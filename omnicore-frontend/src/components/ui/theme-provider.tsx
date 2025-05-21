@@ -17,7 +17,5 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     return <div className="invisible">{children}</div>;
   }
 
-  return (
-    <NextThemesProvider {...props}>{children}</NextThemesProvider>
-  );
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
