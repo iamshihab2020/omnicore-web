@@ -15,6 +15,8 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserAvatar } from "@/components/auth/user-avatar";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -36,6 +38,8 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 export function Navbar() {
+  const { currentUser } = useAuth();
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container">
@@ -90,20 +94,36 @@ export function Navbar() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-          </div>
+          </div>{" "}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden sm:inline-flex"
-              asChild
-            >
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button className="hidden sm:inline-flex" asChild>
-              <Link href="/signup">Sign up</Link>
-            </Button>
+            {currentUser ? (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                  asChild
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+                <UserAvatar />
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                  asChild
+                >
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button className="hidden sm:inline-flex" asChild>
+                  <Link href="/signup">Sign up</Link>
+                </Button>
+              </>
+            )}
             <Button variant="ghost" size="icon" className="md:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
