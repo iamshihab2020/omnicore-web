@@ -6,7 +6,11 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { UserNav } from "@/components/dashboard/user-nav";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -55,7 +59,6 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { currentUser } = useAuth();
 
-  // Required for iOS Safari to prevent the sheet from being shown when the page loads
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -64,7 +67,6 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Get the current route path
   const getCurrentPath = () => {
     if (typeof window !== "undefined") {
       return window.location.pathname;
@@ -73,23 +75,58 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
   };
 
   if (!isMounted) {
-    // Render a placeholder with the same structure but hidden to avoid layout shift
     return <div className="invisible">{children}</div>;
   }
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen flex-col">
-        {" "}
+      <div className="flex flex-col h-screen">
         {/* Top Navigation Bar */}
-        <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
+        <header className="sticky top-0 z-40 w-full pb-3 border-b bg-background/80 backdrop-blur-sm">
           <div
             className={cn(
-              "flex h-16 items-center justify-between",
+              "flex h-16 items-center",
               showSidebar ? (isCollapsed ? "lg:pl-20" : "lg:pl-64") : "",
               "transition-all duration-300 px-4 md:px-6"
             )}
           >
+            {/* Left side with logo and toggle */}
+            {showSidebar && (
+              <div className="hidden lg:flex items-center  h-full pr-3 absolute left-0 top-0 bottom-0">
+                <div
+                  className={cn(
+                    "flex items-center  h-16 px-4 justify-between w-full",
+                    isCollapsed ? "w-20" : "w-64"
+                  )}
+                >
+                  {!isCollapsed && (
+                    <Link href="/" className="flex items-center gap-2">
+                      <Image
+                        src="/omnicore-icon.svg"
+                        alt="OmniCore Logo"
+                        width={50}
+                        height={20}
+                      />
+                      <span className="text-primary dark:text-white  text-2xl font-bold">OmniCore</span>
+                    </Link>
+                  )}
+                  {/* Remove logo when collapsed */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleSidebar}
+                    className="ml-auto"
+                  >
+                    {isCollapsed ? (
+                      <ChevronRight className="h-5 w-5" />
+                    ) : (
+                      <ChevronLeft className="h-5 w-5" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center gap-4 w-full">
               {showSidebar && (
                 <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -100,19 +137,18 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="left" className="w-64 p-0">
+                    {/* <SheetHeader className="sr-only"></SheetHeader> */}
                     <div className="flex h-full flex-col">
-                      <div className="border-b px-6 py-4">
+                      <div className="border-b px-6 py-4 shrink-0">
                         <Link href="/" className="flex items-center gap-2">
                           <Image
-                            src="/next.svg"
+                            src="/omnicore-icon.svg"
                             alt="OmniCore Logo"
                             width={100}
                             height={24}
-                            className="dark:invert"
                           />
-                          <span className="font-bold">OmniCore</span>
                         </Link>
-                      </div>{" "}
+                      </div>
                       <div className="flex-1 overflow-auto">
                         <Sidebar hideTitle={false}>
                           {navItems.map((item) => {
@@ -148,21 +184,14 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                   </SheetContent>
                 </Sheet>
               )}
-
               <Link href="/" className="flex items-center gap-2 lg:hidden">
                 <Image
-                  src="/next.svg"
+                  src="/omnicore-icon.svg"
                   alt="OmniCore Logo"
                   width={100}
                   height={24}
-                  className="dark:invert"
                 />
-                <span className="hidden font-bold sm:inline-block">
-                  OmniCore
-                </span>
               </Link>
-
-              {/* Desktop Navigation - only show in medium screens where sidebar is not visible yet */}
               {showSidebar && (
                 <nav className="hidden md:flex lg:hidden items-center space-x-4">
                   {navItems.map((item) => {
@@ -185,15 +214,14 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                   })}
                 </nav>
               )}
-
               {/* Page Title - show on large screens */}
-              <div className="hidden lg:block text-lg font-semibold">
-                {navItems.find((item) => getCurrentPath() === item.href)
-                  ?.title || "Dashboard"}
+              <div className="hidden lg:flex items-center gap-3 text-lg font-semibold">
+                <span>
+                  {navItems.find((item) => getCurrentPath() === item.href)
+                    ?.title || "Dashboard"}
+                </span>
               </div>
-
               <div className="flex-1"></div>
-
               {/* Right side items */}
               <div className="flex items-center gap-3">
                 <ThemeToggle />
@@ -201,75 +229,50 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               </div>
             </div>
           </div>
-        </header>
+        </header>{" "}
         {/* Main Content */}
-        <main className="flex-1">
-          <div className="flex">
-            {/* Desktop Sidebar */}
+        <main className="flex-1 overflow-hidden">
+          <div className="flex h-full">
             {showSidebar && (
               <aside
                 className={cn(
-                  "hidden lg:flex flex-col border-r bg-background transition-all duration-300",
+                  "hidden lg:flex flex-col border-r bg-background transition-all duration-300 h-full",
                   isCollapsed ? "w-20" : "w-64"
                 )}
               >
                 <div className="h-full flex flex-col">
-                  <div className="flex items-center h-16 px-4 border-b justify-between">
-                    {!isCollapsed && (
-                      <Link href="/" className="flex items-center gap-2">
-                        <Image
-                          src="/next.svg"
-                          alt="OmniCore Logo"
-                          width={80}
-                          height={24}
-                          className="dark:invert"
-                        />
-                        <span className="font-bold">OmniCore</span>
-                      </Link>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={toggleSidebar}
-                      className={isCollapsed ? "mx-auto" : ""}
+                  <div className="flex-1 overflow-y-auto">
+                    <Sidebar
+                      className={cn("py-4", isCollapsed ? "px-0 pt-2" : "")}
+                      hideTitle={isCollapsed}
                     >
-                      {isCollapsed ? (
-                        <ChevronRight className="h-5 w-5" />
-                      ) : (
-                        <ChevronLeft className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </div>{" "}
-                  <Sidebar
-                    className={cn("py-4", isCollapsed ? "px-0 pt-2" : "")}
-                    hideTitle={isCollapsed}
-                  >
-                    {navItems.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <SidebarItem
-                          key={item.href}
-                          href={item.href}
-                          text={isCollapsed ? "" : item.title}
-                          icon={Icon}
-                          isActive={getCurrentPath() === item.href}
-                          className={isCollapsed ? "justify-center" : ""}
-                        />
-                      );
-                    })}
-                  </Sidebar>
+                      {navItems.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <SidebarItem
+                            key={item.href}
+                            href={item.href}
+                            text={isCollapsed ? "" : item.title}
+                            icon={Icon}
+                            isActive={getCurrentPath() === item.href}
+                            className={isCollapsed ? "justify-center" : ""}
+                          />
+                        );
+                      })}
+                    </Sidebar>
+                  </div>
                 </div>
               </aside>
-            )}{" "}
+            )}
             {/* Content Area */}
             <div
               className={cn(
-                "flex-1",
-                "transition-all duration-300",
+                "flex-1 h-full",
+                "transition-all duration-300 overflow-y-auto",
                 isCollapsed ? "lg:ml-0" : ""
               )}
             >
-              <div className="container py-6">{children}</div>
+              <div className="p-6">{children}</div>
             </div>
           </div>
         </main>
