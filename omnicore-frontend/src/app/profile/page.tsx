@@ -1,51 +1,46 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/protected-route";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { AppLayout } from "@/components/app/app-layout";
+import Link from "next/link";
 
 export default function Profile() {
   const { currentUser } = useAuth();
 
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+    <AppLayout>
+      <div className="container py-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-card shadow-sm rounded-lg overflow-hidden border">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Profile
-                </h2>
-                <Link href="/dashboard">
-                  <Button variant="outline">Back to Dashboard</Button>
-                </Link>
+                <h2 className="text-2xl font-bold">Profile</h2>
               </div>
 
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <div className="border-t pt-6">
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                   <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-sm font-medium text-muted-foreground">
                       Email address
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                    <dd className="mt-1 text-sm">
                       {currentUser?.email}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-sm font-medium text-muted-foreground">
                       User ID
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                    <dd className="mt-1 text-sm">
                       {currentUser?.uid}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-sm font-medium text-muted-foreground">
                       Email verified
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                    <dd className="mt-1 text-sm">
                       {currentUser?.emailVerified ? (
                         <span className="text-green-600 dark:text-green-400">
                           Verified
@@ -58,11 +53,11 @@ export default function Profile() {
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <dt className="text-sm font-medium text-muted-foreground">
                       Account created
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {currentUser?.metadata.creationTime
+                    <dd className="mt-1 text-sm">
+                      {currentUser?.metadata?.creationTime
                         ? new Date(
                             currentUser.metadata.creationTime
                           ).toLocaleDateString()
@@ -73,7 +68,7 @@ export default function Profile() {
               </div>
 
               <div className="mt-10">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                <h3 className="text-lg font-medium">
                   Account Settings
                 </h3>
                 <div className="mt-4 space-y-4">
@@ -86,6 +81,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </AppLayout>
   );
 }
