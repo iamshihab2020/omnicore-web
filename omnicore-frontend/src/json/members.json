@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Olivia Martin",
+    "email": "olivia.martin@email.com",
+    "type": "Owner",
+    "avatar": "/avatars/01.png",
+    "fallback": "OM"
+  },
+  {
+    "name": "Jackson Lee",
+    "email": "jackson.lee@email.com",
+    "type": "Admin",
+    "avatar": "/avatars/02.png",
+    "fallback": "JL"
+  },
+  {
+    "name": "Isabella Nguyen",
+    "email": "isabella.nguyen@email.com",
+    "type": "Member",
+    "avatar": "/avatars/03.png",
+    "fallback": "IN"
+  },
+  {
+    "name": "William Kim",
+    "email": "will@email.com",
+    "type": "Member",
+    "avatar": "/avatars/04.png",
+    "fallback": "WK"
+  },
+  {
+    "name": "Sofia Davis",
+    "email": "sofia.davis@email.com",
+    "type": "Guest",
+    "avatar": "/avatars/05.png",
+    "fallback": "SD"
+  }
+]

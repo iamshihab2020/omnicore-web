@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 const TeamMembers = () => {
   return (
@@ -71,7 +72,7 @@ const TeamMembers = () => {
                   {/* <span className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground border font-semibold capitalize">
                     {member.type}
                   </span> */}
-                  
+                  <Badge variant={'default'} className="text-sm font-semibold">{member.type} </Badge>
                 </li>
               ));
             })()}
