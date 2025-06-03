@@ -19,6 +19,7 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Computer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -40,6 +41,11 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Point of Sale",
+    href: "/pos",
+    icon: Computer,
   },
   {
     title: "Profile",
