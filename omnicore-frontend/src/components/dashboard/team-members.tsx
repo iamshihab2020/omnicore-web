@@ -68,9 +68,10 @@ const TeamMembers = () => {
                       {member.email}
                     </div>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground border font-semibold capitalize">
+                  {/* <span className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground border font-semibold capitalize">
                     {member.type}
-                  </span>
+                  </span> */}
+                  
                 </li>
               ));
             })()}
