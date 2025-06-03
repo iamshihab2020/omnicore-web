@@ -20,7 +20,7 @@ export function AnimatedCounter({
   value,
   prefix = "",
   suffix = "",
-  duration = 1.5,
+  duration = 0.9,
   separator = ",",
   decimals = 0,
   enableScrollSpy = true,
@@ -31,7 +31,7 @@ export function AnimatedCounter({
   return (
     <span
       className={cn(
-        "inline-flex items-center text-center text-4xl mt-4 font-semibold",
+        "inline-flex items-center text-center text-2xl font-bold",
         className
       )}
       {...props}
