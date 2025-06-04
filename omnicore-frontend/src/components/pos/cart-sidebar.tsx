@@ -76,7 +76,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                       <span>${item.price.toFixed(2)}</span>
                       <span>×</span>
-                      <span>
+                      <span>-
                         <Badge
                           variant="destructive"
                           className="rounded-full font-semibold px-2"
