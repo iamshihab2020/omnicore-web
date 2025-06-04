@@ -23,7 +23,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
   const [fallbacks, setFallbacks] = useState<{ [id: number]: boolean }>({});
 
   return (
-    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 items-center justify-center mx-auto gap-3 sm:gap-4">
       {products.map((product) => (
         <div
           key={product.id}

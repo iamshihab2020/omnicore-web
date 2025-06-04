@@ -91,10 +91,10 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
     <ProtectedRoute>
       <div className="flex flex-col h-screen">
         {/* Top Navigation Bar */}
-        <header className="sticky top-0 z-40 w-full pb-3 border-b bg-background/80 backdrop-blur-sm">
+        <header className="sticky z-40 w-full  border-b bg-background backdrop-blur-sm">
           <div
             className={cn(
-              "flex h-16 items-center",
+              "flex h-20 items-center",
               showSidebar ? (isCollapsed ? "lg:pl-20" : "lg:pl-64") : "",
               "transition-all duration-300 px-4 md:px-6"
             )}
@@ -104,18 +104,18 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               <div className="hidden lg:flex items-center h-full pr-3 absolute left-0 top-0 bottom-0">
                 <div
                   className={cn(
-                    "flex items-center h-16 px-4 justify-between w-full",
+                    "flex items-center px-4 justify-between w-full",
                     isCollapsed ? "w-20" : "w-64"
                   )}
                 >
                   {!isCollapsed && (
                     <Link href="/" className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex-shrink-0">
+                      <div className="w-8 h-8 flex-shrink-0">
                         <Image
                           src="/omnicore-icon.svg"
                           alt="OmniCore Logo"
-                          width={56}
-                          height={56}
+                          width={45}
+                          height={45}
                           className="object-contain w-full h-full"
                           priority
                         />
@@ -125,19 +125,21 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                       </span>
                     </Link>
                   )}
-                  {/* Remove logo when collapsed */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleSidebar}
-                    className="ml-auto"
-                  >
-                    {isCollapsed ? (
-                      <ChevronRight className="h-5 w-5" />
-                    ) : (
-                      <ChevronLeft className="h-5 w-5" />
-                    )}
-                  </Button>
+                  {/* Collapse button: ensure it's centered and sized */}
+                  <div className="flex items-center h-full">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleSidebar}
+                      className="ml-auto h-10 w-10 flex items-center justify-center"
+                    >
+                      {isCollapsed ? (
+                        <ChevronRight className="h-5 w-5" />
+                      ) : (
+                        <ChevronLeft className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -167,7 +169,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                           href="/"
                           className="flex items-center gap-2 min-w-0"
                         >
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0">
+                          <div className="w-10 h-10 flex-shrink-0">
                             <Image
                               src="/omnicore-icon.svg"
                               alt="OmniCore Logo"
@@ -253,6 +255,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               )}
               {/* Page Title - show on large screens */}
               <div className="hidden lg:flex items-center gap-3 text-lg font-semibold">
+                {/* removed mt-2 */}
                 <span>
                   {navItems.find((item) => getCurrentPath() === item.href)
                     ?.title || "Dashboard"}
