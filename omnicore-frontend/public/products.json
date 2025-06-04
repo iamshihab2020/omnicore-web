@@ -3,24 +3,45 @@
     "id": 1,
     "name": "Classic Burger",
     "category": "Main Course",
+    "type": "burger",
     "price": 12.99,
-    "imageUrl": "/images/burger.jpg",
+    "imageUrl": "/images/burger_1.png",
     "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
   },
   {
     "id": 2,
-    "name": "Caesar Salad",
-    "category": "Appetizer",
+    "name": "Carbonara Pasta",
+    "category": "Main Course",
+    "type": "pasta",
     "price": 8.5,
-    "imageUrl": "/images/caesar-salad.jpg",
+    "imageUrl": "/images/pasta.png",
     "description": "Crisp romaine lettuce, parmesan cheese, croutons, and Caesar dressing."
   },
   {
     "id": 3,
-    "name": "Cola",
-    "category": "Drinks",
+    "name": "Beef Steak",
+    "category": "Main Course",
+    "type": "steak",
     "price": 2.0,
-    "imageUrl": "/images/cola.jpg",
+    "imageUrl": "/images/steak.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 4,
+    "name": "Pizza Margherita",
+    "category": "Main Course",
+    "type": "pizza",
+    "price": 20.0,
+    "imageUrl": "/images/pizza.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 5,
+    "name": "Pizza Margherita",
+    "category": "Main Course",
+    "type": "pizza",
+    "price": 20.0,
+    "imageUrl": "/images/pizza.png",
     "description": "A refreshing carbonated beverage."
   }
 ]
