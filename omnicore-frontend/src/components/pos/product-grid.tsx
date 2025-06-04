@@ -23,11 +23,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
   const [fallbacks, setFallbacks] = useState<{ [id: number]: boolean }>({});
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
       {products.map((product) => (
         <div
           key={product.id}
-          className="bg-card text-card-foreground rounded-lg shadow hover:shadow-lg transition-shadow border border-border flex flex-col cursor-pointer group w-full"
+          className="bg-card text-card-foreground rounded-lg shadow hover:shadow-lg transition-shadow border border-border flex flex-col cursor-pointer group max-w-sm w-full min-w-0"
           onClick={() => onAddToCart(product)}
         >
           <Image

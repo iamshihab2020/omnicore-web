@@ -59,7 +59,7 @@ const PosPage = () => {
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
         {/* Main Product Grid */}
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-2 md:p-4">
           {loading ? (
             <div className="p-8">Loading products...</div>
           ) : error ? (
@@ -69,12 +69,14 @@ const PosPage = () => {
           )}
         </main>
         {/* Order Summary Sidebar */}
-        <CartSidebar
-          cart={cart}
-          onReset={handleResetCart}
-          onCheckout={handleCheckout}
-          onRemove={handleRemoveFromCart}
-        />
+        <div className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0">
+          <CartSidebar
+            cart={cart}
+            onReset={handleResetCart}
+            onCheckout={handleCheckout}
+            onRemove={handleRemoveFromCart}
+          />
+        </div>
       </div>
     </AppLayout>
   );

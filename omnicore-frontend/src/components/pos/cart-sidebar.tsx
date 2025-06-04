@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../ui/button";
+
 
 interface Product {
   id: number;
@@ -29,18 +29,18 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   return (
-    <aside className="w-full md:w-80 bg-card text-card-primary border-border border-2 p-0 flex flex-col h-full min-h-[300px] rounded-2xl">
-      <div className="px-6 py-4 border-b border-t-0 border-l-0 border-r-0 rounded-2xl border-border flex items-center justify-between bg-muted">
+    <aside className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0 bg-card text-card-foreground border-l border-border p-0 flex flex-col min-h-[500px]">
+      <div className="px-4 sm:px-6 py-4 border-b border-border flex items-center justify-between bg-muted rounded-t-lg">
         <span className="text-lg font-bold text-foreground">Order Summary</span>
-        <Button
+        <button
+          className="text-xs text-red-500 hover:text-red-700 font-semibold px-2 py-1 rounded border border-transparent hover:border-red-200 transition"
           onClick={onReset}
-          className="bg-red-600 hover:bg-red-600"
           disabled={cart.length === 0}
         >
           Reset
-        </Button>
+        </button>
       </div>
-      <div className="flex-1 overflow-y-auto px-3 py-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
         {cart.length === 0 ? (
           <div className="text-muted-foreground text-center text-base mt-10">
             No items in cart
@@ -50,7 +50,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             {cart.map((item) => (
               <li
                 key={item.id}
-                className="flex items-center gap-3 bg-sidebar rounded-lg px-3 py-2 group"
+                className="flex items-center gap-3 bg-muted/60 rounded-lg px-3 py-2 group"
               >
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm truncate text-foreground">
@@ -58,7 +58,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                   </div>
                   <div className="text-xs text-muted-foreground flex items-center gap-2">
                     <span>
-                      Qty:
+                      Qty:{" "}
                       <span className="font-semibold">{item.quantity}</span>
                     </span>
                     <span>×</span>
@@ -66,7 +66,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="font-bold text-foreground text-base">
+                  <span className="font-bold text-primary text-base">
                     ${(item.price * item.quantity).toFixed(2)}
                   </span>
                   {/* <button
@@ -82,7 +82,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
           </ul>
         )}
       </div>
-      <div className="px-6 py-4 border-t border-border bg-muted rounded-2xl">
+      <div className="px-4 sm:px-6 py-4 border-t border-border bg-muted rounded-b-lg">
         <div className="flex justify-between items-center mb-3">
           <span className="font-semibold text-foreground">Total</span>
           <span className="font-bold text-xl text-primary">
