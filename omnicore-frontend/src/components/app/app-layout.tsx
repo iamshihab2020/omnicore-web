@@ -10,6 +10,9 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +22,7 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Computer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -40,6 +44,11 @@ const navItems: NavItem[] = [
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Point of Sale",
+    href: "/pos",
+    icon: Computer,
   },
   {
     title: "Profile",
@@ -92,22 +101,28 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
           >
             {/* Left side with logo and toggle */}
             {showSidebar && (
-              <div className="hidden lg:flex items-center  h-full pr-3 absolute left-0 top-0 bottom-0">
+              <div className="hidden lg:flex items-center h-full pr-3 absolute left-0 top-0 bottom-0">
                 <div
                   className={cn(
-                    "flex items-center  h-16 px-4 justify-between w-full",
+                    "flex items-center h-16 px-4 justify-between w-full",
                     isCollapsed ? "w-20" : "w-64"
                   )}
                 >
                   {!isCollapsed && (
-                    <Link href="/" className="flex items-center gap-2">
-                      <Image
-                        src="/omnicore-icon.svg"
-                        alt="OmniCore Logo"
-                        width={50}
-                        height={20}
-                      />
-                      <span className="text-primary dark:text-white  text-2xl font-bold">OmniCore</span>
+                    <Link href="/" className="flex items-center gap-2 min-w-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 flex-shrink-0">
+                        <Image
+                          src="/omnicore-icon.svg"
+                          alt="OmniCore Logo"
+                          width={56}
+                          height={56}
+                          className="object-contain w-full h-full"
+                          priority
+                        />
+                      </div>
+                      <span className="text-primary dark:text-white text-2xl font-bold truncate hidden sm:inline-block">
+                        OmniCore
+                      </span>
                     </Link>
                   )}
                   {/* Remove logo when collapsed */}
@@ -137,16 +152,31 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                     </Button>
                   </SheetTrigger>
                   <SheetContent side="left" className="w-64 p-0">
+                    <SheetHeader>
+                      <SheetTitle className="sr-only">
+                        Navigation Menu
+                      </SheetTitle>
+                      <SheetDescription className="sr-only">
+                        Main navigation drawer for OmniCore dashboard and pages.
+                      </SheetDescription>
+                    </SheetHeader>
                     {/* <SheetHeader className="sr-only"></SheetHeader> */}
                     <div className="flex h-full flex-col">
                       <div className="border-b px-6 py-4 shrink-0">
-                        <Link href="/" className="flex items-center gap-2">
-                          <Image
-                            src="/omnicore-icon.svg"
-                            alt="OmniCore Logo"
-                            width={100}
-                            height={24}
-                          />
+                        <Link
+                          href="/"
+                          className="flex items-center gap-2 min-w-0"
+                        >
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0">
+                            <Image
+                              src="/omnicore-icon.svg"
+                              alt="OmniCore Logo"
+                              width={48}
+                              height={48}
+                              className="object-contain w-full h-full"
+                              priority
+                            />
+                          </div>
                         </Link>
                       </div>
                       <div className="flex-1 overflow-auto">
@@ -184,13 +214,20 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                   </SheetContent>
                 </Sheet>
               )}
-              <Link href="/" className="flex items-center gap-2 lg:hidden">
-                <Image
-                  src="/omnicore-icon.svg"
-                  alt="OmniCore Logo"
-                  width={100}
-                  height={24}
-                />
+              <Link
+                href="/"
+                className="flex items-center gap-2 lg:hidden min-w-0"
+              >
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex-shrink-0">
+                  <Image
+                    src="/omnicore-icon.svg"
+                    alt="OmniCore Logo"
+                    width={48}
+                    height={48}
+                    className="object-contain w-full h-full"
+                    priority
+                  />
+                </div>
               </Link>
               {showSidebar && (
                 <nav className="hidden md:flex lg:hidden items-center space-x-4">

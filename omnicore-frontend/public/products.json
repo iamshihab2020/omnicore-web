@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Burger",
+    "category": "Main Course",
+    "price": 12.99,
+    "imageUrl": "/images/burger.jpg",
+    "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
+  },
+  {
+    "id": 2,
+    "name": "Caesar Salad",
+    "category": "Appetizer",
+    "price": 8.5,
+    "imageUrl": "/images/caesar-salad.jpg",
+    "description": "Crisp romaine lettuce, parmesan cheese, croutons, and Caesar dressing."
+  },
+  {
+    "id": 3,
+    "name": "Cola",
+    "category": "Drinks",
+    "price": 2.0,
+    "imageUrl": "/images/cola.jpg",
+    "description": "A refreshing carbonated beverage."
+  }
+]
