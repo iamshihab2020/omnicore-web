@@ -3,7 +3,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/app/app-layout";
-import Link from "next/link";
 
 export default function Profile() {
   const { currentUser } = useAuth();
