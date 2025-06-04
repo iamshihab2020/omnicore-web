@@ -91,10 +91,10 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
     <ProtectedRoute>
       <div className="flex flex-col h-screen">
         {/* Top Navigation Bar */}
-        <header className="sticky z-40 w-full  border-b bg-background backdrop-blur-sm">
+        <header className="sticky z-40 w-full py-2 lg:py-0  border-b bg-background backdrop-blur-sm">
           <div
             className={cn(
-              "flex h-20 items-center",
+              "flex h-14 lg:h-20 items-center",
               showSidebar ? (isCollapsed ? "lg:pl-20" : "lg:pl-64") : "",
               "transition-all duration-300 px-4 md:px-6"
             )}
