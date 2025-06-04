@@ -37,11 +37,11 @@
   },
   {
     "id": 5,
-    "name": "Pizza Margherita",
-    "category": "Main Course",
-    "type": "pizza",
+    "name": "Strawberry Smoothie",
+    "category": "Beverage",
+    "type": "Smoothie",
     "price": 20.0,
-    "imageUrl": "/images/pizza.png",
+    "imageUrl": "/images/strawberry_smothie.png",
     "description": "A refreshing carbonated beverage."
   }
 ]

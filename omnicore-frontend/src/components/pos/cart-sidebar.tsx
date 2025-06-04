@@ -39,7 +39,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             🛒 Order Summary
           </span>
           <button
-            className="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
+            className="text-xs text-destructive font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
             onClick={onReset}
             disabled={cart.length === 0}
           >
@@ -76,7 +76,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                       <span>${item.price.toFixed(2)}</span>
                       <span>×</span>
-                      <span>-
+                      <span>
                         <Badge
                           variant="destructive"
                           className="rounded-full font-semibold px-2"
