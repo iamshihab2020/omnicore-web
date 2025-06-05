@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AppLayout } from "@/components/app/app-layout";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
+import CartNotification from "@/components/pos/cart-notification";
 
 interface Product {
   id: number;
@@ -19,6 +20,11 @@ const PosPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [notification, setNotification] = useState({
+    isVisible: false,
+    message: "",
+    productName: "",
+  });
 
   useEffect(() => {
     fetch("/products.json")
@@ -30,19 +36,38 @@ const PosPage = () => {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
-
   const handleAddToCart = (product: Product) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
+        // Show notification for increased quantity
+        setNotification({
+          isVisible: true,
+          message: `Added ${product.name} (${existing.quantity + 1})`,
+          productName: product.name,
+        });
+
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
+
+      // Show notification for new item
+      setNotification({
+        isVisible: true,
+        message: `Added ${product.name} to cart`,
+        productName: product.name,
+      });
+
       return [...prev, { ...product, quantity: 1 }];
     });
+
+    // Hide notification after 2 seconds
+    setTimeout(() => {
+      setNotification((prev) => ({ ...prev, isVisible: false }));
+    }, 2000);
   };
 
   const handleRemoveFromCart = (id: number) => {
@@ -57,7 +82,6 @@ const PosPage = () => {
       setCart([]); // Clear cart after print
     }, 100);
   };
-
   return (
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
@@ -80,6 +104,13 @@ const PosPage = () => {
             onCheckout={handleCheckout}
           />
         </div>
+
+        {/* Cart Notification */}
+        <CartNotification
+          isVisible={notification.isVisible}
+          message={notification.message}
+          itemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
+        />
       </div>
     </AppLayout>
   );

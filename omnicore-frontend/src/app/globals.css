@@ -364,8 +364,69 @@
     white-space: pre !important;
     font-family: monospace !important;
   }
-
   .receipt-root * {
     font-family: monospace !important;
   }
+}
+
+/* Product Card Animation Styles */
+@keyframes addToCart {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: scale(0.95);
+    box-shadow: 0 0 15px 5px rgba(83, 145, 255, 0.25);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.product-card-click {
+  animation: addToCart 0.5s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card-click::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(83, 145, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple 0.8s ease-out;
+}
+
+.product-added-badge {
+  animation: fadeInUp 0.3s ease-out forwards;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }

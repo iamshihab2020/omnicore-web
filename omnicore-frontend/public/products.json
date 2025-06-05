@@ -13,7 +13,7 @@
     "name": "Carbonara Pasta",
     "category": "Main Course",
     "type": "pasta",
-    "price": 8.5,
+    "price": 18.5,
     "imageUrl": "/images/pasta.png",
     "description": "Crisp romaine lettuce, parmesan cheese, croutons, and Caesar dressing."
   },
@@ -22,7 +22,7 @@
     "name": "Beef Steak",
     "category": "Main Course",
     "type": "steak",
-    "price": 2.0,
+    "price": 150.0,
     "imageUrl": "/images/steak.png",
     "description": "A refreshing carbonated beverage."
   },
@@ -31,7 +31,7 @@
     "name": "Pizza Margherita",
     "category": "Main Course",
     "type": "pizza",
-    "price": 20.0,
+    "price": 8.0,
     "imageUrl": "/images/pizza.png",
     "description": "A refreshing carbonated beverage."
   },
@@ -40,8 +40,17 @@
     "name": "Strawberry Smoothie",
     "category": "Beverage",
     "type": "Smoothie",
-    "price": 20.0,
+    "price": 12.0,
     "imageUrl": "/images/strawberry_smothie.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 6,
+    "name": "Cold Coffee",
+    "category": "Beverage",
+    "type": "Coffee",
+    "price": 12.0,
+    "imageUrl": "/images/cold_coffee.png",
     "description": "A refreshing carbonated beverage."
   }
 ]
