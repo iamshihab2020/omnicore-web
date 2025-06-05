@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Trash2 } from "lucide-react";
+import ReceiptPrint from "./receipt-print";
 
 interface Product {
   id: number;
@@ -26,10 +27,11 @@ interface CartSidebarProps {
 const CartSidebar: React.FC<CartSidebarProps> = ({
   cart,
   onReset,
-  onCheckout,
   onRemove,
+  onCheckout,
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   return (
     <Card className="rounded-2xl shadow-lg border-0 bg-background">
       <aside className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0 text-card-foreground p-0 flex flex-col min-h-[500px]">
@@ -39,7 +41,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             🛒 Order Summary
           </span>
           <button
-            className="text-xs text-red-500 hover:text-red-700 font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
+            className="text-xs text-destructive font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
             onClick={onReset}
             disabled={cart.length === 0}
           >
@@ -76,7 +78,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                       <span>${item.price.toFixed(2)}</span>
                       <span>×</span>
-                      <span>-
+                      <span>
                         <Badge
                           variant="destructive"
                           className="rounded-full font-semibold px-2"
@@ -101,14 +103,36 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             <span className="font-bold text-2xl text-primary">
               ${total.toFixed(2)}
             </span>
-          </div>
+          </div>{" "}
           <button
             className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 font-semibold text-base shadow hover:bg-primary/90 transition disabled:opacity-60"
-            onClick={onCheckout}
+            onClick={() => {
+              // When checkout is clicked, call the passed onCheckout function
+              // The parent component will handle printing and clearing the cart
+              onCheckout();
+            }}
             disabled={cart.length === 0}
           >
             Checkout
           </button>
+        </div>
+        {/* Hidden Receipt for Print */}
+        <div className="screen-hidden">
+          <ReceiptPrint
+            cart={cart}
+            invoiceNo={
+              // Simple invoice number: date + time
+              new Date()
+                .toISOString()
+                .replace(/[-:T.]/g, "")
+                .slice(0, 14)
+            }
+            restaurant={{
+              name: "OmniCore Restaurant",
+              address: "123 Main St, City, Country",
+              phone: "01954114410",
+            }}
+          />
         </div>
       </aside>
     </Card>

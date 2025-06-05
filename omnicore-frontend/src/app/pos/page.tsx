@@ -51,8 +51,11 @@ const PosPage = () => {
 
   const handleResetCart = () => setCart([]);
   const handleCheckout = () => {
-    // Placeholder for checkout logic
-    alert("Checkout not implemented.");
+    // Add a small delay to ensure the receipt is fully rendered before printing
+    setTimeout(() => {
+      window.print();
+      setCart([]); // Clear cart after print
+    }, 100);
   };
 
   return (
@@ -73,8 +76,8 @@ const PosPage = () => {
           <CartSidebar
             cart={cart}
             onReset={handleResetCart}
-            onCheckout={handleCheckout}
             onRemove={handleRemoveFromCart}
+            onCheckout={handleCheckout}
           />
         </div>
       </div>
