@@ -45,11 +45,11 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(1.000 0.000 0);
+  --background: oklch(1 0 0);
   --foreground: oklch(0.145 0.003 250.97606341771018);
-  --card: oklch(1.000 0.000 0);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0.003 250.97606341771018);
-  --popover: oklch(1.000 0.000 0);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0.003 250.97606341771018);
   --primary: oklch(0.543 0.179 256.3150319365309);
   --primary-foreground: oklch(0.961 0.002 251.4690624152714);
@@ -59,14 +59,14 @@
   --muted-foreground: oklch(0.537 0.069 252.37068402199122);
   --accent: oklch(0.787 0.064 252.0251861484273);
   --accent-foreground: oklch(0.208 0.035 252.76891172929908);
-  --destructive: oklch(0.580 0.237 28.43022926835138);
+  --destructive: oklch(0.58 0.237 28.43022926835138);
   --border: oklch(0.838 0.023 251.66134384081408);
   --input: oklch(0.838 0.023 251.66134384081408);
   --ring: oklch(0.543 0.179 256.3150319365309);
   --chart-1: oklch(0.543 0.179 256.3150319365309);
-  --chart-2: oklch(0.658 0.133 253.18883052025075);
+  --chart-2: oklch(0.658 0.133 253.10003052025075);
   --chart-3: oklch(0.744 0.078 252.18732990860042);
-  --chart-4: oklch(0.410 0.135 256.3331796941823);
+  --chart-4: oklch(0.41 0.135 256.3331796941823);
   --chart-5: oklch(0.312 0.093 255.21911378760365);
   --sidebar: oklch(0.879 0.017 251.60269473773235);
   --sidebar-foreground: oklch(0.211 0.016 251.99417123933029);
@@ -79,7 +79,7 @@
 }
 
 .dark {
-  --background: oklch(0.210 0.019 252.1008211352249);
+  --background: oklch(0.21 0.019 252.1008211352249);
   --foreground: oklch(0.961 0.002 251.4690624152714);
   --card: oklch(0.252 0.026 252.1761637127667);
   --card-foreground: oklch(0.961 0.002 251.4690624152714);
@@ -88,18 +88,18 @@
   --primary: oklch(0.582 0.175 255.36576619297972);
   --primary-foreground: oklch(0.961 0.002 251.4690624152714);
   --secondary: oklch(0.263 0.023 252.06518959115283);
-  --secondary-foreground: oklch(0.960 0.006 251.49756912345924);
+  --secondary-foreground: oklch(0.96 0.006 251.49756912345924);
   --muted: oklch(0.263 0.023 252.06518959115283);
   --muted-foreground: oklch(0.716 0.025 251.71477744583018);
   --accent: oklch(0.357 0.076 253.34366237974555);
   --accent-foreground: oklch(0.958 0.012 251.5526279299997);
-  --destructive: oklch(0.580 0.237 28.43022926835138);
-  --border: oklch(0.360 0.042 252.28742912940533);
-  --input: oklch(0.360 0.042 252.28742912940533);
+  --destructive: oklch(0.58 0.237 28.43022926835138);
+  --border: oklch(0.36 0.042 252.28742912940533);
+  --input: oklch(0.36 0.042 252.28742912940533);
   --ring: oklch(0.582 0.175 255.36576619297972);
   --chart-1: oklch(0.582 0.175 255.36576619297972);
   --chart-2: oklch(0.698 0.132 253.00252180083544);
-  --chart-3: oklch(0.780 0.099 252.35734699468182);
+  --chart-3: oklch(0.78 0.099 252.35734699468182);
   --chart-4: oklch(0.449 0.116 254.22192862982882);
   --chart-5: oklch(0.357 0.076 253.34366237974555);
   --sidebar: oklch(0.331 0.038 252.26528688415738);
@@ -108,10 +108,9 @@
   --sidebar-primary-foreground: oklch(0.961 0.002 251.4690624152714);
   --sidebar-accent: oklch(0.357 0.076 253.34366237974555);
   --sidebar-accent-foreground: oklch(0.958 0.012 251.5526279299997);
-  --sidebar-border: oklch(0.360 0.042 252.28742912940533);
+  --sidebar-border: oklch(0.36 0.042 252.28742912940533);
   --sidebar-ring: oklch(0.582 0.175 255.36576619297972);
 }
-
 
 @layer base {
   * {
@@ -123,5 +122,465 @@
 
   .container {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Hide content on screen but show during print */
+.screen-hidden {
+  display: none;
+  position: absolute;
+  left: -9999px;
+  visibility: hidden;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* INFO: Print styles for receipt */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .screen-hidden {
+    display: block !important;
+    position: static !important;
+    visibility: visible !important;
+    height: auto !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+  #receipt,
+  #receipt * {
+    visibility: visible !important;
+  }
+  #receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    font-size: 12px;
+    background: var(--color-card);
+    color: var(--secondary);
+    font-family: monospace !important;
+    padding: 0;
+    margin: 0;
+  }
+
+  #receipt pre,
+  #receipt span,
+  #receipt div {
+    font-family: monospace !important;
+  }
+}
+
+/* Improved Receipt Print Styles */
+.receipt-root {
+  font-family: monospace;
+  background: var(--color-card);
+  color: var(--secondary);
+  width: 80mm;
+  font-size: 12px;
+  padding: 10px 0;
+  margin: 0;
+  position: relative;
+}
+
+/* Test print button */
+.print-test-button {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@media print {
+  .print-test-button {
+    display: none !important;
+  }
+}
+.receipt-header {
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  font-family: monospace !important;
+  margin-bottom: 2px;
+}
+.receipt-address {
+  text-align: center;
+  font-size: 11px;
+  font-family: monospace !important;
+  margin-bottom: 0;
+}
+.receipt-phone {
+  text-align: center;
+  font-size: 11px;
+  font-family: monospace !important;
+  margin-bottom: 4px;
+}
+
+/* Dash separators for thermal printer style */
+.receipt-dash {
+  width: 100%;
+  font-size: 12px;
+  font-family: monospace !important;
+  margin: 6px 0;
+  white-space: pre;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+/* Date/Time row */
+.receipt-datetime-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-bottom: 2px;
+}
+.receipt-datetime-left {
+  text-align: left;
+  white-space: nowrap;
+  font-family: monospace !important;
+}
+.receipt-datetime-right {
+  text-align: right;
+  white-space: nowrap;
+  font-family: monospace !important;
+}
+.receipt-invoice {
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-bottom: 2px;
+}
+
+/* Table styles */
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: monospace;
+}
+.receipt-table th,
+.receipt-table td {
+  font-size: 12px;
+  font-family: monospace;
+  font-weight: 400;
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.receipt-table-header {
+  font-weight: 600;
+}
+.receipt-qty {
+  width: 30px;
+  text-align: left;
+}
+.receipt-item {
+  width: auto;
+  text-align: left;
+  padding-left: 2px;
+}
+.receipt-price {
+  width: 60px;
+  text-align: right;
+  white-space: nowrap;
+}
+.receipt-tprice {
+  width: 70px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Total section rows */
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 12px;
+  margin: 2px 0;
+  width: 100%;
+}
+.receipt-total-label {
+  text-align: left;
+  font-weight: 400;
+  flex: 1;
+}
+.receipt-total-value {
+  text-align: right;
+  min-width: 70px;
+  font-family: monospace;
+}
+.receipt-grosstotal {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Notes and footer */
+.receipt-notes-label {
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.receipt-notes {
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-bottom: 2px;
+}
+.receipt-powered {
+  font-size: 10px;
+  font-family: monospace !important;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Fixed layout grid for receipt items */
+.receipt-fixed-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.receipt-header-row {
+  display: flex;
+  width: 100%;
+  font-weight: 700;
+  margin-bottom: 2px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #000;
+}
+
+.receipt-item-row {
+  display: flex;
+  width: 100%;
+  padding: 1px 0;
+}
+
+.receipt-col-qty {
+  width: 30px;
+  text-align: left;
+  padding-right: 4px;
+}
+
+.receipt-col-item {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  white-space: pre;
+}
+
+.receipt-col-price {
+  width: 60px;
+  text-align: right;
+  white-space: pre;
+}
+
+.receipt-col-tprice {
+  width: 70px;
+  text-align: right;
+  white-space: pre;
+}
+
+/* Items section with monospace formatting */
+.receipt-items {
+  font-family: monospace;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.receipt-items-header,
+.receipt-items-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.receipt-items-header {
+  flex-direction: row;
+  font-weight: 700;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+}
+
+.receipt-items-row {
+  padding: 1px 0;
+}
+
+/* Column widths for perfect alignment */
+.receipt-items .col-qty {
+  text-align: left;
+}
+
+.receipt-items .col-name {
+  flex: 1;
+  max-width: 215px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+.receipt-items .col-price {
+  text-align: right;
+}
+
+.receipt-items .col-total {
+  text-align: right;
+}
+
+/* Override print styles for the items section */
+@media print {
+  .receipt-items {
+    font-family: monospace !important;
+  }
+
+  .receipt-items-header,
+  .receipt-items-row {
+    display: flex !important;
+  }
+
+  .receipt-items .col-qty,
+  .receipt-items .col-name,
+  .receipt-items .col-price,
+  .receipt-items .col-total {
+    display: block !important;
+  }
+}
+
+/* Pre-formatted monospace receipt styles */
+.receipt-items-pre {
+  font-family: monospace;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+
+.receipt-pre-header,
+.receipt-pre-row {
+  width: 100%;
+  font-family: monospace !important;
+  font-size: 12px;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4;
+  display: flex !important;
+}
+
+.receipt-pre-header {
+  font-weight: 700;
+  margin-bottom: 2px !important;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2px !important;
+  white-space: pre !important;
+}
+
+.receipt-pre-row {
+  gap: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  white-space: pre !important;
+  padding: 1px 0 !important;
+  text-align: right;
+}
+
+/* Column spans for pre-formatted layout - fixed width using ch units */
+.pre-item {
+  /* width: 50%; */
+  text-align: left;
+  margin-left: 2px;
+}
+
+.pre-price {
+  width: 6ch;
+  text-align: right;
+  display: inline-block !important;
+  margin-right: 1ch; /* Add spacing between price and total */
+}
+
+.pre-total {
+  width: 9ch;
+  text-align: right;
+  display: inline-block !important;
+}
+
+/* Totals section using pre-formatted text */
+.receipt-total-pre {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-family: monospace !important;
+  white-space: pre !important;
+  font-size: 12px;
+  margin: 4px 0;
+  width: 100%;
+  line-height: 1.4;
+}
+
+.receipt-total-pre .total-label {
+  text-align: left;
+  font-weight: 400;
+  display: inline-block !important;
+  width: 23ch;
+  overflow: hidden;
+}
+
+.receipt-total-pre .total-value {
+  text-align: right;
+  width: 9ch;
+  display: inline-block !important;
+}
+
+.receipt-total-pre.receipt-grosstotal {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+@media print {
+  #receipt {
+    width: 80mm !important;
+    font-family: monospace !important;
+    font-size: 12px !important;
+  }
+
+  .receipt-pre-header,
+  .receipt-pre-row,
+  .receipt-total-pre {
+    display: flex !important;
+    font-family: monospace !important;
+    white-space: pre !important;
+  }
+  .pre-item,
+  .pre-price,
+  .pre-total,
+  .total-label,
+  .total-value {
+    display: inline-block !important;
+    font-family: monospace !important;
+  }
+
+  .receipt-dash {
+    white-space: pre !important;
+    font-family: monospace !important;
+  }
+
+  .receipt-root * {
+    font-family: monospace !important;
   }
 }
