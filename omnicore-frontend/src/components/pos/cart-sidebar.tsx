@@ -103,7 +103,8 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             <span className="font-bold text-2xl text-primary">
               ${total.toFixed(2)}
             </span>
-          </div>{" "}          <button
+          </div>{" "}
+          <button
             className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 font-semibold text-base shadow hover:bg-primary/90 transition disabled:opacity-60"
             onClick={() => {
               // When checkout is clicked, call the passed onCheckout function

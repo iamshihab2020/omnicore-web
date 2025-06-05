@@ -173,7 +173,7 @@
   }
 }
 
-/* Improved Receipt Print Styles */
+/* Receipt Base Styles */
 .receipt-root {
   font-family: monospace;
   background: var(--color-card);
@@ -185,24 +185,7 @@
   position: relative;
 }
 
-/* Test print button */
-.print-test-button {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-@media print {
-  .print-test-button {
-    display: none !important;
-  }
-}
+/* Restaurant information header */
 .receipt-header {
   text-align: center;
   font-weight: 700;
@@ -223,7 +206,7 @@
   margin-bottom: 4px;
 }
 
-/* Dash separators for thermal printer style */
+/* Dash separator */
 .receipt-dash {
   width: 100%;
   font-size: 12px;
@@ -235,7 +218,7 @@
   text-overflow: clip;
 }
 
-/* Date/Time row */
+/* Date/Time and invoice information */
 .receipt-datetime-row {
   display: flex;
   justify-content: space-between;
@@ -259,211 +242,7 @@
   margin-bottom: 2px;
 }
 
-/* Table styles */
-.receipt-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-family: monospace;
-}
-.receipt-table th,
-.receipt-table td {
-  font-size: 12px;
-  font-family: monospace;
-  font-weight: 400;
-  padding: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.receipt-table-header {
-  font-weight: 600;
-}
-.receipt-qty {
-  width: 30px;
-  text-align: left;
-}
-.receipt-item {
-  width: auto;
-  text-align: left;
-  padding-left: 2px;
-}
-.receipt-price {
-  width: 60px;
-  text-align: right;
-  white-space: nowrap;
-}
-.receipt-tprice {
-  width: 70px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-/* Total section rows */
-.receipt-total-row {
-  display: flex;
-  justify-content: space-between;
-  font-family: monospace;
-  font-size: 12px;
-  margin: 2px 0;
-  width: 100%;
-}
-.receipt-total-label {
-  text-align: left;
-  font-weight: 400;
-  flex: 1;
-}
-.receipt-total-value {
-  text-align: right;
-  min-width: 70px;
-  font-family: monospace;
-}
-.receipt-grosstotal {
-  font-weight: 700;
-  font-size: 13px;
-}
-
-/* Notes and footer */
-.receipt-notes-label {
-  font-size: 12px;
-  font-family: monospace !important;
-  margin-top: 8px;
-  font-weight: 600;
-}
-.receipt-notes {
-  font-size: 12px;
-  font-family: monospace !important;
-  margin-bottom: 2px;
-}
-.receipt-powered {
-  font-size: 10px;
-  font-family: monospace !important;
-  margin-top: 10px;
-  text-align: center;
-}
-
-/* Fixed layout grid for receipt items */
-.receipt-fixed-layout {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  font-family: monospace;
-  white-space: pre;
-}
-
-.receipt-header-row {
-  display: flex;
-  width: 100%;
-  font-weight: 700;
-  margin-bottom: 2px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid #000;
-}
-
-.receipt-item-row {
-  display: flex;
-  width: 100%;
-  padding: 1px 0;
-}
-
-.receipt-col-qty {
-  width: 30px;
-  text-align: left;
-  padding-right: 4px;
-}
-
-.receipt-col-item {
-  flex: 1;
-  text-align: left;
-  overflow: hidden;
-  white-space: pre;
-}
-
-.receipt-col-price {
-  width: 60px;
-  text-align: right;
-  white-space: pre;
-}
-
-.receipt-col-tprice {
-  width: 70px;
-  text-align: right;
-  white-space: pre;
-}
-
-/* Items section with monospace formatting */
-.receipt-items {
-  font-family: monospace;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.receipt-items-header,
-.receipt-items-row {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-.receipt-items-header {
-  flex-direction: row;
-  font-weight: 700;
-  border-bottom: 1px solid #000;
-  padding-bottom: 2px;
-  margin-bottom: 4px;
-}
-
-.receipt-items-row {
-  padding: 1px 0;
-}
-
-/* Column widths for perfect alignment */
-.receipt-items .col-qty {
-  text-align: left;
-}
-
-.receipt-items .col-name {
-  flex: 1;
-  max-width: 215px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-right: 4px;
-}
-
-.receipt-items .col-price {
-  text-align: right;
-}
-
-.receipt-items .col-total {
-  text-align: right;
-}
-
-/* Override print styles for the items section */
-@media print {
-  .receipt-items {
-    font-family: monospace !important;
-  }
-
-  .receipt-items-header,
-  .receipt-items-row {
-    display: flex !important;
-  }
-
-  .receipt-items .col-qty,
-  .receipt-items .col-name,
-  .receipt-items .col-price,
-  .receipt-items .col-total {
-    display: block !important;
-  }
-}
-
-/* Pre-formatted monospace receipt styles */
+/* Items section */
 .receipt-items-pre {
   font-family: monospace;
   width: 100%;
@@ -472,7 +251,6 @@
   font-size: 12px;
 }
 
-.receipt-pre-header,
 .receipt-pre-row {
   width: 100%;
   font-family: monospace !important;
@@ -481,19 +259,7 @@
   padding: 0 !important;
   line-height: 1.4;
   display: flex !important;
-}
-
-.receipt-pre-header {
-  font-weight: 700;
-  margin-bottom: 2px !important;
-  border-bottom: 1px solid #000;
-  padding-bottom: 2px !important;
-  white-space: pre !important;
-}
-
-.receipt-pre-row {
   gap: 2px !important;
-  display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   white-space: pre !important;
@@ -501,9 +267,8 @@
   text-align: right;
 }
 
-/* Column spans for pre-formatted layout - fixed width using ch units */
+/* Item columns */
 .pre-item {
-  /* width: 50%; */
   text-align: left;
   margin-left: 2px;
 }
@@ -521,7 +286,7 @@
   display: inline-block !important;
 }
 
-/* Totals section using pre-formatted text */
+/* Totals section */
 .receipt-total-pre {
   display: flex !important;
   justify-content: space-between !important;
@@ -552,6 +317,26 @@
   font-size: 13px;
 }
 
+/* Notes and footer */
+.receipt-notes-label {
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.receipt-notes {
+  font-size: 12px;
+  font-family: monospace !important;
+  margin-bottom: 2px;
+}
+.receipt-powered {
+  font-size: 10px;
+  font-family: monospace !important;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Print-specific styles */
 @media print {
   #receipt {
     width: 80mm !important;
@@ -559,13 +344,13 @@
     font-size: 12px !important;
   }
 
-  .receipt-pre-header,
   .receipt-pre-row,
   .receipt-total-pre {
     display: flex !important;
     font-family: monospace !important;
     white-space: pre !important;
   }
+
   .pre-item,
   .pre-price,
   .pre-total,

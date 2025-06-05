@@ -49,7 +49,8 @@ const PosPage = () => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleResetCart = () => setCart([]);  const handleCheckout = () => {
+  const handleResetCart = () => setCart([]);
+  const handleCheckout = () => {
     // Add a small delay to ensure the receipt is fully rendered before printing
     setTimeout(() => {
       window.print();

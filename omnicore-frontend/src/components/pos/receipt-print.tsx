@@ -17,7 +17,8 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
   invoiceNo,
   restaurant,
-}) => {  // No longer needed as printing is handled by the parent component
+}) => {
+  // No longer needed as printing is handled by the parent component
   const now = new Date();
   const date = now.toLocaleDateString();
   const time = now.toLocaleTimeString([], {
@@ -51,7 +52,9 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   // const getDashLine = (): string => "-".repeat(39);
 
   return (
-    <div id="receipt" className="receipt-root">      {/* No test button needed - printing is handled by the parent component */}
+    <div id="receipt" className="receipt-root">
+      {" "}
+      {/* No test button needed - printing is handled by the parent component */}
       {/* Restaurant information header */}
       <div className="receipt-header">
         {restaurant?.name || "Restaurant Name"}
@@ -77,7 +80,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         {/* Header row for items table */}
         <pre className="receipt-pre-row">
           <div>
-            <span className="pre-qty">Qty  x  </span>
+            <span className="pre-qty">Qty x </span>
             <span className="pre-item">Item</span>
           </div>
           <div>
@@ -90,7 +93,9 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         {cart.map((item) => (
           <pre key={item.id} className="receipt-pre-row">
             <div>
-              <span className="pre-qty">{formatQty(item.quantity)} {' x '} </span>
+              <span className="pre-qty">
+                {formatQty(item.quantity)} {" x "}{" "}
+              </span>
               <span className="pre-item ">{formatItemName(item.name)}</span>
             </div>
             <div>
@@ -116,8 +121,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-value">{formatTotalPrice(vat)}</span>
       </pre>
       {/* Fifth separator line */}
-      <hr className="receipt-dash" />{" "}
-      {/* Gross total section */}
+      <hr className="receipt-dash" /> {/* Gross total section */}
       <pre className="receipt-total-pre receipt-grosstotal">
         <span className="total-label">{formatTotalLabel("Gross Total:")}</span>
         <span className="total-value">{formatTotalPrice(grossTotal)}</span>
