@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AppLayout } from "@/components/app/app-layout";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
 import CartNotification from "@/components/pos/cart-notification";
+// import SalesSummary from "@/components/pos/sales-summary";
+import { useSoundEffect } from "@/components/pos/use-sound-effect";
+// Removed unused import
 
 interface Product {
   id: number;
@@ -25,6 +28,13 @@ const PosPage = () => {
     message: "",
     productName: "",
   });
+
+  // State for sales summary modal
+  // const [showSalesSummary, setShowSalesSummary] = useState(false);
+  // const [lastSale, setLastSale] = useState<CartItem[]>([]);
+  // const [invoiceNo, setInvoiceNo] = useState<string>("");
+
+  const { playCheckoutSound } = useSoundEffect();
 
   useEffect(() => {
     fetch("/products.json")
@@ -69,30 +79,124 @@ const PosPage = () => {
       setNotification((prev) => ({ ...prev, isVisible: false }));
     }, 2000);
   };
-
   const handleRemoveFromCart = (id: number) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleResetCart = () => setCart([]);
-  const handleCheckout = () => {
+  const handleResetCart = useCallback(() => {
+    setCart([]);
+  }, []);
+  const handleCheckout = useCallback(() => {
+    // Play checkout sound effect
+    playCheckoutSound();
+
+    // Show checkout notification
+    setNotification({
+      isVisible: true,
+      message: "Processing checkout...",
+      productName: "",
+    });
+
+    // Generate invoice number from current date/time
+    // const newInvoiceNo = new Date()
+    //   .toISOString()
+    //   .replace(/[-:T.]/g, "")
+    //   .slice(0, 14);
+    // setInvoiceNo(newInvoiceNo);
+
+    // Save cart items for the sales summary
+    // setLastSale([...cart]);
+
     // Add a small delay to ensure the receipt is fully rendered before printing
     setTimeout(() => {
       window.print();
-      setCart([]); // Clear cart after print
-    }, 100);
-  };
+
+      // Update notification
+      setNotification({
+        isVisible: true,
+        message: "Checkout complete!",
+        productName: "",
+      });
+
+      // Show sales summary modal
+      // setShowSalesSummary(true);
+
+      // Clear cart after print
+      setCart([]);
+    }, 500);
+  }, [playCheckoutSound]); // Setup keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't trigger shortcuts if modifiers are pressed or if typing in an input
+      if (
+        event.ctrlKey ||
+        event.altKey ||
+        event.metaKey ||
+        ["INPUT", "TEXTAREA"].includes((event.target as HTMLElement).tagName)
+      ) {
+        return;
+      }
+
+      switch (event.key) {
+        case "F2":
+          if (!cart.length) return;
+          event.preventDefault();
+          handleCheckout();
+          break;
+        case "F3":
+          if (!cart.length) return;
+          event.preventDefault();
+          handleResetCart();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [cart.length, handleCheckout, handleResetCart]); // These callback functions are memoized
+
   return (
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
+        {" "}
         {/* Main Product Grid */}
         <main className="flex-1 p-2 md:p-4">
+          {" "}
           {loading ? (
-            <div className="p-8">Loading products...</div>
+            <div className="p-8 flex flex-col items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+              <p className="text-muted-foreground">Loading products...</p>
+            </div>
           ) : error ? (
             <div className="p-8 text-red-500">{error}</div>
           ) : (
-            <ProductGrid products={products} onAddToCart={handleAddToCart} />
+            <>
+              {/* Search and filter bar */}
+              <div className="mb-4 flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="px-3 py-2 border border-border rounded-md w-full max-w-sm"
+                  onChange={(e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    if (searchTerm === "") {
+                      fetch("/products.json")
+                        .then((res) => res.json())
+                        .then((data) => setProducts(data));
+                    } else {
+                      setProducts((prevProducts) =>
+                        prevProducts.filter(
+                          (product) =>
+                            product.name.toLowerCase().includes(searchTerm) ||
+                            product.category.toLowerCase().includes(searchTerm)
+                        )
+                      );
+                    }
+                  }}
+                />
+              </div>
+              <ProductGrid products={products} onAddToCart={handleAddToCart} />
+            </>
           )}
         </main>
         {/* Order Summary Sidebar */}
@@ -103,14 +207,21 @@ const PosPage = () => {
             onRemove={handleRemoveFromCart}
             onCheckout={handleCheckout}
           />
-        </div>
-
-        {/* Cart Notification */}
+        </div>{" "}
+        {/* Cart Notification */}{" "}
         <CartNotification
           isVisible={notification.isVisible}
           message={notification.message}
           itemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
+          duration={4000} // 4 seconds for regular notifications
         />
+        {/* Sales Summary Modal */}
+        {/* <SalesSummary
+          isVisible={showSalesSummary}
+          onClose={() => setShowSalesSummary(false)}
+          cartItems={lastSale}
+          invoiceNo={invoiceNo}
+        /> */}
       </div>
     </AppLayout>
   );

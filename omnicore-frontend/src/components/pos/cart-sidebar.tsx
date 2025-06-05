@@ -39,13 +39,13 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
         <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-muted rounded-t-2xl">
           <span className="text-xl font-bold text-foreground tracking-tight">
             🛒 Order Summary
-          </span>
+          </span>{" "}
           <button
             className="text-xs text-destructive font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
             onClick={onReset}
             disabled={cart.length === 0}
           >
-            Reset
+            Reset <span className="text-xs opacity-70">[F3]</span>
           </button>
         </div>
         {/* Cart Items */}
@@ -113,7 +113,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             }}
             disabled={cart.length === 0}
           >
-            Checkout
+            Checkout <span className="text-xs opacity-70">[F2]</span>
           </button>
         </div>
         {/* Hidden Receipt for Print */}

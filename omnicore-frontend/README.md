@@ -1,3 +1,5 @@
+# OmniCore Frontend
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -16,9 +18,38 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Point of Sale (POS) Module
+
+The POS system includes:
+
+- **Product Grid**: Display products with images and quick add-to-cart functionality
+- **Cart Management**: Add, remove, and adjust quantities of products
+- **Checkout Processing**: Complete transactions with receipt printing
+- **Visual Feedback**: Animations and notifications for user actions
+- **Keyboard Shortcuts**:
+  - F2: Quick checkout
+  - F3: Clear cart
+- **Sound Effects**: Audio feedback for adding products and checkout
+- **Product Search**: Filter products by name or category
+- **Sales Summary**: View transaction details after checkout
+- **Auto-closing Notifications**: Progress bar shows time until dismissal
+
+### Dashboard (Coming Soon)
+
+- Sales analytics
+- Inventory management
+- Customer tracking
+
+## Technologies Used
+
+- **Next.js**: React framework for frontend
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **Web Audio API**: For sound effects
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font).
 
 ## Learn More
 
