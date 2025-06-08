@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Counter 1",
+    "location": "Main Entrance",
+    "status": "active",
+    "availableProducts": [1, 2, 3, 4, 5, 6,7]
+  },
+  {
+    "id": 2,
+    "name": "Counter 2",
+    "location": "Food Court",
+    "status": "active",
+    "availableProducts": [1, 7, 4, 5]
+  },
+  {
+    "id": 3,
+    "name": "Counter 3",
+    "location": "Second Floor",
+    "status": "inactive",
+    "availableProducts": [2, 3, 6]
+  },
+  {
+    "id": 4,
+    "name": "Beverage Station",
+    "location": "Main Hall",
+    "status": "active",
+    "availableProducts": [5, 6]
+  },
+  {
+    "id": 5,
+    "name": "Express Counter",
+    "location": "Exit Area",
+    "status": "active",
+    "availableProducts": [1, 7, 4]
+  }
+]
