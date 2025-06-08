@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { AppLayout } from "@/components/app/app-layout";
+import { PageHeader } from "@/components/ui/page-header";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
 import CartAlert from "@/components/pos/cart-alert";
@@ -237,12 +238,20 @@ const PosPage = () => {
       }
     };
   }, []);
-
   return (
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
         {/* Main Product Grid */}
         <main className="flex-1 p-2 md:p-4 w-full">
+          <PageHeader
+            title="Point of Sale"
+            description={
+              selectedCounter
+                ? `Terminal: ${selectedCounter.name}`
+                : "Select a counter below"
+            }
+          />
+
           {loading ? (
             <div className="p-8 flex flex-col items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>

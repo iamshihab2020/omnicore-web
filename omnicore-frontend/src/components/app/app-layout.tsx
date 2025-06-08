@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Computer,
+  ClipboardPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -49,6 +50,11 @@ const navItems: NavItem[] = [
     title: "Point of Sale",
     href: "/pos",
     icon: Computer,
+  },
+  {
+    title: "Create",
+    href: "/create",
+    icon: ClipboardPlus ,
   },
   {
     title: "Profile",
@@ -95,7 +101,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
           <div
             className={cn(
               "flex h-14 lg:h-20 items-center",
-              showSidebar ? (isCollapsed ? "lg:pl-20" : "lg:pl-64") : "",
+              showSidebar ? (isCollapsed ? "lg:pl-16" : "lg:pl-48") : "",
               "transition-all duration-300 px-4 md:px-6"
             )}
           >
@@ -105,7 +111,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                 <div
                   className={cn(
                     "flex items-center px-4 justify-between w-full",
-                    isCollapsed ? "w-20" : "w-64"
+                    isCollapsed ? "w-16" : "w-48"
                   )}
                 >
                   {!isCollapsed && (
@@ -277,7 +283,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               <aside
                 className={cn(
                   "hidden lg:flex flex-col border-r bg-background transition-all duration-300 h-full",
-                  isCollapsed ? "w-20" : "w-64"
+                  isCollapsed ? "w-16" : "w-48"
                 )}
               >
                 <div className="h-full flex flex-col">
