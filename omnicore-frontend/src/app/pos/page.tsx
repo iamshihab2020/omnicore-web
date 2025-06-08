@@ -6,6 +6,7 @@ import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
 import CartNotification from "@/components/pos/cart-notification";
 import { useSoundEffect } from "@/components/pos/use-sound-effect";
+import productsData from "@/json/products.json";
 
 interface Product {
   id: number;
@@ -35,22 +36,19 @@ const PosPage = () => {
   });
 
   const { playCheckoutSound } = useSoundEffect();
-
   useEffect(() => {
-    fetch("/products.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load products");
-        return res.json();
-      })
-      .then((data) => setProducts(data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    try {
+      setProducts(productsData);
+      setLoading(false);
+    } catch (error) {
+      setError(`Failed to load products: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setLoading(false);
+    }
   }, []);
   const handleAddToCart = (product: Product) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
-        // Show notification for increased quantity
         setNotification({
           isVisible: true,
           message: `Added ${product.name} (${existing.quantity + 1})`,
@@ -153,13 +151,11 @@ const PosPage = () => {
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="px-3 py-2 border border-border rounded-md w-full max-w-sm"
-                  onChange={(e) => {
+                  className="px-3 py-2 border border-border rounded-md w-full max-w-sm"                  onChange={(e) => {
                     const searchTerm = e.target.value.toLowerCase();
                     if (searchTerm === "") {
-                      fetch("/products.json")
-                        .then((res) => res.json())
-                        .then((data) => setProducts(data));
+                      // Use imported JSON data instead of fetching
+                      setProducts(productsData);
                     } else {
                       setProducts((prevProducts) =>
                         prevProducts.filter(
