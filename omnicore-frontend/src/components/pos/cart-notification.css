@@ -54,19 +54,33 @@
 .notification-enter {
   transform: translateY(0);
   opacity: 1;
-  transition: transform 300ms ease, opacity 300ms ease;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+  animation: bump 0.3s ease;
 }
 
 .notification-exit {
-  transform: translateY(20px);
+  transform: translateY(-20px);
   opacity: 0;
-  transition: transform 300ms ease, opacity 300ms ease;
+  transition: transform 300ms ease-in, opacity 300ms ease-in;
+}
+
+/* Add a small bump animation for better visual feedback */
+@keyframes bump {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Stacked notifications styling */
 .notification-wrapper {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   right: 24px;
   display: flex;
   flex-direction: column;

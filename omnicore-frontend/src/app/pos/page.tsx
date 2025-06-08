@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { AppLayout } from "@/components/app/app-layout";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
-import CartNotification from "@/components/pos/cart-notification";
+import CartAlert from "@/components/pos/cart-alert";
 import { useSoundEffect } from "@/components/pos/use-sound-effect";
 import productsData from "@/json/products.json";
 import {
@@ -53,6 +53,9 @@ const PosPage = () => {
     productName: "",
   });
 
+  // Reference to store the notification timeout ID
+  const notificationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const { playCheckoutSound } = useSoundEffect();
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +92,7 @@ const PosPage = () => {
     };
 
     fetchData();
-  }, []); 
+  }, []);
   useEffect(() => {
     if (selectedCounter) {
       const filteredProducts = allProducts.filter((product) =>
@@ -106,9 +109,17 @@ const PosPage = () => {
 
     // Clear cart when changing counter
     setCart([]);
-  };
 
+    // Close any existing notification
+    setNotification((prev) => ({ ...prev, isVisible: false }));
+  };
   const handleAddToCart = (product: Product) => {
+    // Cancel any existing notification timeout to prevent overlapping notifications
+    if (notificationTimeoutRef.current) {
+      clearTimeout(notificationTimeoutRef.current);
+      notificationTimeoutRef.current = null;
+    }
+
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -134,20 +145,29 @@ const PosPage = () => {
       return [...prev, { ...product, quantity: 1 }];
     });
 
-    setTimeout(() => {
+    // Set notification to auto-hide after 4 seconds (matching the duration in CartNotification)
+    notificationTimeoutRef.current = setTimeout(() => {
       setNotification((prev) => ({ ...prev, isVisible: false }));
-    }, 2000);
+      notificationTimeoutRef.current = null;
+    }, 4000);
   };
 
   const handleRemoveFromCart = (id: number) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
-
   const handleResetCart = useCallback(() => {
     setCart([]);
+    // Immediately close any existing notification
+    setNotification((prev) => ({ ...prev, isVisible: false }));
   }, []);
 
   const handleCheckout = useCallback(() => {
+    // Clear any existing notification timeout
+    if (notificationTimeoutRef.current) {
+      clearTimeout(notificationTimeoutRef.current);
+      notificationTimeoutRef.current = null;
+    }
+
     playCheckoutSound();
 
     setNotification({
@@ -155,6 +175,7 @@ const PosPage = () => {
       message: "Processing checkout...",
       productName: "",
     });
+
     setTimeout(() => {
       window.print();
 
@@ -164,8 +185,15 @@ const PosPage = () => {
         message: `Checkout complete! (${orderType}, ${paymentMethod})`,
         productName: "",
       });
+
       // Clear cart after print
       setCart([]);
+
+      // Auto-hide the checkout complete notification after 4 seconds
+      notificationTimeoutRef.current = setTimeout(() => {
+        setNotification((prev) => ({ ...prev, isVisible: false }));
+        notificationTimeoutRef.current = null;
+      }, 4000);
     }, 500);
   }, [playCheckoutSound, paymentMethod, orderType]);
 
@@ -199,6 +227,16 @@ const PosPage = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [cart.length, handleCheckout, handleResetCart]);
+
+  // Cleanup effect to clear any notification timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (notificationTimeoutRef.current) {
+        clearTimeout(notificationTimeoutRef.current);
+        notificationTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <AppLayout>
@@ -315,11 +353,14 @@ const PosPage = () => {
             counterName={selectedCounter?.name || "Default"}
           />
         </div>{" "}
-        <CartNotification
+        <CartAlert
           isVisible={notification.isVisible}
           message={notification.message}
           itemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
           duration={4000} // 4 seconds for regular notifications
+          onClose={() =>
+            setNotification((prev) => ({ ...prev, isVisible: false }))
+          }
         />
       </div>
     </AppLayout>
