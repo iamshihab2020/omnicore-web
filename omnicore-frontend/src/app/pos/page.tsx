@@ -22,12 +22,14 @@ const PosPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState<
+    "Cash" | "Card" | "Mobile"
+  >("Cash");
   const [notification, setNotification] = useState({
     isVisible: false,
     message: "",
     productName: "",
   });
-
 
   const { playCheckoutSound } = useSoundEffect();
 
@@ -93,13 +95,13 @@ const PosPage = () => {
       // Update notification
       setNotification({
         isVisible: true,
-        message: "Checkout complete!",
+        message: `Checkout complete! (${paymentMethod})`,
         productName: "",
       });
       // Clear cart after print
       setCart([]);
     }, 500);
-  }, [playCheckoutSound]); // Setup keyboard shortcuts
+  }, [playCheckoutSound, paymentMethod]); // Setup keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't trigger shortcuts if modifiers are pressed or if typing in an input
@@ -128,7 +130,7 @@ const PosPage = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cart.length, handleCheckout, handleResetCart]); 
+  }, [cart.length, handleCheckout, handleResetCart]);
   return (
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
@@ -171,13 +173,15 @@ const PosPage = () => {
             </>
           )}
         </main>
-        {/* Order Summary Sidebar */}
+        {/* Order Summary Sidebar */}{" "}
         <div className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0">
           <CartSidebar
             cart={cart}
             onReset={handleResetCart}
             onRemove={handleRemoveFromCart}
             onCheckout={handleCheckout}
+            paymentMethod={paymentMethod}
+            onPaymentMethodChange={setPaymentMethod}
           />
         </div>{" "}
         <CartNotification
