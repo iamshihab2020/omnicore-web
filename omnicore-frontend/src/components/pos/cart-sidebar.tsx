@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Banknote, CreditCard, Smartphone, Trash2 } from "lucide-react";
@@ -36,6 +36,23 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   onPaymentMethodChange,
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const [paidAmount, setPaidAmount] = useState<number>(total);
+  const [changeAmount, setChangeAmount] = useState<number>(0);
+
+  // Update paid amount and change whenever the total changes
+  useEffect(() => {
+    setPaidAmount(total);
+    setChangeAmount(0);
+  }, [total]);
+
+  // Calculate change when paid amount changes
+  useEffect(() => {
+    if (paidAmount >= total) {
+      setChangeAmount(paidAmount - total);
+    } else {
+      setChangeAmount(0);
+    }
+  }, [paidAmount, total]);
 
   return (
     <Card className="rounded-2xl shadow-lg border-0 bg-background">
@@ -101,7 +118,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               ))}
             </ul>
           )}
-        </div>{" "}
+        </div>
         {/* Footer */}
         <div className="px-6 py-5 border-t border-border bg-muted rounded-b-2xl">
           <div className="flex justify-between items-center mb-4">
@@ -156,6 +173,79 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             </div>
           </div>
 
+          {/* Payment Amount Section - Show for all payment methods */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-muted-foreground">Payment Amount:</p>
+              <div className="text-sm font-medium">
+                Change:{" "}
+                <span className="text-primary font-bold">
+                  ${changeAmount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* Amount Input */}
+            <div className="flex mb-2">
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-border rounded-md"
+                value={paidAmount}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  if (!isNaN(value)) {
+                    setPaidAmount(value);
+                  } else {
+                    setPaidAmount(0);
+                  }
+                }}
+                min={0}
+                step={0.01}
+                aria-label="Payment amount"
+                placeholder="Enter payment amount"
+              />
+            </div>
+
+            {/* Preset Buttons */}
+            <div className="grid grid-cols-5 gap-1 mb-2">
+              <Button
+                variant="outline"
+                className="text-xs py-1"
+                onClick={() => setPaidAmount(200)}
+              >
+                200
+              </Button>
+              <Button
+                variant="outline"
+                className="text-xs py-1"
+                onClick={() => setPaidAmount(500)}
+              >
+                500
+              </Button>
+              <Button
+                variant="outline"
+                className="text-xs py-1"
+                onClick={() => setPaidAmount(1000)}
+              >
+                1000
+              </Button>
+              <Button
+                variant="outline"
+                className="text-xs py-1"
+                onClick={() => setPaidAmount(2000)}
+              >
+                2000
+              </Button>
+              <Button
+                variant="outline"
+                className="text-xs py-1 font-bold"
+                onClick={() => setPaidAmount(total)}
+              >
+                Exact
+              </Button>
+            </div>
+          </div>
+
           <button
             className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 font-semibold text-base shadow hover:bg-primary/90 transition disabled:opacity-60"
             onClick={() => {
@@ -168,7 +258,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             Checkout <span className="text-xs opacity-70">[F2]</span>
           </button>
         </div>
-        {/* Hidden Receipt for Print */}{" "}
+        {/* Hidden Receipt for Print */}
         <div className="screen-hidden">
           <ReceiptPrint
             cart={cart}
@@ -180,6 +270,8 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 .slice(0, 14)
             }
             paymentMethod={paymentMethod}
+            paidAmount={paidAmount}
+            changeAmount={changeAmount}
             restaurant={{
               name: "OmniCore Restaurant",
               address: "123 Main St, City, Country",
