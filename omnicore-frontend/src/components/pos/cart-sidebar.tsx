@@ -213,28 +213,28 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 className="text-xs py-1"
                 onClick={() => setPaidAmount(200)}
               >
-                $200
+                200
               </Button>
               <Button
                 variant="outline"
                 className="text-xs py-1"
                 onClick={() => setPaidAmount(500)}
               >
-                $500
+                500
               </Button>
               <Button
                 variant="outline"
                 className="text-xs py-1"
                 onClick={() => setPaidAmount(1000)}
               >
-                $1000
+                1000
               </Button>
               <Button
                 variant="outline"
                 className="text-xs py-1"
                 onClick={() => setPaidAmount(2000)}
               >
-                $2000
+                2000
               </Button>
               <Button
                 variant="outline"
