@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Banknote, CreditCard, Smartphone, Trash2 } from "lucide-react";
+import { Banknote, CreditCard, Package, Phone, Smartphone, Trash2, Utensils } from "lucide-react";
 import ReceiptPrint from "./receipt-print";
 import { Button } from "../ui/button";
 
@@ -145,6 +145,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 }`}
                 onClick={() => onOrderTypeChange("Dine In")}
               >
+                <Utensils />
                 Dine In
               </Button>
               <Button
@@ -156,6 +157,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 }`}
                 onClick={() => onOrderTypeChange("Parcel")}
               >
+                <Package />
                 Parcel
               </Button>
               <Button
@@ -167,6 +169,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 }`}
                 onClick={() => onOrderTypeChange("On Call")}
               >
+                <Phone />
                 On Call
               </Button>
             </div>
