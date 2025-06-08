@@ -25,6 +25,9 @@ const PosPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<
     "Cash" | "Card" | "Mobile"
   >("Cash");
+  const [orderType, setOrderType] = useState<"Dine In" | "Parcel" | "On Call">(
+    "Dine In"
+  );
   const [notification, setNotification] = useState({
     isVisible: false,
     message: "",
@@ -95,13 +98,13 @@ const PosPage = () => {
       // Update notification
       setNotification({
         isVisible: true,
-        message: `Checkout complete! (${paymentMethod})`,
+        message: `Checkout complete! (${orderType}, ${paymentMethod})`,
         productName: "",
       });
       // Clear cart after print
       setCart([]);
     }, 500);
-  }, [playCheckoutSound, paymentMethod]); // Setup keyboard shortcuts
+  }, [playCheckoutSound, paymentMethod, orderType]); // Setup keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Don't trigger shortcuts if modifiers are pressed or if typing in an input
@@ -181,7 +184,9 @@ const PosPage = () => {
             onRemove={handleRemoveFromCart}
             onCheckout={handleCheckout}
             paymentMethod={paymentMethod}
+            orderType={orderType}
             onPaymentMethodChange={setPaymentMethod}
+            onOrderTypeChange={setOrderType}
           />
         </div>{" "}
         <CartNotification

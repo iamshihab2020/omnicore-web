@@ -5,6 +5,7 @@ interface ReceiptPrintProps {
   cart: CartItem[];
   invoiceNo: string;
   paymentMethod?: string;
+  orderType?: string;
   paidAmount?: number;
   changeAmount?: number;
   restaurant?: {
@@ -20,6 +21,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
   invoiceNo,
   paymentMethod = "Cash",
+  orderType = "Dine In",
   paidAmount,
   changeAmount = 0,
   restaurant,
@@ -133,6 +135,11 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-value">{formatTotalPrice(grossTotal)}</span>
       </pre>
       {/* Final separator line */}
+      <hr className="receipt-dash" /> {/* Order Type section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">{formatTotalLabel("Order Type:")}</span>
+        <span className="total-value">{orderType}</span>
+      </pre>
       <hr className="receipt-dash" />
       {/* Payment Method section */}
       <pre className="receipt-total-pre">
