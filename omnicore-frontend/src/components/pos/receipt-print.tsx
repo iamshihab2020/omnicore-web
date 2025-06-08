@@ -5,6 +5,8 @@ interface ReceiptPrintProps {
   cart: CartItem[];
   invoiceNo: string;
   paymentMethod?: string;
+  paidAmount?: number;
+  changeAmount?: number;
   restaurant?: {
     name: string;
     address: string;
@@ -18,6 +20,8 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
   invoiceNo,
   paymentMethod = "Cash",
+  paidAmount,
+  changeAmount = 0,
   restaurant,
 }) => {
   // No longer needed as printing is handled by the parent component
@@ -137,7 +141,26 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         </span>
         <span className="total-value">{paymentMethod}</span>
       </pre>
-      <hr className="receipt-dash" /> {/* Notes section */}
+      <hr className="receipt-dash" />
+      {/* Payment and Change section - show for all payment methods */}
+      {paidAmount !== undefined && (
+        <>
+          <pre className="receipt-total-pre">
+            <span className="total-label">
+              {formatTotalLabel("Amount Paid:")}
+            </span>
+            <span className="total-value">{formatTotalPrice(paidAmount)}</span>
+          </pre>
+          <pre className="receipt-total-pre">
+            <span className="total-label">{formatTotalLabel("Change:")}</span>
+            <span className="total-value">
+              {formatTotalPrice(changeAmount)}
+            </span>
+          </pre>
+          <hr className="receipt-dash" />
+        </>
+      )}
+      {/* Notes section */}
       <div className="receipt-notes-label">Notes:</div>
       <div className="receipt-notes">
         Thank You for your order. Visit us again.
