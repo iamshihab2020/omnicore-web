@@ -9,6 +9,15 @@
     "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
   },
   {
+    "id": 7,
+    "name": "Chicken Burger",
+    "category": "Main Course",
+    "type": "burger",
+    "price": 12.99,
+    "imageUrl": "/images/burger_2.png",
+    "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
+  },
+  {
     "id": 2,
     "name": "Carbonara Pasta",
     "category": "Main Course",
