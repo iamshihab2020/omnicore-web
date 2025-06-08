@@ -13,6 +13,9 @@ import {
 import ReceiptPrint from "./receipt-print";
 import { Button } from "../ui/button";
 
+// Define VAT rate constant (5%)
+const VAT_RATE = 0.05;
+
 interface Product {
   id: number;
   name: string;
@@ -47,9 +50,15 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   orderType,
   onPaymentMethodChange,
   onOrderTypeChange,
-  counterName = "Default", 
+  counterName = "Default",
 }) => {
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const vatAmount = +(subtotal * VAT_RATE).toFixed(2);
+  const total = +(subtotal + vatAmount).toFixed(2);
+
   const [paidAmount, setPaidAmount] = useState<number>(total);
   const [changeAmount, setChangeAmount] = useState<number>(0);
 
@@ -84,7 +93,6 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             Reset <span className="text-xs opacity-70">[F3]</span>
           </button>
         </div>
-
         {/* Cart Items */}
         <div className="flex-1 overflow-y-auto px-3 py-4 border-border border-2 bg-background">
           {cart.length === 0 ? (
@@ -133,14 +141,26 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               ))}
             </ul>
           )}
-        </div>
+        </div>{" "}
         {/* Footer */}
         <div className="px-6 py-5 border-t border-border bg-muted rounded-b-2xl">
-          <div className="flex justify-between items-center mb-4">
-            <span className="font-semibold text-foreground text-lg">Total</span>
-            <span className="font-bold text-2xl text-primary">
-              ${total.toFixed(2)}
-            </span>{" "}
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between items-center">
+              <span className="text-foreground">Subtotal</span>
+              <span className="font-medium">${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-foreground">VAT (5%)</span>
+              <span className="font-medium">${vatAmount.toFixed(2)}</span>
+            </div>
+            <div className="border-t pt-2 mt-2 border-border flex justify-between items-center">
+              <span className="font-semibold text-foreground text-lg">
+                Total
+              </span>
+              <span className="font-bold text-2xl text-primary">
+                ${total.toFixed(2)}
+              </span>
+            </div>
           </div>
 
           {/* Order Type Selection */}
