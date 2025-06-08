@@ -24,7 +24,9 @@ interface CartSidebarProps {
   onCheckout: () => void;
   onRemove: (id: number) => void;
   paymentMethod: string;
+  orderType: string;
   onPaymentMethodChange: (method: "Cash" | "Card" | "Mobile") => void;
+  onOrderTypeChange: (type: "Dine In" | "Parcel" | "On Call") => void;
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({
@@ -33,7 +35,9 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   onRemove,
   onCheckout,
   paymentMethod,
+  orderType,
   onPaymentMethodChange,
+  onOrderTypeChange,
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const [paidAmount, setPaidAmount] = useState<number>(total);
@@ -125,7 +129,47 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             <span className="font-semibold text-foreground text-lg">Total</span>
             <span className="font-bold text-2xl text-primary">
               ${total.toFixed(2)}
-            </span>
+            </span>{" "}
+          </div>
+
+          {/* Order Type Selection */}
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground mb-2">Order Type:</p>
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                variant={"ghost"}
+                className={`${
+                  orderType === "Dine In"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onOrderTypeChange("Dine In")}
+              >
+                Dine In
+              </Button>
+              <Button
+                variant={"ghost"}
+                className={` ${
+                  orderType === "Parcel"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onOrderTypeChange("Parcel")}
+              >
+                Parcel
+              </Button>
+              <Button
+                variant={"ghost"}
+                className={` ${
+                  orderType === "On Call"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onOrderTypeChange("On Call")}
+              >
+                On Call
+              </Button>
+            </div>
           </div>
 
           {/* Payment Method Selection */}
@@ -258,7 +302,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             Checkout <span className="text-xs opacity-70">[F2]</span>
           </button>
         </div>
-        {/* Hidden Receipt for Print */}
+        {/* Hidden Receipt for Print */}{" "}
         <div className="screen-hidden">
           <ReceiptPrint
             cart={cart}
@@ -270,6 +314,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 .slice(0, 14)
             }
             paymentMethod={paymentMethod}
+            orderType={orderType}
             paidAmount={paidAmount}
             changeAmount={changeAmount}
             restaurant={{
