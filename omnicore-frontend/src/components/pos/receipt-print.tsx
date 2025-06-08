@@ -13,6 +13,7 @@ interface ReceiptPrintProps {
     address: string;
     phone: string;
   };
+  counterName?: string;
 }
 
 const VAT_RATE = 0.05;
@@ -25,6 +26,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   paidAmount,
   changeAmount = 0,
   restaurant,
+  counterName = "Default",
 }) => {
   // No longer needed as printing is handled by the parent component
   const now = new Date();
@@ -140,13 +142,18 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-label">{formatTotalLabel("Order Type:")}</span>
         <span className="total-value">{orderType}</span>
       </pre>
-      <hr className="receipt-dash" />
-      {/* Payment Method section */}
+      <hr className="receipt-dash" /> {/* Payment Method section */}
       <pre className="receipt-total-pre">
         <span className="total-label">
           {formatTotalLabel("Payment Method:")}
         </span>
         <span className="total-value">{paymentMethod}</span>
+      </pre>
+      <hr className="receipt-dash" />
+      {/* Counter section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">{formatTotalLabel("Counter:")}</span>
+        <span className="total-value">{counterName}</span>
       </pre>
       <hr className="receipt-dash" />
       {/* Payment and Change section - show for all payment methods */}

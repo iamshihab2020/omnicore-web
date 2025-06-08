@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Banknote, CreditCard, Package, Phone, Smartphone, Trash2, Utensils } from "lucide-react";
+import {
+  Banknote,
+  CreditCard,
+  Package,
+  Phone,
+  Smartphone,
+  Trash2,
+  Utensils,
+} from "lucide-react";
 import ReceiptPrint from "./receipt-print";
 import { Button } from "../ui/button";
 
@@ -27,6 +35,7 @@ interface CartSidebarProps {
   orderType: string;
   onPaymentMethodChange: (method: "Cash" | "Card" | "Mobile") => void;
   onOrderTypeChange: (type: "Dine In" | "Parcel" | "On Call") => void;
+  counterName?: string; // Added this prop to the interface
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({
@@ -38,6 +47,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   orderType,
   onPaymentMethodChange,
   onOrderTypeChange,
+  counterName = "Default", 
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const [paidAmount, setPaidAmount] = useState<number>(total);
@@ -59,7 +69,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   }, [paidAmount, total]);
 
   return (
-    <Card className="rounded-2xl shadow-lg border-0 bg-background">
+    <Card className="rounded-2xl shadow-lg">
       <aside className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0 text-card-foreground p-0 flex flex-col min-h-[500px]">
         {/* Header */}
         <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-muted rounded-t-2xl">
@@ -74,10 +84,11 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             Reset <span className="text-xs opacity-70">[F3]</span>
           </button>
         </div>
+
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 border bg-background">
+        <div className="flex-1 overflow-y-auto px-3 py-4 border-border border-2 bg-background">
           {cart.length === 0 ? (
-            <div className="text-muted-foreground text-center text-base mt-10">
+            <div className="text-muted-foreground text-center text-base py-10">
               No items in cart
             </div>
           ) : (
@@ -325,6 +336,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               address: "123 Main St, City, Country",
               phone: "01954114410",
             }}
+            counterName={counterName} // Pass the counter name to the receipt
           />
         </div>
       </aside>
