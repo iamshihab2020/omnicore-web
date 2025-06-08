@@ -1,8 +1,9 @@
 import React from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Trash2 } from "lucide-react";
+import { Banknote, CreditCard, Smartphone, Trash2 } from "lucide-react";
 import ReceiptPrint from "./receipt-print";
+import { Button } from "../ui/button";
 
 interface Product {
   id: number;
@@ -22,6 +23,8 @@ interface CartSidebarProps {
   onReset: () => void;
   onCheckout: () => void;
   onRemove: (id: number) => void;
+  paymentMethod: string;
+  onPaymentMethodChange: (method: "Cash" | "Card" | "Mobile") => void;
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({
@@ -29,6 +32,8 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   onReset,
   onRemove,
   onCheckout,
+  paymentMethod,
+  onPaymentMethodChange,
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -41,7 +46,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             🛒 Order Summary
           </span>{" "}
           <button
-            className="text-xs text-destructive font-semibold px-3 py-1 rounded border border-transparent hover:border-red-200 transition"
+            className="text-sm text-destructive font-semibold px-3 py-1 rounded border border-transparent transition"
             onClick={onReset}
             disabled={cart.length === 0}
           >
@@ -66,14 +71,15 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                       <span className="font-medium text-base truncate text-foreground">
                         {item.name}
                       </span>
-                      <button
+                      <Button
+                        variant={"ghost"}
                         className="ml-2 text-destructive p-1 rounded-full transition"
                         onClick={() => onRemove(item.id)}
                         title="Remove"
                         aria-label="Remove item"
                       >
                         <Trash2 />
-                      </button>
+                      </Button>
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                       <span>${item.price.toFixed(2)}</span>
@@ -95,7 +101,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               ))}
             </ul>
           )}
-        </div>
+        </div>{" "}
         {/* Footer */}
         <div className="px-6 py-5 border-t border-border bg-muted rounded-b-2xl">
           <div className="flex justify-between items-center mb-4">
@@ -103,7 +109,53 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             <span className="font-bold text-2xl text-primary">
               ${total.toFixed(2)}
             </span>
-          </div>{" "}
+          </div>
+
+          {/* Payment Method Selection */}
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground mb-2">
+              Payment Method:
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                variant={"ghost"}
+                className={`${
+                  paymentMethod === "Cash"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onPaymentMethodChange("Cash")}
+              >
+                <Banknote />
+                Cash
+              </Button>
+              <Button
+                variant={"ghost"}
+                className={` ${
+                  paymentMethod === "Card"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onPaymentMethodChange("Card")}
+              >
+                <CreditCard />
+                Card
+              </Button>
+              <Button
+                variant={"ghost"}
+                className={` ${
+                  paymentMethod === "Mobile"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted/70"
+                }`}
+                onClick={() => onPaymentMethodChange("Mobile")}
+              >
+                <Smartphone />
+                Mobile
+              </Button>
+            </div>
+          </div>
+
           <button
             className="w-full bg-primary text-primary-foreground rounded-lg px-4 py-2 font-semibold text-base shadow hover:bg-primary/90 transition disabled:opacity-60"
             onClick={() => {
@@ -116,7 +168,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
             Checkout <span className="text-xs opacity-70">[F2]</span>
           </button>
         </div>
-        {/* Hidden Receipt for Print */}
+        {/* Hidden Receipt for Print */}{" "}
         <div className="screen-hidden">
           <ReceiptPrint
             cart={cart}
@@ -127,6 +179,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 .replace(/[-:T.]/g, "")
                 .slice(0, 14)
             }
+            paymentMethod={paymentMethod}
             restaurant={{
               name: "OmniCore Restaurant",
               address: "123 Main St, City, Country",

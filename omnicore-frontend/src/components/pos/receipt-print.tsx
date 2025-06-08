@@ -4,6 +4,7 @@ import type { CartItem } from "./cart-sidebar";
 interface ReceiptPrintProps {
   cart: CartItem[];
   invoiceNo: string;
+  paymentMethod?: string;
   restaurant?: {
     name: string;
     address: string;
@@ -16,6 +17,7 @@ const VAT_RATE = 0.05;
 const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
   invoiceNo,
+  paymentMethod = "Cash",
   restaurant,
 }) => {
   // No longer needed as printing is handled by the parent component
@@ -121,12 +123,20 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-value">{formatTotalPrice(vat)}</span>
       </pre>
       {/* Fifth separator line */}
-      <hr className="receipt-dash" /> {/* Gross total section */}
+      <hr className="receipt-dash" /> {/* Gross total section */}{" "}
       <pre className="receipt-total-pre receipt-grosstotal">
         <span className="total-label">{formatTotalLabel("Gross Total:")}</span>
         <span className="total-value">{formatTotalPrice(grossTotal)}</span>
       </pre>
       {/* Final separator line */}
+      <hr className="receipt-dash" />
+      {/* Payment Method section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">
+          {formatTotalLabel("Payment Method:")}
+        </span>
+        <span className="total-value">{paymentMethod}</span>
+      </pre>
       <hr className="receipt-dash" /> {/* Notes section */}
       <div className="receipt-notes-label">Notes:</div>
       <div className="receipt-notes">
