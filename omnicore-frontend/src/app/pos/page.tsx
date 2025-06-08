@@ -5,14 +5,13 @@ import { AppLayout } from "@/components/app/app-layout";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
 import CartNotification from "@/components/pos/cart-notification";
-// import SalesSummary from "@/components/pos/sales-summary";
 import { useSoundEffect } from "@/components/pos/use-sound-effect";
-// Removed unused import
 
 interface Product {
   id: number;
   name: string;
   category: string;
+  type: string;
   price: number;
   imageUrl: string;
   description?: string;
@@ -29,10 +28,6 @@ const PosPage = () => {
     productName: "",
   });
 
-  // State for sales summary modal
-  // const [showSalesSummary, setShowSalesSummary] = useState(false);
-  // const [lastSale, setLastSale] = useState<CartItem[]>([]);
-  // const [invoiceNo, setInvoiceNo] = useState<string>("");
 
   const { playCheckoutSound } = useSoundEffect();
 
@@ -64,7 +59,6 @@ const PosPage = () => {
         );
       }
 
-      // Show notification for new item
       setNotification({
         isVisible: true,
         message: `Added ${product.name} to cart`,
@@ -74,7 +68,6 @@ const PosPage = () => {
       return [...prev, { ...product, quantity: 1 }];
     });
 
-    // Hide notification after 2 seconds
     setTimeout(() => {
       setNotification((prev) => ({ ...prev, isVisible: false }));
     }, 2000);
@@ -87,27 +80,13 @@ const PosPage = () => {
     setCart([]);
   }, []);
   const handleCheckout = useCallback(() => {
-    // Play checkout sound effect
     playCheckoutSound();
 
-    // Show checkout notification
     setNotification({
       isVisible: true,
       message: "Processing checkout...",
       productName: "",
     });
-
-    // Generate invoice number from current date/time
-    // const newInvoiceNo = new Date()
-    //   .toISOString()
-    //   .replace(/[-:T.]/g, "")
-    //   .slice(0, 14);
-    // setInvoiceNo(newInvoiceNo);
-
-    // Save cart items for the sales summary
-    // setLastSale([...cart]);
-
-    // Add a small delay to ensure the receipt is fully rendered before printing
     setTimeout(() => {
       window.print();
 
@@ -117,10 +96,6 @@ const PosPage = () => {
         message: "Checkout complete!",
         productName: "",
       });
-
-      // Show sales summary modal
-      // setShowSalesSummary(true);
-
       // Clear cart after print
       setCart([]);
     }, 500);
@@ -153,15 +128,12 @@ const PosPage = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cart.length, handleCheckout, handleResetCart]); // These callback functions are memoized
-
+  }, [cart.length, handleCheckout, handleResetCart]); 
   return (
     <AppLayout>
       <div className="flex flex-col md:flex-row h-full min-h-screen">
-        {" "}
         {/* Main Product Grid */}
         <main className="flex-1 p-2 md:p-4">
-          {" "}
           {loading ? (
             <div className="p-8 flex flex-col items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
@@ -208,20 +180,12 @@ const PosPage = () => {
             onCheckout={handleCheckout}
           />
         </div>{" "}
-        {/* Cart Notification */}{" "}
         <CartNotification
           isVisible={notification.isVisible}
           message={notification.message}
           itemCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
           duration={4000} // 4 seconds for regular notifications
         />
-        {/* Sales Summary Modal */}
-        {/* <SalesSummary
-          isVisible={showSalesSummary}
-          onClose={() => setShowSalesSummary(false)}
-          cartItems={lastSale}
-          invoiceNo={invoiceNo}
-        /> */}
       </div>
     </AppLayout>
   );
