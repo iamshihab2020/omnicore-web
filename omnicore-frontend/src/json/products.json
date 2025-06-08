@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Burger",
+    "category": "Main Course",
+    "type": "burger",
+    "price": 12.99,
+    "imageUrl": "/images/burger_1.png",
+    "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
+  },
+  {
+    "id": 7,
+    "name": "Chicken Burger",
+    "category": "Main Course",
+    "type": "burger",
+    "price": 12.99,
+    "imageUrl": "/images/burger_2.png",
+    "description": "A juicy beef patty with fresh lettuce, tomato, and our special sauce."
+  },
+  {
+    "id": 2,
+    "name": "Carbonara Pasta",
+    "category": "Main Course",
+    "type": "pasta",
+    "price": 18.5,
+    "imageUrl": "/images/pasta.png",
+    "description": "Crisp romaine lettuce, parmesan cheese, croutons, and Caesar dressing."
+  },
+  {
+    "id": 3,
+    "name": "Beef Steak",
+    "category": "Main Course",
+    "type": "steak",
+    "price": 150.0,
+    "imageUrl": "/images/steak.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 4,
+    "name": "Pizza Margherita",
+    "category": "Main Course",
+    "type": "pizza",
+    "price": 8.0,
+    "imageUrl": "/images/pizza.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 5,
+    "name": "Strawberry Smoothie",
+    "category": "Beverage",
+    "type": "Smoothie",
+    "price": 12.0,
+    "imageUrl": "/images/strawberry_smothie.png",
+    "description": "A refreshing carbonated beverage."
+  },
+  {
+    "id": 6,
+    "name": "Cold Coffee",
+    "category": "Beverage",
+    "type": "Coffee",
+    "price": 12.0,
+    "imageUrl": "/images/cold_coffee.png",
+    "description": "A refreshing carbonated beverage."
+  }
+]

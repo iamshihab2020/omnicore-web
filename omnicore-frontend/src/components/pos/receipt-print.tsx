@@ -4,11 +4,16 @@ import type { CartItem } from "./cart-sidebar";
 interface ReceiptPrintProps {
   cart: CartItem[];
   invoiceNo: string;
+  paymentMethod?: string;
+  orderType?: string;
+  paidAmount?: number;
+  changeAmount?: number;
   restaurant?: {
     name: string;
     address: string;
     phone: string;
   };
+  counterName?: string;
 }
 
 const VAT_RATE = 0.05;
@@ -16,7 +21,12 @@ const VAT_RATE = 0.05;
 const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
   invoiceNo,
+  paymentMethod = "Cash",
+  orderType = "Dine In",
+  paidAmount,
+  changeAmount = 0,
   restaurant,
+  counterName = "Default",
 }) => {
   // No longer needed as printing is handled by the parent component
   const now = new Date();
@@ -121,13 +131,50 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-value">{formatTotalPrice(vat)}</span>
       </pre>
       {/* Fifth separator line */}
-      <hr className="receipt-dash" /> {/* Gross total section */}
+      <hr className="receipt-dash" /> {/* Gross total section */}{" "}
       <pre className="receipt-total-pre receipt-grosstotal">
         <span className="total-label">{formatTotalLabel("Gross Total:")}</span>
         <span className="total-value">{formatTotalPrice(grossTotal)}</span>
       </pre>
       {/* Final separator line */}
-      <hr className="receipt-dash" /> {/* Notes section */}
+      <hr className="receipt-dash" /> {/* Order Type section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">{formatTotalLabel("Order Type:")}</span>
+        <span className="total-value">{orderType}</span>
+      </pre>
+      <hr className="receipt-dash" /> {/* Payment Method section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">
+          {formatTotalLabel("Payment Method:")}
+        </span>
+        <span className="total-value">{paymentMethod}</span>
+      </pre>
+      <hr className="receipt-dash" />
+      {/* Counter section */}
+      <pre className="receipt-total-pre">
+        <span className="total-label">{formatTotalLabel("Counter:")}</span>
+        <span className="total-value">{counterName}</span>
+      </pre>
+      <hr className="receipt-dash" />
+      {/* Payment and Change section - show for all payment methods */}
+      {paidAmount !== undefined && (
+        <>
+          <pre className="receipt-total-pre">
+            <span className="total-label">
+              {formatTotalLabel("Amount Paid:")}
+            </span>
+            <span className="total-value">{formatTotalPrice(paidAmount)}</span>
+          </pre>
+          <pre className="receipt-total-pre">
+            <span className="total-label">{formatTotalLabel("Change:")}</span>
+            <span className="total-value">
+              {formatTotalPrice(changeAmount)}
+            </span>
+          </pre>
+          <hr className="receipt-dash" />
+        </>
+      )}
+      {/* Notes section */}
       <div className="receipt-notes-label">Notes:</div>
       <div className="receipt-notes">
         Thank You for your order. Visit us again.

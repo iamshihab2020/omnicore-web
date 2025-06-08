@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
-import { ShoppingCart, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { useSoundEffect } from "./use-sound-effect";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -56,8 +56,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
 
     return groupedProducts;
   }, [products, productTypes]);
-
-  // Handle product click with animation
+  // Handle product click with simple animation
   const handleProductClick = (product: Product) => {
     // If already clicked, don't trigger animation again
     if (clickedProductId === product.id) return;
@@ -70,20 +69,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
     // Add to cart
     onAddToCart(product);
 
-    // Reset animation after 800ms (allowing for complete animation sequence)
+    // Reset animation after 400ms (shorter duration for better performance)
     setTimeout(() => {
       setClickedProductId(null);
-    }, 800);
+    }, 400);
   };
-
-  // Product card component for reuse
+  // Product card component for reuse with simplified animation
   const ProductCard = ({ product }: { product: Product }) => (
     <div
       key={product.id}
-      className={`bg-card text-card-foreground rounded-lg shadow hover:shadow-lg border border-border flex flex-col cursor-pointer group max-w-sm w-full min-w-0 transition-all duration-300 ${
-        clickedProductId === product.id
-          ? "product-card-click ring-2 ring-primary shadow-lg"
-          : "scale-100"
+      className={`bg-card text-card-foreground rounded-lg shadow border border-border flex flex-col cursor-pointer group max-w-sm w-full min-w-0 ${
+        clickedProductId === product.id ? "ring-1 ring-primary" : ""
       }`}
       onClick={() => handleProductClick(product)}
     >
@@ -93,26 +89,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
           alt={product.name}
           width={300}
           height={200}
-          className={`w-full h-52 object-cover object-center bg-muted transition-all duration-300 ${
-            clickedProductId === product.id
-              ? "opacity-80 scale-105"
-              : "opacity-100 scale-100"
-          }`}
-          onError={() =>
-            setFallbacks((f) => ({ ...f, [product.id]: true }))
-          }
+          className="w-full h-52 object-cover object-center bg-muted"
+          onError={() => setFallbacks((f) => ({ ...f, [product.id]: true }))}
           unoptimized
         />
         {clickedProductId === product.id && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="bg-primary/90 text-primary-foreground px-4 py-2 rounded-full text-sm font-bold product-added-badge shadow-lg flex items-center gap-2">
-              <CheckCircle size={16} className="animate-bounce" />
-              Added to Cart
-              <ShoppingCart size={16} className="ml-1" />
+          <div className="absolute bottom-0 right-0 m-2">
+            <span className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+              <CheckCircle size={12} />
+              Added
             </span>
           </div>
         )}
-      </div>
+      </div>{" "}
       <div className="p-3 flex-1 flex flex-col md:flex-row items-start md:items-center justify-between">
         <div>
           <h3 className="text-base font-semibold mb-0.5 truncate">
@@ -123,10 +112,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
           </div>
         </div>
         <div
-          className={`text-base font-bold mb-1 transition-all duration-300 ${
-            clickedProductId === product.id
-              ? "text-primary scale-110"
-              : "text-primary"
+          className={`text-base font-bold mb-1 ${
+            clickedProductId === product.id ? "text-primary" : "text-primary"
           }`}
         >
           ${product.price.toFixed(2)}
