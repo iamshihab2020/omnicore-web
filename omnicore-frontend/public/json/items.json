@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Mojo",
+    "description": "",
+    "price": 25,
+    "categoryId": 3,
+    "image": "/images/187128e2-d3e2-4305-966c-c62be26ffd9b.jpeg",
+    "id": 1,
+    "categoryName": "Cola"
+  }
+]

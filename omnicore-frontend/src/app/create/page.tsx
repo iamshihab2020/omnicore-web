@@ -12,10 +12,24 @@ import {
 } from "@/components/ui/card";
 import { AppLayout } from "@/components/app/app-layout";
 import { PageHeader } from "@/components/ui/page-header";
-import { Percent, UserPlus, Utensils, Table, Receipt } from "lucide-react";
+import {
+  ShoppingBag,
+  Percent,
+  UserPlus,
+  Utensils,
+  Table,
+  Receipt,
+} from "lucide-react";
 
 export default function CreatePage() {
   const createOptions = [
+    {
+      title: "Create Menu Item",
+      description: "Add new food or beverage items to your menu",
+      icon: <ShoppingBag className="h-6 w-6" />,
+      href: "/create/item",
+      color: "text-blue-500",
+    },
     {
       title: "Create Discount",
       description: "Set up new discount offers and promotions",
