@@ -12,10 +12,24 @@ import {
 } from "@/components/ui/card";
 import { AppLayout } from "@/components/app/app-layout";
 import { PageHeader } from "@/components/ui/page-header";
-import { Percent, UserPlus, Utensils, Table, Receipt } from "lucide-react";
+import {
+  ShoppingBag,
+  Percent,
+  UserPlus,
+  Utensils,
+  Table,
+  Receipt,
+} from "lucide-react";
 
 export default function CreatePage() {
   const createOptions = [
+    {
+      title: "Create Menu Item",
+      description: "Add new food or beverage items to your menu",
+      icon: <ShoppingBag className="h-6 w-6" />,
+      href: "/create/item",
+      color: "text-blue-500",
+    },
     {
       title: "Create Discount",
       description: "Set up new discount offers and promotions",
@@ -62,19 +76,19 @@ export default function CreatePage() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {createOptions.map((option) => (
-            <Link key={option.title} href={option.href} className="block">
-              <Card className="h-full transition-all hover:shadow-md">
+            <Link key={option.title} href={option.href} className="block group">
+              <Card className="h-full transition-all border-border border-2 duration-300 hover:shadow-md hover:shadow-primary hover:border-primary m">
                 <CardHeader>
                   <div
-                    className={`rounded-full w-12 h-12 flex items-center justify-center bg-muted ${option.color}`}
+                    className={`rounded-full w-12 h-12 flex items-center justify-center bg-muted ${option.color} transition-transform group-hover:scale-110`}
                   >
                     {option.icon}
                   </div>
                   <CardTitle className="mt-4">{option.title}</CardTitle>
                   <CardDescription>{option.description}</CardDescription>
-                </CardHeader>
+                </CardHeader>{" "}
                 <CardFooter>
-                  <Button className="w-full">
+                  <Button className="w-full transition-colors duration-300 group-hover:bg-primary/90 group-hover:text-white">
                     Create {option.title.split(" ").pop()}
                   </Button>
                 </CardFooter>
