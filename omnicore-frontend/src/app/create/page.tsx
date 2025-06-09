@@ -74,9 +74,10 @@ export default function CreatePage() {
           description="Create and manage your restaurant resources"
         />
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">          {createOptions.map((option) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {createOptions.map((option) => (
             <Link key={option.title} href={option.href} className="block group">
-              <Card className="h-full transition-all duration-300 hover:shadow-lg hover:border-primary hover:border-2 hover:scale-[1.03] hover:bg-white/95 group-hover:transform">
+              <Card className="h-full transition-all border-border border-2 duration-300 hover:shadow-lg hover:shadow-primary hover:border-primary m">
                 <CardHeader>
                   <div
                     className={`rounded-full w-12 h-12 flex items-center justify-center bg-muted ${option.color} transition-transform group-hover:scale-110`}
@@ -85,7 +86,8 @@ export default function CreatePage() {
                   </div>
                   <CardTitle className="mt-4">{option.title}</CardTitle>
                   <CardDescription>{option.description}</CardDescription>
-                </CardHeader>                <CardFooter>
+                </CardHeader>{" "}
+                <CardFooter>
                   <Button className="w-full transition-colors duration-300 group-hover:bg-primary/90 group-hover:text-white">
                     Create {option.title.split(" ").pop()}
                   </Button>
