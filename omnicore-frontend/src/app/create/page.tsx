@@ -77,7 +77,7 @@ export default function CreatePage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {createOptions.map((option) => (
             <Link key={option.title} href={option.href} className="block">
-              <Card className="h-full transition-all hover:shadow-md">
+              <Card className="h-full transition-all hover:shadow-md hover:shadow-primary  border-border border-2 hover:border-primary duration-200">
                 <CardHeader>
                   <div
                     className={`rounded-full w-12 h-12 flex items-center justify-center bg-muted ${option.color}`}

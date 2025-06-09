@@ -10,7 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
-import { CategoryList, Category } from "@/components/category/category-list"; // Import the new component
+import { CategoryList, Category } from "@/components/category/category-list";
+import { PageHeader } from "@/components/ui/page-header";
+import { ChevronLeft } from "lucide-react";
 
 export default function EditCategoryPage() {
   const router = useRouter();
@@ -233,6 +235,22 @@ export default function EditCategoryPage() {
 
   return (
     <AppLayout>
+      <div className="px-4">
+        <PageHeader
+          title="Edit Category"
+          description="Modify the details of your category."
+          className="mb-4"
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => router.push("/create/category")}
+            >
+              <ChevronLeft className="mr-2" />
+              Back to Items
+            </Button>
+          }
+        />
+      </div>
       <div className="flex flex-1 p-4 gap-6">
         {/* Left Column: Edit Form */}
         <div className="w-1/2">

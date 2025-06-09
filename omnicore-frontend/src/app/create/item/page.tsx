@@ -19,9 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { useRouter } from "next/navigation";
 
 export default function CreateItemPage() {
+    const router = useRouter();
+  
   // Form state
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
@@ -266,6 +270,22 @@ export default function CreateItemPage() {
 
   return (
     <AppLayout>
+      <div className="px-4">
+        <PageHeader
+          title="Create Menu Item"
+          description="Add new items to your menu."
+          className="mb-4"
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => router.push("/create")}
+            >
+              <ChevronLeft className="mr-2" />
+              Back to Items
+            </Button>
+          }
+        />
+      </div>
       <div className="flex flex-1 p-4 gap-6">
         {/* Left Column: Create Item Form */}
         <div className="w-1/2 flex flex-col space-y-4">
@@ -412,7 +432,7 @@ export default function CreateItemPage() {
         <Separator orientation="vertical" className="h-auto" />
 
         {/* Right Column: Display Added Items */}
-        <div className="w-1/2 flex flex-col">
+        <div className="w-2/3 flex flex-col">
           <ItemList
             items={itemsList}
             isLoading={isLoadingItems}

@@ -10,8 +10,11 @@ import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { CategoryList, Category } from "@/components/category/category-list"; // Import the new component
-
+import { PageHeader } from "@/components/ui/page-header";
+import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 export default function CreateCategoryPage() {
+  const router = useRouter();
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [message, setMessage] = useState<{
@@ -118,6 +121,22 @@ export default function CreateCategoryPage() {
 
   return (
     <AppLayout>
+      <div className="px-4">
+        <PageHeader
+          title="Create Category"
+          description="Create a new item category to organize your items."
+          className="mb-4"
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => router.push("/create")}
+            >
+              <ChevronLeft className="mr-2" />
+              Back to Items
+            </Button>
+          }
+        />
+      </div>
       <div className="flex flex-1 p-4 gap-6">
         {/* Left Column: Create Category Form */}
         <div className="w-1/2 flex flex-col space-y-4">

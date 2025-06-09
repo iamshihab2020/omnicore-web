@@ -27,12 +27,21 @@
     "image": "/images/3192345f-68d4-4056-a772-b32c90c48090.png"
   },
   {
+    "id": 4,
     "name": "Pizza Magaritha",
     "description": "",
     "price": 400,
     "categoryId": 4,
-    "image": "/images/81f1de5f-ccd5-4d4e-85fe-e9ee665f1fb7.png",
-    "id": 4,
-    "categoryName": "Pizza"
+    "categoryName": "Pizza",
+    "image": "/images/81f1de5f-ccd5-4d4e-85fe-e9ee665f1fb7.png"
+  },
+  {
+    "id": 5,
+    "name": "Pasta Carbonara",
+    "description": "Pasta Carbonara",
+    "price": 300,
+    "categoryId": 3,
+    "categoryName": "Cola",
+    "image": "/images/13482d01-6f72-4690-9b7d-c223fc5a46fb.png"
   }
 ]

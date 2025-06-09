@@ -14,7 +14,7 @@ export interface Item {
   price: number;
   categoryId: number;
   categoryName?: string;
-  image?: string; // URL to the image
+  image?: string;
 }
 
 interface ItemListProps {
@@ -23,7 +23,7 @@ interface ItemListProps {
   error: string | null;
   title?: string;
   onItemClick?: (item: Item) => void;
-  highlightId?: number; // ID of the item to highlight (e.g., currently being edited)
+  highlightId?: number;
 }
 
 export function ItemList({
@@ -35,12 +35,12 @@ export function ItemList({
   highlightId,
 }: ItemListProps) {
   return (
-    <Card className="flex-grow flex flex-col gap-y-3">
+    <Card className="flex-grow flex flex-col gap-y-3 ">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden">
-        {isLoading && <p className="text-center p-4">Loading items...</p>}
+        {isLoading && <p className="text-center">Loading items...</p>}
         {error && (
           <Alert variant="destructive" className="m-4">
             <AlertTitle>Error Fetching Items</AlertTitle>
@@ -48,21 +48,20 @@ export function ItemList({
           </Alert>
         )}
         {!isLoading && !error && items.length === 0 && (
-          <p className="text-center p-4">No items added yet.</p>
+          <p className="text-center4">No items added yet.</p>
         )}
         {!isLoading && !error && items.length > 0 && (
-          <div className="h-full overflow-y-auto p-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pr-2">
+          <div className="h-full">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-3 pr-2">
               {items
                 .slice()
                 .reverse()
                 .map((item) => {
                   const isHighlighted = item.id === highlightId;
                   return onItemClick ? (
-                    // If onItemClick is provided, make it clickable but not a link
                     <Card
                       key={item.id}
-                      className={`p-3 cursor-pointer transition-colors duration-300 h-full ${
+                      className={`p-3 cursor-pointer transition-colors duration-300 ${
                         isHighlighted
                           ? "border-primary border-2"
                           : "hover:bg-primary/10"
@@ -90,11 +89,6 @@ export function ItemList({
                               Category: {item.categoryName}
                             </div>
                           )}
-                          {item.description && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {item.description}
-                            </p>
-                          )}
                           <div className="text-sm font-medium text-primary mt-1 text-center">
                             {formatPrice(item.price)}
                           </div>
@@ -110,7 +104,7 @@ export function ItemList({
                       className="h-full"
                     >
                       <Card
-                        className={`p-3 cursor-pointer transition-colors duration-300 h-full ${
+                        className={`p-3 cursor-pointer transition-colors duration-300  ${
                           isHighlighted
                             ? "border-primary border-2"
                             : "hover:bg-primary/10"
@@ -118,13 +112,13 @@ export function ItemList({
                       >
                         <div className="flex flex-col h-full">
                           {item.image && (
-                            <div className="mb-3 text-center">
+                            <div className="mb-3  text-center">
                               <Image
                                 src={item.image}
                                 alt={item.name}
                                 width={80}
                                 height={80}
-                                className="rounded-md object-cover mx-auto"
+                                className="rounded-md object-contain mx-auto"
                               />
                             </div>
                           )}
@@ -136,11 +130,6 @@ export function ItemList({
                               <div className="text-xs text-muted-foreground text-center">
                                 Category: {item.categoryName}
                               </div>
-                            )}
-                            {item.description && (
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {item.description}
-                              </p>
                             )}
                             <div className="text-sm font-medium text-primary mt-1 text-center">
                               {formatPrice(item.price)}

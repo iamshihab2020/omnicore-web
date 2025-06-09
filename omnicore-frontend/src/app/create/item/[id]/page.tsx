@@ -13,6 +13,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
 import { ItemList, Item } from "@/components/item/item-list";
 import { Category } from "@/components/category/category-list";
+import { PageHeader } from "@/components/ui/page-header";
+import { ChevronLeft, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -20,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
 
 export default function EditItemPage() {
   const router = useRouter();
@@ -386,6 +387,22 @@ export default function EditItemPage() {
 
   return (
     <AppLayout>
+      <div className="px-4">
+        <PageHeader
+          title="Edit Item"
+          description="Modify the details of your item."
+          className="mb-4"
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => router.push("/create/item")}
+            >
+              <ChevronLeft className="mr-2" />
+              Back to Items
+            </Button>
+          }
+        />
+      </div>
       <div className="flex flex-1 p-4 gap-6">
         {/* Left Column: Edit Form */}
         <div className="w-1/2">

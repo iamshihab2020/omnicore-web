@@ -101,7 +101,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
           <div
             className={cn(
               "flex h-14 lg:h-20 items-center",
-              showSidebar ? (isCollapsed ? "lg:pl-16" : "lg:pl-48") : "",
+              showSidebar ? (isCollapsed ? "lg:pl-16" : "lg:pl-54") : "",
               "transition-all duration-300 px-4 md:px-6"
             )}
           >
@@ -111,7 +111,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                 <div
                   className={cn(
                     "flex items-center px-4 justify-between w-full",
-                    isCollapsed ? "w-16" : "w-48"
+                    isCollapsed ? "w-16" : "w-54"
                   )}
                 >
                   {!isCollapsed && (
@@ -126,7 +126,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                           priority
                         />
                       </div>
-                      <span className="text-primary dark:text-white text-2xl font-bold truncate hidden sm:inline-block">
+                      <span className="text-primary dark:text-white text-xl font-bold truncate hidden sm:inline-block">
                         OmniCore
                       </span>
                     </Link>
@@ -179,8 +179,8 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                             <Image
                               src="/omnicore-icon.svg"
                               alt="OmniCore Logo"
-                              width={48}
-                              height={48}
+                              width={54}
+                              height={54}
                               className="object-contain w-full h-full"
                               priority
                             />
@@ -230,8 +230,8 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                   <Image
                     src="/omnicore-icon.svg"
                     alt="OmniCore Logo"
-                    width={48}
-                    height={48}
+                    width={54}
+                    height={54}
                     className="object-contain w-full h-full"
                     priority
                   />
@@ -283,7 +283,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               <aside
                 className={cn(
                   "hidden lg:flex flex-col border-r bg-background transition-all duration-300 h-full",
-                  isCollapsed ? "w-16" : "w-48"
+                  isCollapsed ? "w-16" : "w-54"
                 )}
               >
                 <div className="h-full flex flex-col">
