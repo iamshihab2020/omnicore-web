@@ -170,13 +170,12 @@ export default function EditItemPage() {
       setItemImage(imageUrl);
     }
   };
-
   const clearImage = () => {
     setItemImage(null);
     setUploadedImageFile(null);
     // Reset the input field
     const inputElement = document.getElementById(
-      "itemImage"
+      "itemImageEdit"
     ) as HTMLInputElement;
     if (inputElement) {
       inputElement.value = "";
@@ -199,6 +198,7 @@ export default function EditItemPage() {
   const handleItemClick = (item: Item) => {
     router.push(`/create/item/${item.id}`);
   };
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (itemId === null) return;
@@ -226,9 +226,7 @@ export default function EditItemPage() {
       setMessage({ type: "error", text: "Please select a category." });
       setIsUpdating(false);
       return;
-    }
-
-    // Handle image upload if there's a new image
+    } // Handle image upload if there's a new image
     let imageUrl = itemImage;
 
     if (uploadedImageFile) {
@@ -517,6 +515,7 @@ export default function EditItemPage() {
                           className="w-full h-full object-cover"
                           width={300}
                           height={160}
+                          unoptimized={itemImage.startsWith("blob:")}
                         />
                       </div>
                     )}

@@ -52,7 +52,7 @@ export function ItemList({
         )}
         {!isLoading && !error && items.length > 0 && (
           <div className="h-full overflow-y-auto p-1">
-            <div className="space-y-2 pr-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pr-2">
               {items
                 .slice()
                 .reverse()
@@ -62,29 +62,31 @@ export function ItemList({
                     // If onItemClick is provided, make it clickable but not a link
                     <Card
                       key={item.id}
-                      className={`p-3 cursor-pointer transition-colors duration-300 ${
+                      className={`p-3 cursor-pointer transition-colors duration-300 h-full ${
                         isHighlighted
                           ? "border-primary border-2"
                           : "hover:bg-primary/10"
                       }`}
                       onClick={() => onItemClick(item)}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex flex-col h-full">
                         {item.image && (
-                          <div className="flex-shrink-0">
+                          <div className="mb-3 text-center">
                             <Image
                               src={item.image}
                               alt={item.name}
-                              width={60}
-                              height={60}
-                              className="rounded-md object-cover"
+                              width={80}
+                              height={80}
+                              className="rounded-md object-cover mx-auto"
                             />
                           </div>
                         )}
                         <div className="flex-grow">
-                          <h3 className="font-semibold text-sm">{item.name}</h3>
+                          <h3 className="font-semibold text-sm text-center">
+                            {item.name}
+                          </h3>
                           {item.categoryName && (
-                            <div className="text-xs text-muted-foreground">
+                            <div className="text-xs text-muted-foreground text-center">
                               Category: {item.categoryName}
                             </div>
                           )}
@@ -93,7 +95,7 @@ export function ItemList({
                               {item.description}
                             </p>
                           )}
-                          <div className="text-sm font-medium text-primary mt-1">
+                          <div className="text-sm font-medium text-primary mt-1 text-center">
                             {formatPrice(item.price)}
                           </div>
                         </div>
@@ -105,32 +107,33 @@ export function ItemList({
                       key={item.id}
                       href={`/create/item/${item.id}`}
                       passHref
+                      className="h-full"
                     >
                       <Card
-                        className={`p-3 cursor-pointer transition-colors duration-300 ${
+                        className={`p-3 cursor-pointer transition-colors duration-300 h-full ${
                           isHighlighted
                             ? "border-primary border-2"
                             : "hover:bg-primary/10"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
+                        <div className="flex flex-col h-full">
                           {item.image && (
-                            <div className="flex-shrink-0">
+                            <div className="mb-3 text-center">
                               <Image
                                 src={item.image}
                                 alt={item.name}
-                                width={60}
-                                height={60}
-                                className="rounded-md object-cover"
+                                width={80}
+                                height={80}
+                                className="rounded-md object-cover mx-auto"
                               />
                             </div>
                           )}
                           <div className="flex-grow">
-                            <h3 className="font-semibold text-sm">
+                            <h3 className="font-semibold text-sm text-center">
                               {item.name}
                             </h3>
                             {item.categoryName && (
-                              <div className="text-xs text-muted-foreground">
+                              <div className="text-xs text-muted-foreground text-center">
                                 Category: {item.categoryName}
                               </div>
                             )}
@@ -139,7 +142,7 @@ export function ItemList({
                                 {item.description}
                               </p>
                             )}
-                            <div className="text-sm font-medium text-primary mt-1">
+                            <div className="text-sm font-medium text-primary mt-1 text-center">
                               {formatPrice(item.price)}
                             </div>
                           </div>

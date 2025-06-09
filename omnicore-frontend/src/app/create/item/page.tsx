@@ -150,6 +150,7 @@ export default function CreateItemPage() {
       setItemPrice(value);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage({ type: null, text: "" });
@@ -171,9 +172,7 @@ export default function CreateItemPage() {
     if (!selectedCategoryId) {
       setMessage({ type: "error", text: "Please select a category." });
       return;
-    }
-
-    // Handle image upload if there's a new image
+    } // Upload image if provided
     let imageUrl = "";
     if (uploadedImageFile) {
       try {
@@ -386,6 +385,7 @@ export default function CreateItemPage() {
                           className="w-full h-full object-cover"
                           width={300}
                           height={160}
+                          unoptimized={itemImage.startsWith("blob:")}
                         />
                       </div>
                     )}

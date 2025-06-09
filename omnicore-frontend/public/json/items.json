@@ -1,11 +1,38 @@
 [
   {
-    "name": "Mojo",
+    "id": 1,
+    "name": "Cola",
     "description": "",
     "price": 25,
     "categoryId": 3,
-    "image": "/images/187128e2-d3e2-4305-966c-c62be26ffd9b.jpeg",
-    "id": 1,
-    "categoryName": "Cola"
+    "categoryName": "Cola",
+    "image": "/images/dc4df7ed-f190-4c6d-b550-2f254098fce5.jpeg"
+  },
+  {
+    "id": 2,
+    "name": "Beef Burger",
+    "description": "",
+    "price": 250,
+    "categoryId": 2,
+    "categoryName": "Burger",
+    "image": "/images/ea3fc5c3-6529-4547-a8c4-958dbfcbfc51.png"
+  },
+  {
+    "id": 3,
+    "name": "Chicken Burger",
+    "description": "",
+    "price": 200,
+    "categoryId": 2,
+    "categoryName": "Burger",
+    "image": "/images/3192345f-68d4-4056-a772-b32c90c48090.png"
+  },
+  {
+    "name": "Pizza Magaritha",
+    "description": "",
+    "price": 400,
+    "categoryId": 4,
+    "image": "/images/81f1de5f-ccd5-4d4e-85fe-e9ee665f1fb7.png",
+    "id": 4,
+    "categoryName": "Pizza"
   }
 ]

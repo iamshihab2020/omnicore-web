@@ -97,9 +97,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Await params to resolve the NextJS warning
-    const { id } = params;
-    const itemId = parseInt(id, 10);
+    const itemId = parseInt(params.id, 10);
     if (isNaN(itemId)) {
       return NextResponse.json(
         { message: "Invalid item ID." },
@@ -204,9 +202,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Await params to resolve the NextJS warning
-    const { id } = params;
-    const itemId = parseInt(id, 10);
+    const itemId = parseInt(params.id, 10);
     if (isNaN(itemId)) {
       return NextResponse.json(
         { message: "Invalid item ID." },
