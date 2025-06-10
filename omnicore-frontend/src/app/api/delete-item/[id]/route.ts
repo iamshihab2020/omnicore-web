@@ -57,8 +57,9 @@ async function writeItems(data: Item[]) {
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const itemId = parseInt(params.id, 10);
     if (isNaN(itemId)) {

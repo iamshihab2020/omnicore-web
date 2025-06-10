@@ -54,8 +54,9 @@ async function writeCategories(data: Category[]) {
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const categoryId = parseInt(params.id, 10);
     if (isNaN(categoryId)) {

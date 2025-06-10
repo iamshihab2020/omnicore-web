@@ -94,8 +94,9 @@ async function writeItems(data: Item[]) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const itemId = parseInt(params.id, 10);
     if (isNaN(itemId)) {
@@ -199,8 +200,9 @@ export async function PUT(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     const itemId = parseInt(params.id, 10);
     if (isNaN(itemId)) {
