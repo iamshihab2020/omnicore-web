@@ -30,8 +30,6 @@ router = DefaultRouter()
 api_v1_patterns = [
     # Authentication
     path("auth/", include("apps.users.urls")),
-    # Superadmin routes
-    path("superadmin/", include("superadmin_app.urls")),
     # App routes
     path("menu/", include("apps.menu.urls")),
     path("pos/", include("apps.pos.urls")),

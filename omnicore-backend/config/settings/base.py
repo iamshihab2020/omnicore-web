@@ -37,14 +37,13 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "core_app",
-    "tenants_app",
-    "superadmin_app",
+    "apps.core",
     "apps.users",
     "apps.menu",
     "apps.pos",
     "apps.staff",
     "apps.analytics",
+    "tenants_app",  # Add back temporarily for legacy Tenant model
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
