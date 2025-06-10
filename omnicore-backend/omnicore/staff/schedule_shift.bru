@@ -1,0 +1,33 @@
+meta {
+  name: Schedule Shift
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/staff/shifts/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tenant_access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "staff_id": "{{staff_id}}",
+    "start_time": "2025-06-15T09:00:00Z",
+    "end_time": "2025-06-15T17:00:00Z",
+    "position": "SERVER",
+    "notes": "Lunch shift"
+  }
+}
+
+tests {
+  test("Can schedule shift", function() {
+    expect(response.status).to.equal(201);
+    expect(response.body).to.have.property("id");
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Process Payment
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/pos/orders/{{order_id}}/payment/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tenant_access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "payment_method": "CREDIT_CARD",
+    "amount": 25.98,
+    "transaction_id": "tx_123456789",
+    "tip_amount": 5.00
+  }
+}
+
+tests {
+  test("Can process payment", function() {
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("payment_status");
+    expect(response.body.payment_status).to.equal("COMPLETED");
+  });
+}

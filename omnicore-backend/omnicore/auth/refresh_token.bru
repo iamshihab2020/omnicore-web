@@ -1,0 +1,30 @@
+meta {
+  name: Token Refresh
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8000/api/refresh/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refresh": "{{refresh_token}}"
+  }
+}
+
+tests {
+  test("Token refresh successful", function() {
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("access");
+    // Update access token in environment
+    bru.setEnvVar("access_token", response.body.access);
+  });
+}

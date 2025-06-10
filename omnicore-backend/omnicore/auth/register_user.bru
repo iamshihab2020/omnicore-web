@@ -1,0 +1,35 @@
+meta {
+  name: Register User
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/auth/register/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "email": "newuser@example.com",
+    "password": "password123",
+    "first_name": "New",
+    "last_name": "User",
+    "role": "TENANT_STAFF"
+  }
+}
+
+tests {
+  test("User registration successful", function() {
+    expect(response.status).to.equal(201);
+    expect(response.body).to.have.property("id");
+    expect(response.body).to.have.property("email");
+    expect(response.body.email).to.equal("newuser@example.com");
+  });
+}

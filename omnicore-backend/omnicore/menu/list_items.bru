@@ -1,0 +1,22 @@
+meta {
+  name: List Menu Items
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/menu/items/
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tenant_access_token}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Can list menu items", function() {
+    expect(response.status).to.equal(200);
+  });
+}

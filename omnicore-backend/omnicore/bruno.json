@@ -1,0 +1,26 @@
+{
+  "version": "1",
+  "name": "OmniCore API Collection",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "created": "2025-06-11",
+  "lastUpdated": "2025-06-11",
+  "description": "API Collection for testing Omnicore SaaS Restaurant Management System",
+  "size": 0.013855934143066406,
+  "filesCount": 28,
+  "proxy": {
+    "bypassProxy": "",
+    "enabled": "global",
+    "auth": {
+      "enabled": false,
+      "username": "",
+      "password": ""
+    },
+    "port": null,
+    "hostname": "http://localhost:8000/api",
+    "protocol": "http"
+  }
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Tenant Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8000/api/login/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "owner@restaurant.com",
+    "password": "Owner@123!"
+  }
+}
+
+tests {
+  test("Tenant login successful", function() {
+    expect(response.status).to.equal(200);
+    expect(response.body).to.have.property("access");
+    expect(response.body).to.have.property("refresh");
+    // Store tokens in environment variables
+    bru.setEnvVar("tenant_access_token", response.body.access);
+    bru.setEnvVar("tenant_refresh_token", response.body.refresh);
+  });
+}

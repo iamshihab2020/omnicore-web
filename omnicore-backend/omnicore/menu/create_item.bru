@@ -1,0 +1,40 @@
+meta {
+  name: Create Menu Item
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/menu/items/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{tenant_access_token}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Chicken Wings",
+    "description": "Spicy buffalo wings with blue cheese dip",
+    "price": 12.99,
+    "category": "{{category_id}}",
+    "is_available": true,
+    "preparation_time": 15,
+    "calories": 650,
+    "dietary_info": ["Contains dairy"]
+  }
+}
+
+tests {
+  test("Can create menu item", function() {
+    expect(response.status).to.equal(201);
+    expect(response.body).to.have.property("id");
+    expect(response.body).to.have.property("name");
+    if (response.body.id) {
+      bru.setEnvVar("menu_item_id", response.body.id);
+    }
+  });
+}
