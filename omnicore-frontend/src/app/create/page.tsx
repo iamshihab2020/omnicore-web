@@ -31,6 +31,13 @@ export default function CreatePage() {
       color: "text-blue-500",
     },
     {
+      title: "Create Category",
+      description: "Organize your menu items into categories",
+      icon: <Utensils className="h-6 w-6" />,
+      href: "/create/category",
+      color: "text-amber-500",
+    },
+    {
       title: "Create Discount",
       description: "Set up new discount offers and promotions",
       icon: <Percent className="h-6 w-6" />,
@@ -43,13 +50,6 @@ export default function CreatePage() {
       icon: <UserPlus className="h-6 w-6" />,
       href: "/create/waiter",
       color: "text-purple-500",
-    },
-    {
-      title: "Create Category",
-      description: "Organize your menu items into categories",
-      icon: <Utensils className="h-6 w-6" />,
-      href: "/create/category",
-      color: "text-amber-500",
     },
     {
       title: "Create Table",
