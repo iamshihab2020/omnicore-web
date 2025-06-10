@@ -14,8 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import Link from "next/link";
 
 export function LoginForm() {
@@ -26,7 +24,6 @@ export function LoginForm() {
 
   const { login } = useAuth();
   const router = useRouter();
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -75,26 +72,11 @@ export function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </div>
+          </div>{" "}
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Logging in..." : "Log In"}
           </Button>
         </form>
-
-        <div className="my-6 relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="px-2 bg-background text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <GoogleSignInButton
-          onError={(errorMessage) => setError(errorMessage)}
-        />
       </CardContent>
       <CardFooter className="flex flex-col space-y-2 text-center text-sm">
         <div>

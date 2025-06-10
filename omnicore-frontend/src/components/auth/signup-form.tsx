@@ -14,8 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import Link from "next/link";
 
 export function SignupForm() {
@@ -91,26 +89,11 @@ export function SignupForm() {
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
             />
-          </div>
+          </div>{" "}
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Creating Account..." : "Sign Up"}
           </Button>
         </form>
-
-        <div className="my-6 relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="px-2 bg-background text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <GoogleSignInButton
-          onError={(errorMessage) => setError(errorMessage)}
-        />
       </CardContent>
       <CardFooter className="flex justify-center text-sm">
         <div>

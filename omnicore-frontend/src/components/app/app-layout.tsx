@@ -54,7 +54,7 @@ const navItems: NavItem[] = [
   {
     title: "Create",
     href: "/create",
-    icon: ClipboardPlus ,
+    icon: ClipboardPlus,
   },
   {
     title: "Profile",
@@ -208,8 +208,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                         <div className="flex items-center gap-4">
                           <div className="flex-1">
                             <p className="text-sm font-medium">
-                              {currentUser?.displayName ||
-                                currentUser?.email?.split("@")[0]}
+                              {currentUser?.email?.split("@")[0]}
                             </p>
                             <p className="text-xs text-muted-foreground truncate">
                               {currentUser?.email}

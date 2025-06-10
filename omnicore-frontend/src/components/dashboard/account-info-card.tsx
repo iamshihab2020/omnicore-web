@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User } from "firebase/auth";
+import { User } from "@/lib/api";
 
 interface AccountInfoCardProps {
   user: User | null;
@@ -18,30 +18,30 @@ export function AccountInfoCard({ user }: AccountInfoCardProps) {
           <div className="text-sm font-medium text-muted-foreground">Email</div>
           <div className="mt-1 text-md">
             {user?.email || "No email available"}
-          </div>
+          </div>{" "}
         </div>
         <div>
           <div className="text-sm font-medium text-muted-foreground">
             User ID
           </div>
-          <div className="mt-1 text-md">{user?.uid}</div>
-        </div>
-        {user?.emailVerified !== undefined && (
+          <div className="mt-1 text-md">{user?.id || "N/A"}</div>
+        </div>{" "}
+        {(user?.first_name || user?.last_name) && (
           <div>
             <div className="text-sm font-medium text-muted-foreground">
-              Email Verification
+              Name
             </div>
             <div className="mt-1 text-md">
-              {user.emailVerified ? (
-                <span className="text-green-500 dark:text-green-400">
-                  Verified
-                </span>
-              ) : (
-                <span className="text-red-500 dark:text-red-400">
-                  Not verified
-                </span>
-              )}
+              {`${user?.first_name || ""} ${user?.last_name || ""}`.trim()}
             </div>
+          </div>
+        )}
+        {user?.username && (
+          <div>
+            <div className="text-sm font-medium text-muted-foreground">
+              Username
+            </div>
+            <div className="mt-1 text-md">{user.username}</div>
           </div>
         )}
       </CardContent>
