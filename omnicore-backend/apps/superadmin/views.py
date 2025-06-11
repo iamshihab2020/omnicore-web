@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from tenants_app.models import Tenant
+from apps.tenants.models import Tenant
 from apps.users.serializers import UserSerializer
 from core.permissions.permissions import IsSuperAdmin
 

@@ -43,7 +43,8 @@ LOCAL_APPS = [
     "apps.pos",
     "apps.staff",
     "apps.analytics",
-    "tenants_app",  # Add back temporarily for legacy Tenant model
+    "apps.tenants",  # Updated from tenants_app
+    "apps.superadmin",  # Added superadmin app
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -57,7 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "tenants_app.middleware.TenantMiddleware",
+    "apps.tenants.middleware.TenantMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -73,7 +74,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "tenants_app.context_processors.tenant_context",
+                "apps.tenants.context_processors.tenant_context",
             ],
         },
     },
@@ -93,7 +94,7 @@ DATABASES = {
 
 # Database routers
 DATABASE_ROUTERS = [
-    "tenants_app.tenant_router.TenantRouter",
+    "apps.tenants.tenant_router.TenantRouter",
 ]
 
 # Password validation
