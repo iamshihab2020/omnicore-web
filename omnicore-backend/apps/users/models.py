@@ -1,3 +1,4 @@
+# filepath: c:\Users\Victus\Documents\GitHub\omnicore-web\omnicore-backend\apps\users\models.py
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -29,7 +30,7 @@ class UserManager(BaseUserManager):
         """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", "SUPER_ADMIN")
+        extra_fields.setdefault("role", "TENANT")
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -46,7 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     """
 
     ROLE_CHOICES = [
-        ("SUPER_ADMIN", "Super Admin"),
         ("TENANT", "Tenant"),
         ("MANAGER", "Manager"),
         ("STAFF", "Staff"),
@@ -54,17 +54,34 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         ("WAITER", "Waiter"),
     ]
 
+    STATUS_CHOICES = [
+        ("ACTIVE", "Active"),
+        ("INACTIVE", "Inactive"),
+        ("SUSPENDED", "Suspended"),
+    ]
+
+    # Basic information
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+
+    # Address information
+    address = models.TextField(blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    time_zone = models.CharField(max_length=50, default="UTC", blank=True)
+
+    # Account status
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+    last_login_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ACTIVE")
 
     # User role
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="STAFF")
 
-    # Multi-tenancy: link users to their tenant (except super admins)
+    # Multi-tenancy: link users to their tenant
     tenant = models.ForeignKey(
         Tenant, on_delete=models.CASCADE, related_name="users", null=True, blank=True
     )
@@ -102,6 +119,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         return self.role == "TENANT"
 
     @property
-    def is_super_admin(self):
-        """Check if user is a super admin."""
-        return self.role == "SUPER_ADMIN"
+    def has_admin_access(self):
+        """Check if user has access to Django admin interface."""
+        return self.is_staff and self.is_superuser
