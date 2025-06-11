@@ -17,13 +17,12 @@ import { useRouter } from "next/navigation";
 export function UserAvatar() {
   const { currentUser, logout } = useAuth();
   const router = useRouter();
-
   if (!currentUser) return null;
 
   const userInitial = currentUser.email
     ? currentUser.email[0].toUpperCase()
     : "U";
-  const userImage = currentUser.photoURL;
+  const userImage = null; // Django doesn't provide photo URLs by default
 
   const handleLogout = async () => {
     try {

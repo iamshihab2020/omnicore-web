@@ -6,7 +6,7 @@ from django.contrib.auth.models import (
 )
 from django.utils import timezone
 from core.models.abstract_models import TimeStampedModel, SoftDeleteModel
-from tenants_app.models import Tenant
+from apps.tenants.models import Tenant
 
 
 class UserManager(BaseUserManager):

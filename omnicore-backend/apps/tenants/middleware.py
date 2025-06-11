@@ -3,7 +3,7 @@ from django.urls import resolve
 from django.conf import settings
 from django.http import Http404
 
-from tenants_app.models import Tenant
+from apps.tenants.models import Tenant
 
 
 class TenantMiddleware(MiddlewareMixin):

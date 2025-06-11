@@ -21,7 +21,6 @@ export function ResetPasswordForm() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { resetPassword } = useAuth();
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 

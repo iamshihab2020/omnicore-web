@@ -7,23 +7,12 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  googleProvider,
-  signInWithPopup,
-} from "../../firebase";
-import { User, UserCredential } from "firebase/auth";
+import { authApi, User, AuthResponse, setAuthTokens } from "@/lib/api";
 
 interface AuthContextType {
   currentUser: User | null;
-  signup: (email: string, password: string) => Promise<UserCredential>;
-  login: (email: string, password: string) => Promise<UserCredential>;
-  loginWithGoogle: () => Promise<UserCredential>;
+  signup: (email: string, password: string) => Promise<AuthResponse>;
+  login: (email: string, password: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   loading: boolean;
@@ -39,43 +28,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email: string, password: string) {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
-  function login(email: string, password: string) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
-
-  function loginWithGoogle() {
-    return signInWithPopup(auth, googleProvider);
+  async function signup(email: string, password: string) {
+    const response = await authApi.register(email, password);
+    setAuthTokens(response);
+    await fetchCurrentUser(); // Get user profile after registration
+    return response;
   }
 
-  function logout() {
-    return signOut(auth);
+  async function login(email: string, password: string) {
+    const response = await authApi.login(email, password);
+    setAuthTokens(response);
+    await fetchCurrentUser(); // Get user profile after login
+    return response;
   }
 
-  function resetPassword(email: string) {
-    return sendPasswordResetEmail(auth, email);
+  async function logout() {
+    authApi.logout();
+    setCurrentUser(null);
+    return Promise.resolve();
   }
+
+  async function resetPassword(email: string) {
+    return authApi.resetPassword(email);
+  }
+
+  // Fetch the current user's profile
+  async function fetchCurrentUser() {
+    try {
+      const user = await authApi.getUserProfile();
+      setCurrentUser(user);
+      return user;
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+      return null;
+    }
+  }
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // If the user is signed in via Google, their profile data is already set
-        // but we could add some additional data to their profile if needed
-        setCurrentUser(user);
-      } else {
-        setCurrentUser(null);
+    async function loadUser() {
+      try {
+        // Check if we have a token in localStorage
+        const token = localStorage.getItem("accessToken");
+        if (token) {
+          await fetchCurrentUser();
+        }
+      } catch (error) {
+        console.error("Error during authentication:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    }
 
-    return unsubscribe;
+    loadUser();
   }, []);
+
   const value = {
     currentUser,
     signup,
     login,
-    loginWithGoogle,
     logout,
     resetPassword,
     loading,
