@@ -1,12 +1,18 @@
 meta {
   name: List Menu Items
   type: http
-  seq: 3
+  seq: 1
 }
 
 get {
   url: {{baseUrl}}/api/menu/items/
+  body: none
   auth: bearer
+}
+
+params:query {
+  category: {{categoryId}}
+  is_active: true
 }
 
 headers {
@@ -16,11 +22,6 @@ headers {
 
 auth:bearer {
   token: {{accessToken}}
-}
-
-query {
-  category: {{categoryId}}
-  is_active: true
 }
 
 tests {

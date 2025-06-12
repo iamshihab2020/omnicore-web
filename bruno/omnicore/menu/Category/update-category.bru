@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: http://localhost:8000/api/menu/categories/{{categoryId}}/
+  url: http://localhost:8000/api/menu/categories/2f81372b-ab2d-4437-8ddb-3bbcc98183a6/
   body: json
   auth: bearer
 }
@@ -16,13 +16,13 @@ headers {
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NzM3MTI5LCJpYXQiOjE3NDk3MzM1MjksImp0aSI6ImQ2YTRkYjYzYWViNjQ2MWM5OTkxZjYyMjgyZGNjZjg0IiwidXNlcl9pZCI6IjVlYjEyNGQ1LWUxZDItNDAzMS1iZDQyLTJkNmMxM2QwOTY4MyJ9.7fsGcckjZPt-0HzNDg9lNvNF7l-tiyEOdfIlOxbuGnU
 }
 
 body:json {
   {
-    "name": "Updated Category Name",
-    "description": "Updated category description",
+    "name": "Burger",
+    "description": "Patty two side , meat patty in the middel",
     "display_order": 2,
     "status": "active"
   }
