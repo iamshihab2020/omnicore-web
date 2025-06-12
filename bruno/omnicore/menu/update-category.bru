@@ -1,0 +1,44 @@
+meta {
+  name: Update Category
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8000/api/menu/categories/{{categoryId}}/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Updated Category Name",
+    "description": "Updated category description",
+    "display_order": 2,
+    "status": "active"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has message", function() {
+    expect(res.body).to.have.property("message");
+  });
+  
+  test("Response has data", function() {
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.have.property("name").equals("Updated Category Name");
+  });
+}

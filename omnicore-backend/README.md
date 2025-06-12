@@ -195,10 +195,13 @@ Details of the frontend implementation can be found in the `omnicore-frontend` d
 
 OmniCore uses a multi-tenant approach with the following characteristics:
 
-- Each restaurant/business is a tenant
+- Each restaurant/business is a tenant identified by a human-readable slug
 - Users can belong to multiple tenants with different roles
 - Each tenant has its own menu, inventory, orders, etc.
 - Common functionality is shared across tenants
+- Requests include an `X-Tenant-Slug` header to specify the tenant context
+
+For detailed documentation on the multi-tenant architecture, see [multi-tenant-architecture.md](docs/multi-tenant-architecture.md).
 
 ## Authentication Flow
 
@@ -207,6 +210,16 @@ OmniCore uses a multi-tenant approach with the following characteristics:
 3. Frontend stores tokens and includes them in subsequent API requests
 4. Access token is used for authentication and authorization
 5. Refresh token is used to obtain a new access token when it expires
+6. For authenticated requests to tenant-specific endpoints, the `X-Tenant-Slug` header is included
+
+## Tenant Utilities
+
+We provide utility functions to make working with tenants easier:
+
+- `TenantContextManager`: Helper class for tenant operations
+- Methods for tenant filtering, role checking, and more
+
+For detailed documentation on these utilities, see [tenant-utils.md](docs/tenant-utils.md).
 
 ## License
 

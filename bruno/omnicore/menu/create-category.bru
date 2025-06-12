@@ -5,14 +5,18 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/categories/
+  url: http://localhost:8000/api/menu/categories/
   body: json
-  auth: none
+  auth: bearer
 }
 
 headers {
   Content-Type: application/json
-  Authorization: Bearer {{accessToken}}
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NzI0NzYzLCJpYXQiOjE3NDk3MjExNjMsImp0aSI6Ijk2Y2YzY2NlODQyNTQwYzg5MWZkMjQzYjAzOWI5OGNiIiwidXNlcl9pZCI6IjVlYjEyNGQ1LWUxZDItNDAzMS1iZDQyLTJkNmMxM2QwOTY4MyJ9.kyRGcxDo0PXGwCYUhng51s_aLiy5lfNViH9YZkhRJsE
 }
 
 body:json {
@@ -20,7 +24,7 @@ body:json {
     "name": "Main Dishes",
     "description": "Our signature main course dishes",
     "display_order": 1,
-    "is_active": true
+    "status": "active"
   }
 }
 

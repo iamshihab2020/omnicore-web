@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -23,16 +24,14 @@ from rest_framework_simplejwt.views import TokenVerifyView
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # API endpoints
-    path('api/auth/', include('apps.authentication.urls')),
-    path('api/tenants/', include('apps.tenants.urls')),
-    
+    path("admin/", admin.site.urls),  # API endpoints
+    path("api/auth/", include("apps.authentication.urls")),
+    path("api/tenants/", include("apps.tenants.urls")),
+    path("api/menu/", include("apps.menu.urls")),
     # JWT token verify endpoint
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    
+    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     # Root URL redirects to admin
-    path('', RedirectView.as_view(url='/admin/'), name='index'),
+    path("", RedirectView.as_view(url="/admin/"), name="index"),
 ]
 
 # Add media files serving in development

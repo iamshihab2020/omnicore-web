@@ -5,14 +5,18 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/items/
+  url: {{baseUrl}}/api/menu/items/
   body: json
-  auth: none
+  auth: bearer
 }
 
 headers {
   Content-Type: application/json
-  Authorization: Bearer {{accessToken}}
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 body:json {

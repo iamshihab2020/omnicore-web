@@ -1,0 +1,33 @@
+meta {
+  name: Delete Menu Item
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/api/menu/items/{{menuItemId}}/
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status code is 204", function() {
+    expect(res.status).to.equal(204);
+  });
+}
+
+docs {
+  Deletes a specific menu item.
+  Returns a 204 No Content status code on success.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+  The tenant is identified by the X-Tenant-Slug header.
+}

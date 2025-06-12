@@ -5,13 +5,17 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/items/{{menuItemId}}/
-  auth: none
+  url: {{baseUrl}}/api/menu/items/{{menuItemId}}/
+  auth: bearer
 }
 
 headers {
   Content-Type: application/json
-  Authorization: Bearer {{accessToken}}
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 tests {

@@ -1,0 +1,41 @@
+meta {
+  name: Get Category
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8000/api/menu/categories/{{categoryId}}/
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has correct id", function() {
+    expect(res.body).to.have.property("id").equals("{{categoryId}}");
+  });
+  
+  test("Response has name", function() {
+    expect(res.body).to.have.property("name");
+  });
+  
+  test("Response has description", function() {
+    expect(res.body).to.have.property("description");
+  });
+  
+  test("Response has status", function() {
+    expect(res.body).to.have.property("status");
+  });
+}
