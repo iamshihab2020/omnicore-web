@@ -1,0 +1,43 @@
+meta {
+  name: Close POS Session
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/pos/sessions/{{posSessionId}}/close/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "closing_balance": 320.50,
+    "notes": "Cash matches expected balance"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Session closed successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("closed");
+    expect(res.body).to.have.property("closed_at");
+  });
+}
+
+docs {
+  Closes an active POS session.
+  Records the closing balance and finalizes the session.
+  Requires a valid access token in the Authorization header.
+  User must be the one who opened the session or have manager permissions.
+}

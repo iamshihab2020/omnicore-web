@@ -1,0 +1,42 @@
+meta {
+  name: List Menu Items
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/items/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+query {
+  category: {{categoryId}}
+  is_active: true
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response is an array", function() {
+    expect(res.body).to.be.an("array");
+  });
+  
+  // Save the first menu item ID if available
+  if (res.body && res.body.length > 0) {
+    bru.setEnvVar("menuItemId", res.body[0].id);
+  }
+}
+
+docs {
+  Lists all menu items for a specific tenant.
+  Can be filtered by category and active status.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+}

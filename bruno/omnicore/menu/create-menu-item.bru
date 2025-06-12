@@ -1,0 +1,57 @@
+meta {
+  name: Create Menu Item
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/items/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Grilled Salmon",
+    "description": "Fresh Atlantic salmon grilled to perfection with herbs",
+    "price": 19.99,
+    "cost": 8.50,
+    "category": "{{categoryId}}",
+    "is_active": true,
+    "is_featured": true,
+    "is_vegetarian": false,
+    "is_vegan": false,
+    "is_gluten_free": true,
+    "preparation_time": 15,
+    "calories": 420,
+    "display_order": 1
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Menu item created successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+    expect(res.body.name).to.equal("Grilled Salmon");
+  });
+  
+  // Save the menu item ID
+  if (res.body && res.body.id) {
+    bru.setEnvVar("newMenuItemId", res.body.id);
+  }
+}
+
+docs {
+  Creates a new menu item for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  User must have manager permissions or above in the tenant.
+}

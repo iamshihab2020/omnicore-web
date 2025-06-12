@@ -1,0 +1,45 @@
+meta {
+  name: Record Cash Movement
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/pos/sessions/{{posSessionId}}/cash-movements/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "movement_type": "out",
+    "amount": 20.00,
+    "reason": "petty_cash",
+    "notes": "Office supplies purchase"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Cash movement recorded successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("movement_type");
+    expect(res.body.movement_type).to.equal("out");
+    expect(res.body).to.have.property("amount");
+    expect(res.body.amount).to.equal(20);
+  });
+}
+
+docs {
+  Records a cash movement (in/out) for a specific POS session.
+  Requires a valid access token in the Authorization header.
+  User must be the one who opened the session or have manager permissions.
+}

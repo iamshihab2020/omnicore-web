@@ -1,0 +1,38 @@
+meta {
+  name: Get Session Summary
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/pos/sessions/{{posSessionId}}/summary/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has session summary", function() {
+    expect(res.body).to.have.property("session_id");
+    expect(res.body).to.have.property("opening_balance");
+    expect(res.body).to.have.property("cash_sales");
+    expect(res.body).to.have.property("card_sales");
+    expect(res.body).to.have.property("cash_in");
+    expect(res.body).to.have.property("cash_out");
+    expect(res.body).to.have.property("expected_balance");
+  });
+}
+
+docs {
+  Gets a summary of a specific POS session.
+  Includes total sales by payment method, cash movements, and expected closing balance.
+  Requires a valid access token in the Authorization header.
+  User must be the one who opened the session or have manager permissions.
+}

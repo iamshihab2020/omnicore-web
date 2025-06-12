@@ -1,0 +1,8 @@
+{
+  "name": "development",
+  "variables": {
+    "baseUrl": "http://localhost:8000",
+    "accessToken": "",
+    "refreshToken": ""
+  }
+}

@@ -1,0 +1,35 @@
+meta {
+  name: Get Menu Item Details
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/items/{{menuItemId}}/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has menu item details", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+    expect(res.body).to.have.property("price");
+    expect(res.body).to.have.property("category");
+  });
+}
+
+docs {
+  Gets details for a specific menu item.
+  Includes information about variants and add-ons.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+}

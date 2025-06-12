@@ -1,0 +1,33 @@
+meta {
+  name: Get Tenant Details
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has tenant details", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+    expect(res.body.id).to.equal(bru.getEnvVar("tenantId"));
+  });
+}
+
+docs {
+  Gets details for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  The user must belong to the tenant to access its details.
+}

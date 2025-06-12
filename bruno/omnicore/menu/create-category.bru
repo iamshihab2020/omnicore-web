@@ -1,0 +1,48 @@
+meta {
+  name: Create Category
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/menu/categories/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Main Dishes",
+    "description": "Our signature main course dishes",
+    "display_order": 1,
+    "is_active": true
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Category created successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+    expect(res.body.name).to.equal("Main Dishes");
+  });
+  
+  // Save the category ID
+  if (res.body && res.body.id) {
+    bru.setEnvVar("newCategoryId", res.body.id);
+  }
+}
+
+docs {
+  Creates a new menu category for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  User must have manager permissions or above in the tenant.
+}

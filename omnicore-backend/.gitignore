@@ -1,4 +1,4 @@
-# Python
+# Python and Django specific
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,54 +16,33 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
-# Django
+# Django stuff
 *.log
-*.pot
-*.pyc
+local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
+media/
 staticfiles/
 
-# Environment variables
-.env
-.venv
-env/
+# Virtual Environment
 venv/
 ENV/
 env.bak/
 venv.bak/
 
-# VS Code
-.vscode/
-*.code-workspace
-.history/
+# Environment variables
+.env
+.env.local
 
-# PyCharm
-.idea/
-*.iml
-*.iws
-*.ipr
-*.iws
-out/
-.idea_modules/
-
-# SQLite
-*.db
-*.sqlite3
-*.sqlite3-journal
-
-# Logs
-logs/
-*.log
-
-# Coverage reports
+# Unit test / coverage reports
 htmlcov/
 .tox/
+.nox/
 .coverage
 .coverage.*
 .cache
@@ -71,29 +50,28 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-
-# PyTest
 .pytest_cache/
 
-# Jupyter Notebooks
+# Translations
+*.mo
+*.pot
+
+# Jupyter Notebook
 .ipynb_checkpoints
 
-# Node (in case Frontend has node dependencies)
-node_modules/
-npm-debug.log
-yarn-error.log
-yarn-debug.log
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
 
-# Mac OS
-.DS_Store
-.AppleDouble
-.LSOverride
+# SageMath parsed files
+*.sage.py
 
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
+# Local development settings
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# JWT related
-*.pem
+# Generated files
+migrations/*_auto_*.py
+!

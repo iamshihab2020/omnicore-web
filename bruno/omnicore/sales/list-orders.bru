@@ -1,0 +1,44 @@
+meta {
+  name: List Orders
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/sales/orders/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+query {
+  status: pending,preparing
+  start_date: 2025-06-01
+  end_date: 2025-06-12
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response is paginated", function() {
+    expect(res.body).to.have.property("results");
+    expect(res.body).to.have.property("count");
+  });
+  
+  // Save the first order ID if available
+  if (res.body && res.body.results && res.body.results.length > 0) {
+    bru.setEnvVar("orderId", res.body.results[0].id);
+  }
+}
+
+docs {
+  Lists orders for a specific tenant with optional filtering.
+  Returns paginated results.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+}

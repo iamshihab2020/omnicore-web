@@ -1,0 +1,48 @@
+meta {
+  name: Update Tenant
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Updated Restaurant Name",
+    "address": "456 Updated Street",
+    "city": "New City",
+    "state": "New State",
+    "country": "New Country",
+    "zip_code": "54321",
+    "phone": "987-654-3210",
+    "email": "updated@restaurant.com",
+    "primary_color": "#3366FF",
+    "secondary_color": "#FF6633"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Tenant updated successfully", function() {
+    expect(res.body).to.have.property("name");
+    expect(res.body.name).to.equal("Updated Restaurant Name");
+  });
+}
+
+docs {
+  Updates details for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  The user must be an owner of the tenant to update its details.
+}
