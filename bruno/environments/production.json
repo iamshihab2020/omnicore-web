@@ -1,0 +1,8 @@
+{
+  "name": "production",
+  "variables": {
+    "baseUrl": "https://api.omnicore.example.com",
+    "accessToken": "",
+    "refreshToken": ""
+  }
+}

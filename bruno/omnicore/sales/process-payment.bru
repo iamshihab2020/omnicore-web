@@ -1,0 +1,49 @@
+meta {
+  name: Process Payment
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/sales/orders/{{orderId}}/payments/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "amount": 39.98,
+    "payment_method": "card",
+    "transaction_id": "txn_12345",
+    "payment_details": {
+      "card_type": "Visa",
+      "last_four": "4242"
+    }
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Payment processed successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("amount");
+    expect(res.body).to.have.property("payment_method");
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("completed");
+  });
+}
+
+docs {
+  Records a payment for a specific order.
+  If the payment covers the full order amount, the order status is automatically updated.
+  Requires a valid access token in the Authorization header.
+  User must have cashier permissions or above in the tenant.
+}

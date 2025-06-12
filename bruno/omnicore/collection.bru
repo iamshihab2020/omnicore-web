@@ -1,0 +1,90 @@
+meta {
+  name: OmniCore API Collection
+  version: 1.0.0
+  schema: https://schema.usebruno.com/collection/v1
+  icon: restaurant
+}
+
+docs {
+  # OmniCore API Documentation
+
+  Welcome to the OmniCore API collection. This document provides an overview of the available API endpoints and how to use them.
+
+  ## Authentication
+
+  All requests except login and register require a valid JWT token in the Authorization header.
+
+  ```
+  Authorization: Bearer <your-access-token>
+  ```
+
+  The access token is valid for 60 minutes. After that, you'll need to refresh it using the refresh token.
+
+  ## Multi-Tenant Architecture
+
+  OmniCore uses a multi-tenant architecture where each restaurant/business is a separate tenant. Users can belong to multiple tenants with different roles.
+
+  All tenant-specific endpoints require a tenant ID in the URL path:
+
+  ```
+  /api/tenants/{tenant_id}/...
+  ```
+
+  ## API Endpoints
+
+  The API is organized into the following sections:
+
+  - **Auth**: User authentication and management
+  - **Tenants**: Tenant management and user associations
+  - **Menu**: Menu categories and items
+  - **Sales**: Orders and payments
+  - **POS**: Point of Sale sessions and operations
+
+  ## Rate Limiting
+
+  API requests are rate-limited to prevent abuse. The current limits are:
+
+  - Authenticated requests: 100 requests per minute
+  - Anonymous requests: 20 requests per minute
+
+  ## Pagination
+
+  List endpoints return paginated results with the following structure:
+
+  ```json
+  {
+    "count": 100,
+    "next": "http://localhost:8000/api/tenants/1/menu/items/?page=2",
+    "previous": null,
+    "results": [...]
+  }
+  ```
+
+  You can specify the page size and page number using query parameters:
+
+  ```
+  ?page=1&page_size=20
+  ```
+
+  ## Error Handling
+
+  The API returns standard HTTP status codes:
+
+  - 2xx: Success
+  - 4xx: Client error (e.g., invalid input, unauthorized)
+  - 5xx: Server error
+
+  Error responses include a detail message:
+
+  ```json
+  {
+    "detail": "Authentication credentials were not provided."
+  }
+  ```
+
+  ## Getting Started
+
+  1. Use the "Login" request to obtain JWT tokens
+  2. Use the "List Tenants" request to get the tenant IDs
+  3. Explore the various endpoints using the tenant ID
+}
