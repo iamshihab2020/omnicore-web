@@ -5,8 +5,9 @@
 - Created `MenuItemViewSet` to handle all CRUD operations for menu items
 - Updated router configuration to register the viewset
 - Implemented proper tenant context filtering in querysets
-- Added support for query parameters (category, is_active, is_featured)
+- Added support for query parameters (category, is_active)
 - Updated the Bruno API collection with new endpoints for menu items
+- Simplified MenuItem model by removing unnecessary fields (is_featured, is_vegetarian, is_vegan, is_gluten_free, display_order, calories)
 
 ## 2. Bruno API Collection Updates
 

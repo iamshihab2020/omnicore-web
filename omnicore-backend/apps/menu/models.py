@@ -49,22 +49,16 @@ class MenuItem(models.Model):
     cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     image = models.ImageField(upload_to="menu_item_images/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=False)
-    is_vegetarian = models.BooleanField(default=False)
-    is_vegan = models.BooleanField(default=False)
-    is_gluten_free = models.BooleanField(default=False)
     preparation_time = models.IntegerField(
         default=0, help_text="Preparation time in minutes"
     )
-    calories = models.IntegerField(default=0)
-    display_order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Menu Item"
         verbose_name_plural = "Menu Items"
-        ordering = ["display_order", "name"]
+        ordering = ["name"]
 
     def __str__(self):
         return f"{self.name} ({self.tenant.name})"

@@ -5,23 +5,18 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/menu/items/
+  url: http://localhost:8000/api/menu/items/
   body: none
   auth: bearer
 }
 
-params:query {
-  category: {{categoryId}}
-  is_active: true
-}
-
 headers {
   Content-Type: application/json
-  X-Tenant-Slug: {{tenantSlug}}
+  X-Tenant-Slug: test-tenant-restaurant
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NzQwMzU3LCJpYXQiOjE3NDk3MzY3NTcsImp0aSI6IjE4ODY0MDY2YzhmMDQ2MWFhNTEzYTFlMmU1MzAyYTBlIiwidXNlcl9pZCI6IjVlYjEyNGQ1LWUxZDItNDAzMS1iZDQyLTJkNmMxM2QwOTY4MyJ9.jEdqs41tBo51OrtskEVUJhas6bKq9Y5B9Tpk4PSdggE
 }
 
 tests {
