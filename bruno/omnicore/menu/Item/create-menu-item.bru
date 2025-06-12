@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/menu/items/
+  url: http://localhost:8000/api/menu/items/
   body: json
   auth: bearer
 }
@@ -21,19 +21,13 @@ auth:bearer {
 
 body:json {
   {
-    "name": "Grilled Salmon",
-    "description": "Fresh Atlantic salmon grilled to perfection with herbs",
-    "price": 19.99,
-    "cost": 8.50,
-    "category": "{{categoryId}}",
+    "name": "Grilled Chicken Salad",
+    "description": "Fresh mixed greens with grilled chicken breast, cherry tomatoes, and balsamic dressing",
+    "price": 14.99,
+    "cost": 5.50,
     "is_active": true,
-    "is_featured": true,
-    "is_vegetarian": false,
-    "is_vegan": false,
-    "is_gluten_free": true,
-    "preparation_time": 15,
-    "calories": 420,
-    "display_order": 1
+    "preparation_time": 10,
+    "category": "{{categoryId}}"
   }
 }
 

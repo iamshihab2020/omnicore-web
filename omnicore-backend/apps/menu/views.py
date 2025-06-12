@@ -128,12 +128,6 @@ class MenuItemViewSet(viewsets.ModelViewSet):
             is_active = is_active.lower() == "true"
             queryset = queryset.filter(is_active=is_active)
 
-        # Filter featured items if specified
-        is_featured = self.request.query_params.get("is_featured")
-        if is_featured:
-            is_featured = is_featured.lower() == "true"
-            queryset = queryset.filter(is_featured=is_featured)
-
         return queryset
 
     def perform_create(self, serializer):
