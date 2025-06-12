@@ -10,7 +10,16 @@ This folder contains a collection of Bruno API requests for testing the OmniCore
 
 1. Download and install Bruno from the [official website](https://www.usebruno.com/downloads)
 2. Open Bruno and click on "Open Collection"
-3. Select the `bruno/omnicore` folder from your OmniCore repository
+3. Select the `bruno` folder (not the nested omnicore folder) from your OmniCore repository
+
+## Updated Structure
+
+The Bruno collection has been reorganized to follow the latest Bruno format. The collection now includes:
+
+- A `.brunorc` file at the root level
+- Properly formatted `bruno.json` in the collection folder
+- Folder structure with `folder.bru` files
+- Environment configuration in `environments.bru`
 
 ## Environment Setup
 

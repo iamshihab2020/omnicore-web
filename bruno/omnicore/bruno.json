@@ -1,18 +1,8 @@
 {
   "name": "omnicore",
   "version": "1",
+  "type": "collection",
+  "schema": "https://usebruno.com/schema/collection",
   "description": "OmniCore API Collection",
-  "icon": "restaurant",
-  "env": {
-    "development": {
-      "baseUrl": "http://localhost:8000",
-      "accessToken": "",
-      "refreshToken": ""
-    },
-    "production": {
-      "baseUrl": "https://api.omnicore.example.com",
-      "accessToken": "",
-      "refreshToken": ""
-    }
-  }
+  "icon": "restaurant"
 }
