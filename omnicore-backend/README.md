@@ -1,59 +1,221 @@
-# OmniCore Backend - Implementation Summary
+# OmniCore - Restaurant Management SaaS Platform
 
-## What's Implemented
+OmniCore is a comprehensive multi-tenant SaaS platform designed for restaurant management and Point of Sale (POS) operations.
 
-### Core Backend Infrastructure
+## Project Structure
 
-- Django REST Framework setup with proper project structure
-- Multi-tenant database design with tenant identification
-- JWT-based authentication system (replacing Firebase)
-- Role-based permissions system
-- Custom user model with tenant relationships
+The project is divided into two main parts:
 
-### Authentication System
+1. **omnicore-backend**: Django REST API backend with JWT authentication
+2. **omnicore-frontend**: Next.js frontend application
 
-- Token-based JWT authentication endpoints
-  - `/api/v1/auth/token/` - Login and get access token
-  - `/api/v1/auth/token/refresh/` - Refresh expired tokens
-  - `/api/v1/auth/token/blacklist/` - Blacklist tokens on logout
-- Custom token payload with user role and tenant info
-- User registration and management endpoints
+## Backend
 
-### Multi-Tenant System
+### Technology Stack
 
-- Tenant model and relationships
-- Tenant middleware for request identification
-- Database router for future scaled multi-tenancy
-- Super admin capabilities to manage tenants
+- **Python 3.12+**
+- **Django 5.2+**
+- **Django REST Framework**
+- **JWT Authentication** (using djangorestframework-simplejwt)
+- **SQLite** (default for development, can be configured for PostgreSQL in production)
 
-### Admin Interface
+### Setup and Installation
 
-- Custom Django admin for User and Tenant models
-- SuperAdmin app with API endpoints for tenant management
+1. **Clone the repository**
 
-## What's Next
+```bash
+git clone https://github.com/yourusername/omnicore-web.git
+cd omnicore-web/omnicore-backend
+```
 
-### Implementation Tasks
+2. **Set up a virtual environment**
 
-1. Complete specific feature apps:
+```bash
+python -m venv venv
+source venv/Scripts/activate  # On Windows
+# OR
+source venv/bin/activate      # On Unix/Mac
+```
 
-   - Menu management
-   - POS system
-   - Staff management
-   - Analytics
+3. **Install dependencies**
 
-2. Add comprehensive permission checks:
-   - Tenant-specific data isolation
-   - Role-based access controls within tenants
-3. Add API documentation with drf-yasg
+```bash
+pip install -r requirements.txt
+```
 
-4. Implement data validation and error handling
+4. **Configure environment variables**
 
-5. Add comprehensive testing
+Create a `.env` file in the omnicore-backend directory and add:
 
-### Integration Tasks
+```
+DEBUG=True
+SECRET_KEY=your-secret-key
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=sqlite:///db.sqlite3
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+```
 
-1. Update frontend to use JWT authentication instead of Firebase
-2. Implement token refresh logic on frontend
-3. Store JWT tokens securely on frontend
-4. Update API calls to include authentication headers
+5. **Run migrations**
+
+```bash
+python manage.py migrate
+```
+
+6. **Create a superuser**
+
+```bash
+python manage.py createsuperuser
+```
+
+7. **Create a tenant**
+
+```bash
+python manage.py create_tenant --name "Your Restaurant" --email "admin@example.com" --password "securepassword" --first_name "Admin" --last_name "User"
+```
+
+8. **Run the development server**
+
+```bash
+python manage.py runserver
+```
+
+The API will be available at `http://localhost:8000/api/`
+
+### API Endpoints
+
+#### Authentication
+
+- `POST /api/auth/login/` - Log in and obtain JWT tokens
+- `POST /api/auth/logout/` - Log out (blacklist refresh token)
+- `POST /api/auth/register/` - Register a new user
+- `GET /api/auth/user/` - Get authenticated user details
+- `POST /api/auth/password/change/` - Change user password
+- `POST /api/auth/password/reset/` - Request password reset
+- `POST /api/auth/password/reset/confirm/` - Confirm password reset
+
+#### Tenants
+
+- `GET /api/tenants/` - List user's tenants
+- `POST /api/tenants/` - Create a new tenant
+- `GET /api/tenants/{id}/` - Get tenant details
+- `PUT /api/tenants/{id}/` - Update tenant
+- `DELETE /api/tenants/{id}/` - Delete tenant
+- `GET /api/tenants/{tenant_id}/users/` - List tenant users
+- `POST /api/tenants/{tenant_id}/users/` - Add user to tenant
+- `GET /api/tenants/{tenant_id}/users/{id}/` - Get tenant user details
+- `PUT /api/tenants/{tenant_id}/users/{id}/` - Update tenant user
+- `DELETE /api/tenants/{tenant_id}/users/{id}/` - Remove user from tenant
+
+### Project Structure
+
+```
+omnicore-backend/
+├── __init__.py
+├── asgi.py
+├── settings.py
+├── urls.py
+└── wsgi.py
+apps/
+├── __init__.py
+│
+├── tenants/          # Manages tenants (Shared App)
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── management/
+│   │   └── commands/
+│   │       └── create_tenant.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+│
+├── core/             # Core/Shared logic (Shared App)
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── permissions.py
+│   ├── tests.py
+│   └── views.py
+│
+├── authentication/   # Manages users per tenant (Tenant App)
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+│
+├── menu/             # Manages menu items (Tenant App)
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+│
+├── sales/            # Manages orders and sales (Tenant App)
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+│
+└── pos/              # Handles POS operations (Tenant App)
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── migrations/
+    ├── models.py
+    ├── serializers.py
+    ├── tests.py
+    ├── urls.py
+    └── views.py
+```
+
+## Frontend (Next.js)
+
+Details of the frontend implementation can be found in the `omnicore-frontend` directory.
+
+## Multi-Tenancy Architecture
+
+OmniCore uses a multi-tenant approach with the following characteristics:
+
+- Each restaurant/business is a tenant
+- Users can belong to multiple tenants with different roles
+- Each tenant has its own menu, inventory, orders, etc.
+- Common functionality is shared across tenants
+
+## Authentication Flow
+
+1. User registers or logs in
+2. Backend validates credentials and returns JWT tokens (access and refresh)
+3. Frontend stores tokens and includes them in subsequent API requests
+4. Access token is used for authentication and authorization
+5. Refresh token is used to obtain a new access token when it expires
+
+## License
+
+[MIT License](LICENSE)
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
