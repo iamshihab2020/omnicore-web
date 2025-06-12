@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/auth/", include("apps.authentication.urls")),
     path("api/tenants/", include("apps.tenants.urls")),
     path("api/menu/", include("apps.menu.urls")),
+    path("api/management/", include("apps.management.urls")),
     # JWT token verify endpoint
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     # Root URL redirects to admin

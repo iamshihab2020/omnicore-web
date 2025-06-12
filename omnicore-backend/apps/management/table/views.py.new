@@ -1,0 +1,88 @@
+# filepath: c:\Users\Victus\Documents\GitHub\omnicore-web\omnicore-backend\apps\management\table\views.py.new
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
+from .models import RestaurantTable
+from .serializers import TableSerializer
+from apps.core.permissions import IsTenantUser, IsTenantAdmin, IsTenantOwner
+
+
+class TableViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing restaurant tables
+
+    - List: Get all tables for the current tenant
+    - Create: Create a new table for the current tenant
+    - Retrieve: Get details of a specific table
+    - Update: Update a table
+    - Delete: Delete a table
+
+    Access requires an authenticated user with access to the tenant.
+    The tenant is determined from the authenticated user and X-Tenant-Slug header.
+    """
+
+    serializer_class = TableSerializer
+    permission_classes = [permissions.IsAuthenticated, IsTenantUser]
+
+    def get_queryset(self):
+        """
+        Get tables for the current tenant
+        Filter by various parameters if specified in query params
+        """
+        if hasattr(self.request, "tenant"):
+            queryset = RestaurantTable.objects.filter(tenant=self.request.tenant)
+            
+            # Filter by status if specified
+            status = self.request.query_params.get("status")
+            if status:
+                queryset = queryset.filter(status=status)
+            
+            # Filter by active status
+            is_active = self.request.query_params.get("is_active")
+            if is_active is not None:
+                is_active = is_active.lower() == "true"
+                queryset = queryset.filter(is_active=is_active)
+            
+            # Filter by area
+            area = self.request.query_params.get("area")
+            if area:
+                queryset = queryset.filter(area=area)
+                
+            return queryset
+        return RestaurantTable.objects.none()
+
+    def perform_create(self, serializer):
+        """
+        Create a new table for the current tenant
+        """
+        if hasattr(self.request, "tenant"):
+            serializer.save(tenant=self.request.tenant)
+        else:
+            raise ValueError("No active tenant found. Set X-Tenant-Slug header.")
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new table with validation
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            {"message": "Table created successfully", "data": serializer.data},
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update a table
+        """
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(
+            {"message": "Table updated successfully", "data": serializer.data}
+        )

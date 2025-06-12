@@ -1,0 +1,54 @@
+meta {
+  name: Update Restaurant Table
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/api/management/table/tables/{{tableId}}/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "number": "T1",
+    "name": "VIP Window Table",
+    "capacity": 6,
+    "status": "reserved",
+    "area": "Main Hall",
+    "is_active": true,
+    "notes": "Premium table with the best view"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Table updated successfully", function() {
+    expect(res.body).to.have.property("message");
+    expect(res.body.message).to.equal("Table updated successfully");
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.have.property("name");
+    expect(res.body.data.name).to.equal("VIP Window Table");
+    expect(res.body.data).to.have.property("capacity");
+    expect(res.body.data.capacity).to.equal(6);
+  });
+}
+
+docs {
+  Updates an existing restaurant table.
+  Requires a valid access token in the Authorization header and the table ID.
+  User must have appropriate permissions in the tenant.
+}

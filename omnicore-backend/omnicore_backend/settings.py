@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "apps.menu.apps.MenuConfig",
     "apps.sales.apps.SalesConfig",
     "apps.pos.apps.PosConfig",
+    "apps.management.apps.ManagementConfig",
 ]
 
 MIDDLEWARE = [

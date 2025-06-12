@@ -1,0 +1,38 @@
+meta {
+  name: Delete Restaurant Table
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/management/table/tables/{{tableId}}/
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Table deleted successfully", function() {
+    expect(res.body).to.have.property("message");
+    expect(res.body.message).to.contain("deleted successfully");
+    expect(res.body).to.have.property("id");
+  });
+}
+
+docs {
+  Deletes a restaurant table with the specified ID.
+  Requires a valid access token in the Authorization header and the table ID.
+  User must have appropriate permissions in the tenant.
+}
