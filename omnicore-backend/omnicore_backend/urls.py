@@ -24,8 +24,9 @@ from rest_framework_simplejwt.views import TokenVerifyView
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),  # API endpoints
-    path("api/auth/", include("apps.authentication.urls")),
+    path(
+        "admin/", admin.site.urls
+    ),  # API endpoints    path("api/auth/", include("apps.authentication.urls")),
     path("api/tenants/", include("apps.tenants.urls")),
     path("api/menu/", include("apps.menu.urls")),
     path("api/management/", include("apps.management.urls")),
