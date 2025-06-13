@@ -1,0 +1,30 @@
+meta {
+  name: Update Counter
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8000/api/settings/counters/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Slug: example-restaurant
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5ODEwNjAwLCJpYXQiOjE3NDk4MDcwMDAsImp0aSI6ImFhYzcyOTQxMDA0NDRmZjM5NGEwNTNkYjkxNjc0YmYwIiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.Lghspui7lROohFKGoesAfCDIF_3ko6eXN1rPAXWPQNs
+}
+
+body:json {
+  {
+    "name": "Couunter 5",
+    "description": "Main selling point at the entrance",
+    "location": "Front entrance",
+    "status": "active",
+    "items" : ["4295ed9b-fe3c-48b9-80a6-ad9ca3d2bc18"]
+  }
+}

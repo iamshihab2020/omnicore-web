@@ -12,11 +12,11 @@ post {
 
 headers {
   Content-Type: application/json
-  X-Tenant-Slug: test-tenant-restaurant
+  X-Tenant-Slug: example-restaurant
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5ODEwNjAwLCJpYXQiOjE3NDk4MDcwMDAsImp0aSI6ImFhYzcyOTQxMDA0NDRmZjM5NGEwNTNkYjkxNjc0YmYwIiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.Lghspui7lROohFKGoesAfCDIF_3ko6eXN1rPAXWPQNs
 }
 
 body:json {
@@ -27,7 +27,7 @@ body:json {
     "cost": 5.50,
     "is_active": true,
     "preparation_time": 10,
-    "category": "{{categoryId}}"
+    "category": "b5da702a-1998-4534-9b69-ca9d21e5457a"
   }
 }
 
