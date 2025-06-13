@@ -6,9 +6,11 @@ import Link from "next/link";
 import React from "react";
 
 export interface Category {
-  id: number;
+  id: string | number;
   name: string;
   description?: string;
+  status?: string;
+  display_order?: number;
 }
 
 interface CategoryListProps {
@@ -17,7 +19,7 @@ interface CategoryListProps {
   error: string | null;
   title?: string;
   onCategoryClick?: (category: Category) => void;
-  highlightId?: number; // ID of the category to highlight (e.g., currently being edited)
+  highlightId?: string | number; // ID of the category to highlight (e.g., currently being edited)
 }
 
 export function CategoryList({
@@ -51,7 +53,8 @@ export function CategoryList({
                 .slice()
                 .reverse()
                 .map((category) => {
-                  const isHighlighted = category.id === highlightId;
+                  const isHighlighted =
+                    String(category.id) === String(highlightId);
                   return onCategoryClick ? (
                     // If onCategoryClick is provided, make it clickable but not a link
                     <Card
@@ -75,8 +78,8 @@ export function CategoryList({
                     <Link
                       key={category.id}
                       href={`/create/category/${category.id}`}
-                        passHref
-                        className="mb-4"
+                      passHref
+                      className="mb-4"
                     >
                       <Card
                         className={`p-3 cursor-pointer transition-colors mb-4 duration-300 ${
