@@ -1,0 +1,47 @@
+meta {
+  name: Partial Update Counter
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/settings/counters/{{counterId}}/
+  body: json
+  auth: {
+    type: bearer
+    bearer: {{accessToken}}
+  }
+}
+
+headers {
+  X-Tenant-Slug: {{tenantSlug}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "inactive"
+  }
+}
+
+docs {
+  # Partial Update Counter
+  
+  This endpoint partially updates a specific counter.
+  
+  ## URL Parameters
+  
+  - `counterId`: The UUID of the counter to update
+  
+  ## Request Body
+  
+  One or more of:
+  - `name`: The updated name of the counter
+  - `description`: The updated description of the counter
+  - `location`: The updated physical location of the counter
+  - `status`: The updated status of the counter, either "active" or "inactive"
+  
+  ## Response
+  
+  Returns the updated counter object with its details.
+}

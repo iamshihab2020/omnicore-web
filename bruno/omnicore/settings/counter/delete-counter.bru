@@ -1,0 +1,32 @@
+meta {
+  name: Delete Counter
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/api/settings/counters/{{counterId}}/
+  body: none
+  auth: {
+    type: bearer
+    bearer: {{accessToken}}
+  }
+}
+
+headers {
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+docs {
+  # Delete Counter
+  
+  This endpoint deletes a specific counter.
+  
+  ## URL Parameters
+  
+  - `counterId`: The UUID of the counter to delete
+  
+  ## Response
+  
+  Returns no content on success (status code 204).
+}

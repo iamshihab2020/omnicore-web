@@ -1,0 +1,49 @@
+meta {
+  name: Update Counter
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/settings/counters/{{counterId}}/
+  body: json
+  auth: {
+    type: bearer
+    bearer: {{accessToken}}
+  }
+}
+
+headers {
+  X-Tenant-Slug: {{tenantSlug}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Updated Counter Name",
+    "description": "Updated description",
+    "location": "Updated location",
+    "status": "inactive"
+  }
+}
+
+docs {
+  # Update Counter
+  
+  This endpoint updates a specific counter.
+  
+  ## URL Parameters
+  
+  - `counterId`: The UUID of the counter to update
+  
+  ## Request Body
+  
+  - `name`: (Required) The updated name of the counter
+  - `description`: (Optional) The updated description of the counter
+  - `location`: (Optional) The updated physical location of the counter
+  - `status`: (Optional) The updated status of the counter, either "active" or "inactive"
+  
+  ## Response
+  
+  Returns the updated counter object with its details.
+}
