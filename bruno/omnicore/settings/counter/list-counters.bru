@@ -1,0 +1,28 @@
+meta {
+  name: List Counters
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/settings/counters/
+  body: none
+  auth: {
+    type: bearer
+    bearer: {{accessToken}}
+  }
+}
+
+headers {
+  X-Tenant-Slug: {{tenantSlug}}
+}
+
+docs {
+  # List Counters
+  
+  This endpoint retrieves all counters for the current tenant.
+  
+  ## Response
+  
+  Returns an array of counter objects with their details.
+}
