@@ -17,7 +17,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     - Delete: Delete a category
 
     Access requires an authenticated user with access to the tenant.
-    The tenant is determined from the authenticated user and X-Tenant-Slug header.
+    The tenant is determined from the authenticated user and X-Tenant-Workspace header.
     """
 
     serializer_class = CategorySerializer
@@ -38,7 +38,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         if hasattr(self.request, "tenant"):
             serializer.save(tenant=self.request.tenant)
         else:
-            raise ValueError("No active tenant found. Set X-Tenant-Slug header.")
+            raise ValueError("No active tenant found. Set X-Tenant-Workspace header.")
 
     def create(self, request, *args, **kwargs):
         """
@@ -80,7 +80,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     - Delete: Delete a menu item
 
     Access requires an authenticated user with access to the tenant.
-    The tenant is determined from the authenticated user and X-Tenant-Slug header.
+    The tenant is determined from the authenticated user and X-Tenant-Workspace header.
     """
 
     serializer_class = MenuItemSerializer
@@ -96,7 +96,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         # Debug information
         print(f"DEBUG - User authenticated: {request.user.is_authenticated}")
         print(f"DEBUG - User: {request.user}")
-        print(f"DEBUG - Tenant header: {request.headers.get('X-Tenant-Slug')}")
+        print(f"DEBUG - Tenant header: {request.headers.get('X-Tenant-Workspace')}")
         print(f"DEBUG - Request tenant: {getattr(request, 'tenant', None)}")
 
         if hasattr(request, "tenant"):
@@ -137,7 +137,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         if hasattr(self.request, "tenant"):
             serializer.save(tenant=self.request.tenant)
         else:
-            raise ValueError("No active tenant found. Set X-Tenant-Slug header.")
+            raise ValueError("No active tenant found. Set X-Tenant-Workspace header.")
 
     def create(self, request, *args, **kwargs):
         """

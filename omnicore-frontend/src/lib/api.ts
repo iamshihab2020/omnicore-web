@@ -1,9 +1,18 @@
 // API client for interacting with Django backend
 const API_URL = "http://localhost:8000/api";
 
+export interface Tenant {
+  id: string;
+  name: string;
+  slug?: string;
+  role?: string;
+}
+
 export interface AuthResponse {
   access: string; // JWT access token
   refresh: string; // JWT refresh token
+  user?: User;
+  tenants?: Tenant[];
 }
 
 export interface User {
@@ -169,12 +178,6 @@ export async function fetchWithAuth(
   return response;
 }
 
-
-
-
-
-
-
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import Cookies from "js-cookie";
 
@@ -189,10 +192,10 @@ const getBaseUrl = (): string => {
     typeof window !== "undefined" ? window.location.hostname : "";
   if (hostname === "localhost") {
     return "http://localhost:8000/api/";
-  } else if (hostname === "www.counterfoil.app") {
-    return "https://www.counterfoil.app/api/";
-  } else if (hostname === "counterfoil.app") {
-    return "https://counterfoil.app/api/";
+  } else if (hostname === "www.omnicore.app") {
+    return "https://www.omnicore.app/api/";
+  } else if (hostname === "omnicore.app") {
+    return "https://omnicore.app/api/";
   } else {
     return `${process.env.NEXT_PUBLIC_DJANGO_API || ""}/api/`;
   }
@@ -210,21 +213,46 @@ export const apiRequest = async <Req, Res>(
   options: ApiRequestOptions<Req> = {},
   requireAuth = true
 ): Promise<Res> => {
-  const token = Cookies.get("access");
+  // First try to get token from cookies
+  let token = Cookies.get("access") || "";
   const workspaceName = Cookies.get("workspace");
 
-  if (requireAuth && (!token || !workspaceName)) {
+  // If not found in cookies, try localStorage as fallback (for compatibility)
+  if (!token) {
+    const localToken = localStorage.getItem("accessToken");
+    if (localToken) {
+      token = localToken;
+      // Also set it as a cookie for future requests
+      Cookies.set("access", localToken);
+    }
+  }
+
+  // If we still don't have a token and auth is required, redirect to login
+  if (requireAuth && !token) {
+    console.log("No authentication token found. Redirecting to login.");
     await router.push("/login");
     throw new Error("Authentication error. Please log in again.");
   }
 
-  // Default headers
+  // For now, if workspaceName is missing but we have a token, let's try to continue
+  // The backend will handle tenant selection for single-tenant users
+  if (requireAuth && !workspaceName && token) {
+    console.log(
+      "No workspace selected, but token exists. Backend will try to auto-select tenant."
+    );
+  } // Default headers
   const headers: Record<string, string> = {
     Authorization: token ? `Bearer ${token}` : "",
-    "X-Tenant-Workspace": workspaceName || "",
+    "X-Tenant-Slug": workspaceName || "",
     "Content-Type": "application/json", // Default Content-Type
     ...options.headers,
   };
+
+  // Debug info
+  console.log(`API Request to ${endpoint}:`, {
+    auth: token ? `Bearer ${token.substring(0, 10)}...` : "No token",
+    workspace: workspaceName || "No workspace",
+  });
 
   // Handle FormData
   if (options.data instanceof FormData) {
@@ -255,14 +283,19 @@ export const apiRequest = async <Req, Res>(
 
       try {
         const refreshResponse = await axios.post(
-          `${BASE_URL}authenticate/refresh-token/`,
+          `${BASE_URL}auth/token/refresh/`, // Updated endpoint to match backend
           {
             refresh: refreshToken,
           }
         );
 
         const newAccessToken = refreshResponse.data.access;
+
+        // Update token in cookies
         Cookies.set("access", newAccessToken);
+
+        // Also update in localStorage for backward compatibility
+        localStorage.setItem("accessToken", newAccessToken);
 
         // Retry the original request with updated token
         config.headers = {

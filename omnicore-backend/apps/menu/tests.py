@@ -73,7 +73,7 @@ class MenuItemViewSetTestCase(TestCase):
         """Test that menu items are filtered by tenant slug"""
         # Test tenant 1
         response = self.client.get(
-            "/api/menu/items/", HTTP_X_TENANT_SLUG=self.tenant1.slug
+            "/api/menu/items/", HTTP_X_TENANT_WORKSPACE=self.tenant1.slug
         )
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -82,7 +82,7 @@ class MenuItemViewSetTestCase(TestCase):
 
         # Test tenant 2
         response = self.client.get(
-            "/api/menu/items/", HTTP_X_TENANT_SLUG=self.tenant2.slug
+            "/api/menu/items/", HTTP_X_TENANT_WORKSPACE=self.tenant2.slug
         )
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -100,7 +100,7 @@ class MenuItemViewSetTestCase(TestCase):
                 "cost": 7.50,
                 "category": str(self.category1.id),
             },
-            HTTP_X_TENANT_SLUG=self.tenant1.slug,
+            HTTP_X_TENANT_WORKSPACE=self.tenant1.slug,
             format="json",
         )
         self.assertEqual(response.status_code, 201)
@@ -112,12 +112,12 @@ class MenuItemViewSetTestCase(TestCase):
 
         # Verify it's accessible via tenant 1's context
         response = self.client.get(
-            f"/api/menu/items/{new_item_id}/", HTTP_X_TENANT_SLUG=self.tenant1.slug
+            f"/api/menu/items/{new_item_id}/", HTTP_X_TENANT_WORKSPACE=self.tenant1.slug
         )
         self.assertEqual(response.status_code, 200)
 
         # Verify it's NOT accessible via tenant 2's context
         response = self.client.get(
-            f"/api/menu/items/{new_item_id}/", HTTP_X_TENANT_SLUG=self.tenant2.slug
+            f"/api/menu/items/{new_item_id}/", HTTP_X_TENANT_WORKSPACE=self.tenant2.slug
         )
         self.assertEqual(response.status_code, 404)

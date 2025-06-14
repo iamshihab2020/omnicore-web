@@ -12,7 +12,7 @@ put {
 
 headers {
   Content-Type: application/json
-  X-Tenant-Slug: {{tenantSlug}}
+  X-Tenant-Workspace: {{tenantSlug}}
 }
 
 auth:bearer {
@@ -48,5 +48,5 @@ docs {
   Updates a specific menu item.
   Requires a valid access token in the Authorization header.
   User must belong to the tenant to access this resource.
-  The tenant is identified by the X-Tenant-Slug header.
+  The tenant is identified by the X-Tenant-Workspace header.
 }

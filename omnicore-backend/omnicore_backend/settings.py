@@ -180,6 +180,24 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS", "http://localhost:3000"
 ).split(",")
 
+# Allow credentials (cookies) to be sent in cross-origin requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Allow specific headers in CORS requests
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "x-tenant-workspace",
+    "x-tenant-slug",
+]
+
 # Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
