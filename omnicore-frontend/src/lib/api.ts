@@ -153,7 +153,7 @@ export function isTokenExpired(token: string | null): boolean {
     return Date.now() >= expiryTime;
   } catch (error) {
     console.error("Error parsing token:", error);
-    return true; // If we can't parse the token, assume it's expired
+    return true; 
   }
 }
 

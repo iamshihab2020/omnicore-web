@@ -35,7 +35,7 @@ headers = {
 
 # Make the API request
 try:
-    url = f"{base_url}/api/management/table/tables/{table_id}/"
+    url = f"{base_url}/api/management/table/{table_id}/"
     print(f"Deleting restaurant table with ID: {table_id}")
 
     response = requests.delete(url, headers=headers)

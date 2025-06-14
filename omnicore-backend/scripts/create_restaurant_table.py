@@ -38,7 +38,7 @@ headers = {
 
 # Make the API request
 try:
-    url = f"{base_url}/api/management/table/tables/"
+    url = f"{base_url}/api/management/table/"
     print(f"Creating restaurant table at: {url}")
     print(f"With data: {json.dumps(table_data, indent=2)}")
 

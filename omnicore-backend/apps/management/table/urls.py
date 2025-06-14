@@ -1,12 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import TableViewSet
+from .views import RestaurantTableViewSet
 
-# Create a router and register our viewsets with it.
+# Create a router for viewsets
 router = DefaultRouter()
-router.register(r"tables", TableViewSet, basename="table")
+router.register(r"", RestaurantTableViewSet, basename="restaurant-table")
 
-# The API URLs are determined automatically by the router.
 urlpatterns = [
     path("", include(router.urls)),
 ]

@@ -26,7 +26,7 @@ fi
 
 # Create the restaurant table
 echo "Creating restaurant table..."
-curl -X POST http://localhost:8000/api/management/table/tables/ \
+curl -X POST http://localhost:8000/api/management/table/ \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-Tenant-Slug: test-tenant-restaurant" \

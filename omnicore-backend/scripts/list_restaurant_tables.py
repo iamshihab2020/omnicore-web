@@ -54,7 +54,7 @@ if query_string:
 
 # Make the API request
 try:
-    url = f"{base_url}/api/management/table/tables/{query_string}"
+    url = f"{base_url}/api/management/table/{query_string}"
     print(f"Fetching restaurant tables from: {url}")
 
     response = requests.get(url, headers=headers)

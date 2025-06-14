@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import RestaurantTable
 
 
-class TableSerializer(serializers.ModelSerializer):
+class RestaurantTableSerializer(serializers.ModelSerializer):
     """Serializer for RestaurantTable model"""
 
     class Meta:
@@ -20,10 +20,3 @@ class TableSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
-
-
-class TableDetailSerializer(TableSerializer):
-    """Detailed serializer for Table model with additional data"""
-
-    class Meta(TableSerializer.Meta):
-        fields = TableSerializer.Meta.fields + []
