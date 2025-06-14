@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
 import React from "react";
@@ -30,12 +30,17 @@ export function CategoryList({
   onCategoryClick,
   highlightId,
 }: CategoryListProps) {
+  // If a title is provided, show it (for backward compatibility)
+  const showHeader = title !== "";
+
   return (
-    <Card className="flex-grow flex flex-col gap-y-3">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow overflow-hidden">
+    <div className="flex-grow flex flex-col gap-y-2">
+      {showHeader && (
+        <div className="px-4 py-3 sm:px-6 sm:py-4">
+          <h3 className="text-lg sm:text-xl font-semibold">{title}</h3>
+        </div>
+      )}
+      <div className="flex-grow">
         {isLoading && <p className="text-center p-4">Loading categories...</p>}
         {error && (
           <Alert variant="destructive" className="m-4">
@@ -100,10 +105,10 @@ export function CategoryList({
                     </Link>
                   );
                 })}
-            </div>
+            </div>{" "}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

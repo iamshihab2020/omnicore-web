@@ -645,7 +645,7 @@ export default function CreateItemPage() {
               <CardTitle className="text-lg sm:text-xl">All Items</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-250px)]">
+              <ScrollArea className="h-[calc(100vh-290px)]">
                 <div className="px-3 sm:px-6 pb-4">
                   <ItemList
                     items={itemsList}

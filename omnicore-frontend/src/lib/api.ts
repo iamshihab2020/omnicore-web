@@ -73,10 +73,14 @@ export const authApi = {
     }
 
     return response.json();
-  },
-  // Refresh the access token using the refresh token
+  },  // Refresh the access token using the refresh token
   async refreshToken(): Promise<{ access: string }> {
-    const refreshToken = localStorage.getItem("refreshToken");
+    // Get refresh token from both localStorage and cookies
+    const Cookies = (await import("js-cookie")).default;
+    const refreshTokenInCookies = Cookies.get("refresh");
+    const refreshTokenInStorage = localStorage.getItem("refreshToken");
+    const refreshToken = refreshTokenInCookies || refreshTokenInStorage;
+    
     if (!refreshToken) {
       throw new Error("No refresh token found");
     }
@@ -111,11 +115,17 @@ export const authApi = {
 
     return;
   },
-
-  // Logout - clears tokens from localStorage
-  logout() {
+  // Logout - clears tokens from both localStorage and cookies
+  async logout() {
+    // Clear localStorage tokens
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    
+    // Also clear cookies
+    const Cookies = (await import("js-cookie")).default;
+    Cookies.remove("access");
+    Cookies.remove("refresh");
+    Cookies.remove("workspace");
   },
 };
 
@@ -130,13 +140,68 @@ export function getAccessToken(): string | null {
   return localStorage.getItem("accessToken");
 }
 
+// Utility function to check if a JWT token is expired
+export function isTokenExpired(token: string | null): boolean {
+  if (!token) return true;
+  
+  try {
+    // Get the expiration part from the JWT
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expiryTime = payload.exp * 1000; // Convert to milliseconds
+    
+    // Check if the token has expired
+    return Date.now() >= expiryTime;
+  } catch (error) {
+    console.error("Error parsing token:", error);
+    return true; // If we can't parse the token, assume it's expired
+  }
+}
+
 // A helper function to handle API requests with authentication
 export async function fetchWithAuth(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
-  // Get the token
-  const token = localStorage.getItem("accessToken");
+  // Get the token from localStorage or cookies (for compatibility)
+  const Cookies = (await import("js-cookie")).default;
+  const tokenInCookies = Cookies.get("access");
+  const tokenInStorage = localStorage.getItem("accessToken");
+  const token = tokenInCookies || tokenInStorage;
+
+  // If we have a token in one place but not the other, sync them
+  if (tokenInCookies && !tokenInStorage) {
+    localStorage.setItem("accessToken", tokenInCookies);
+  } else if (!tokenInCookies && tokenInStorage) {
+    Cookies.set("access", tokenInStorage);
+  }
+  
+  // Check if token is expired before even making the request
+  if (token && isTokenExpired(token)) {
+    console.log("Token is expired, attempting to refresh before request");
+    try {
+      // Try to refresh the token before even making the request
+      const refreshed = await authApi.refreshToken();
+      
+      // Save the new token in both localStorage and cookies
+      localStorage.setItem("accessToken", refreshed.access);
+      Cookies.set("access", refreshed.access);
+      
+      // Use the new token for this request
+      const newToken = refreshed.access;
+      
+      // Add the new token to headers
+      options.headers = {
+        ...options.headers,
+        Authorization: `Bearer ${newToken}`,
+      };
+      
+      // Return the request with the new token
+      return fetch(url, options);
+    } catch (error) {
+      console.error("Preemptive token refresh failed:", error);
+      // Continue with the request, it will fail with 401 and trigger the regular refresh flow
+    }
+  }
 
   // Add token to headers if it exists
   const headers = {
@@ -153,11 +218,24 @@ export async function fetchWithAuth(
   // If the request was unauthorized, try to refresh the token
   if (response.status === 401) {
     try {
+      console.log("Token expired, attempting to refresh...");
+      
+      // Get the refresh token from localStorage or cookies
+      const refreshTokenInCookies = Cookies.get("refresh");
+      const refreshTokenInStorage = localStorage.getItem("refreshToken");
+      
+      if (!refreshTokenInCookies && !refreshTokenInStorage) {
+        throw new Error("No refresh token available");
+      }
+
       // Try to refresh the token
       const refreshed = await authApi.refreshToken();
 
-      // Save the new token
+      // Save the new token in both localStorage and cookies
       localStorage.setItem("accessToken", refreshed.access);
+      Cookies.set("access", refreshed.access);
+      
+      console.log("Token refreshed successfully");
 
       // Retry the original request with the new token
       return fetch(url, {
@@ -166,11 +244,17 @@ export async function fetchWithAuth(
           ...options.headers,
           Authorization: `Bearer ${refreshed.access}`,
         },
-      });
-    } catch {
-      // If refresh fails, logout and redirect to login
+      });    } catch (error) {
+      // If refresh fails, logout and redirect with session expired parameter
+      console.error("Token refresh failed:", error);
       authApi.logout();
-      window.location.href = "/login";
+      
+      // Only redirect if we're in the browser
+      if (typeof window !== 'undefined') {
+        window.location.href = "/login?sessionExpired=true";
+      }
+      
+      // Return the original 401 response
       return response;
     }
   }

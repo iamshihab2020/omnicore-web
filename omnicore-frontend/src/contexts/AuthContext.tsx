@@ -53,31 +53,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     await fetchCurrentUser(); // Get user profile after login
     return response;
-  }
-  async function logout() {
-    // Clear localStorage (old method)
-    authApi.logout();
-
-    // Also clear cookies (new method)
-    const Cookies = (await import("js-cookie")).default;
-    Cookies.remove("access");
-    Cookies.remove("refresh");
-    Cookies.remove("workspace");
-
+  }  async function logout() {
+    // Use the centralized logout function
+    await authApi.logout();
+    
+    // Update the UI state
     setCurrentUser(null);
     return Promise.resolve();
   }
 
   async function resetPassword(email: string) {
     return authApi.resetPassword(email);
-  }
-  // Fetch the current user's profile
+  }  // Fetch the current user's profile
   async function fetchCurrentUser() {
     try {
       // Import Cookies
       const Cookies = (await import("js-cookie")).default;
       const tokenInCookies = Cookies.get("access");
       const tokenInStorage = localStorage.getItem("accessToken");
+
+      // If we don't have any tokens, don't even try
+      if (!tokenInCookies && !tokenInStorage) {
+        console.log("No authentication tokens found, skipping profile fetch");
+        return null;
+      }
 
       // If we have a token in cookies but not in localStorage, set it for backward compatibility
       if (tokenInCookies && !tokenInStorage) {
@@ -93,6 +92,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return user;
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
+        // Look for specific error indicating expired token that couldn't be refreshed
+      // The error might be from axios or fetch, handle both cases
+      const axiosError = error as { response?: { status: number } };
+      const fetchError = error as { status?: number };
+      if (axiosError.response?.status === 401 || fetchError.status === 401) {
+        console.log("Authentication failed - session likely expired");
+        // Ensure we're logged out if token refresh failed
+        authApi.logout();
+      }
+      
       return null;
     }
   }
