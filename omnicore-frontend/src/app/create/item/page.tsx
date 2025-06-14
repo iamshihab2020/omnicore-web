@@ -7,7 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ItemList, Item } from "@/components/item/item-list";
 import { Category } from "@/components/category/category-list";
 import Image from "next/image";
@@ -18,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, Loader2, X } from "lucide-react";
+import { ChevronLeft, Loader2, X, Save } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "@/lib/api";
@@ -380,16 +392,16 @@ export default function CreateItemPage() {
               Back to Create
             </Button>
           }
-        />{" "}
+        />
       </div>
-      <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 p-4  gap-6">
         {/* Left Column: Create Item Form */}
-        <div className="w-full lg:w-1/2">
-          <Card>
+        <div className="w-full lg:w-1/2 flex flex-col">
+          <Card className="flex flex-col h-auto">
             <CardHeader>
               <CardTitle>Create Menu Item</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
               {/* Display message alert */}
               {uiState.message &&
                 (function () {
@@ -432,7 +444,6 @@ export default function CreateItemPage() {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {" "}
                   <div>
                     <Label htmlFor="itemPrice">Price ($)</Label>
                     <Input
@@ -471,7 +482,7 @@ export default function CreateItemPage() {
                       onChange={handlePrepTimeInput}
                       placeholder="10"
                     />
-                  </div>{" "}
+                  </div>
                   <div className="flex flex-col justify-end mb-2">
                     <div className="flex items-center gap-2">
                       <Switch
@@ -555,18 +566,48 @@ export default function CreateItemPage() {
                       </div>
                     )}
                   </div>
-                </div>{" "}
+                </div>
                 <div className="flex space-x-2">
-                  <Button type="submit" disabled={uiState.isSubmitting}>
-                    {uiState.isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      "Create Item"
-                    )}
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button" disabled={uiState.isSubmitting}>
+                        {uiState.isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Create Item
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Create New Item</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to create this new menu item?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            document.forms[0].dispatchEvent(
+                              new Event("submit", {
+                                bubbles: true,
+                                cancelable: true,
+                              })
+                            );
+                          }}
+                        >
+                          Create
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <Button
                     variant="outline"
                     onClick={() => router.push("/create")}
@@ -577,7 +618,7 @@ export default function CreateItemPage() {
                 </div>
               </form>
             </CardContent>
-          </Card>{" "}
+          </Card>
           {uiState.message &&
             (function () {
               // Create a temporary string to avoid type comparison issues
@@ -599,13 +640,24 @@ export default function CreateItemPage() {
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display All Items */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <ItemList
-            items={itemsList}
-            isLoading={loadingState.items}
-            error={null}
-            title="All Items"
-            onItemClick={handleItemClick}
-          />
+          <Card className="h-auto">
+            <CardHeader className="px-4 py-3 sm:px-6 sm:py-4">
+              <CardTitle className="text-lg sm:text-xl">All Items</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ScrollArea className="h-[calc(100vh-250px)]">
+                <div className="px-3 sm:px-6 pb-4">
+                  <ItemList
+                    items={itemsList}
+                    isLoading={loadingState.items}
+                    error={null}
+                    title=""
+                    onItemClick={handleItemClick}
+                  />
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </AppLayout>
