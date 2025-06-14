@@ -6,9 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ItemList, Item } from "@/components/item/item-list";
 import { Category } from "@/components/category/category-list";
 import Image from "next/image";
@@ -19,121 +30,158 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft, Loader2, X, Save } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { useRouter } from "next/navigation";
+import { apiRequest } from "@/lib/api";
+import { Switch } from "@/components/ui/switch";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+
+// Define UI state types as constants
+const STATUS_TYPES = {
+  LOADING: "loading",
+  SUCCESS: "success",
+  ERROR: "error",
+} as const;
+
+// Define the interface for a working router wrapper compatible with apiRequest
+interface RouterWrapper {
+  push: (url: string) => Promise<boolean | void>;
+}
+
+// Define interfaces for our data models
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface MenuItemData {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  cost?: number;
+  is_active: boolean;
+  preparation_time?: number;
+  category: string;
+  image?: string;
+}
 
 export default function CreateItemPage() {
-    const router = useRouter();
-  
-  // Form state
-  const [itemName, setItemName] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
-  const [itemPrice, setItemPrice] = useState<string>("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
-  const [itemImage, setItemImage] = useState<string | null>(null);
-  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
+  const router = useRouter();
 
-  // Feedback message
-  const [message, setMessage] = useState<{
-    type: "success" | "error" | null;
-    text: string;
+  // Create a router wrapper compatible with apiRequest
+  const routerWrapper = useMemo<RouterWrapper>(
+    () => ({
+      push: async (url: string) => router.push(url),
+    }),
+    [router]
+  );
+
+  // Form state in a single consolidated object
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    price: string;
+    cost: string;
+    is_active: boolean;
+    preparation_time: string;
+    category: string;
+    image: string | null;
   }>({
-    type: null,
-    text: "",
+    name: "",
+    description: "",
+    price: "",
+    cost: "",
+    is_active: true,
+    preparation_time: "",
+    category: "",
+    image: null,
   });
 
-  // Items list state
+  // Uploaded image file reference
+  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
+
+  // UI state
+  const [uiState, setUiState] = useState<{
+    status: (typeof STATUS_TYPES)[keyof typeof STATUS_TYPES];
+    message: string | null;
+    isSubmitting: boolean;
+  }>({
+    status: STATUS_TYPES.LOADING,
+    message: null,
+    isSubmitting: false,
+  });
+
+  // Lists state
   const [itemsList, setItemsList] = useState<Item[]>([]);
-  const [isLoadingItems, setIsLoadingItems] = useState<boolean>(true);
-  const [fetchItemsError, setFetchItemsError] = useState<string | null>(null);
-
-  // Categories state for dropdown
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(true);
-  const [fetchCategoriesError, setFetchCategoriesError] = useState<
-    string | null
-  >(null);
+  const [loadingState, setLoadingState] = useState({
+    items: true,
+    categories: true,
+  });
+  // Generic form field change handler for text fields
+  const handleFieldChange = (
+    field: string,
+    value: string | boolean | number | null
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-  const fetchCategories = async () => {
-    setIsLoadingCategories(true);
-    setFetchCategoriesError(null);
-    try {
-      const res = await fetch("/api/save-category");
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({
-          message: `Failed to fetch categories: ${res.statusText}`,
-        }));
-        throw new Error(
-          errorData.message || `Failed to fetch categories: ${res.statusText}`
-        );
-      }
-      const data: Category[] = await res.json();
-      setCategories(data);
-    } catch (error) {
-      if (error instanceof Error) {
-        setFetchCategoriesError(error.message);
-      } else {
-        setFetchCategoriesError(
-          "An unknown error occurred while fetching categories."
-        );
-      }
-      setCategories([]); // Clear list on error
-    } finally {
-      setIsLoadingCategories(false);
+  // Handle text input changes (name, description)
+  const handleTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    // Clean field name (remove Edit suffix and item prefix)
+    const fieldName = id
+      .replace(/Edit$/, "")
+      .replace(/^item/, "")
+      .toLowerCase();
+    handleFieldChange(fieldName, value);
+  };
+
+  // Handle numeric input with validation (price, cost)
+  const handleNumericInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    const fieldName = id
+      .replace(/Edit$/, "")
+      .replace(/^item/, "")
+      .toLowerCase();
+
+    // Validate decimal input (allow empty or numbers with up to 2 decimal places)
+    if (value === "" || /^\d+(\.\d{0,2})?$/.test(value)) {
+      handleFieldChange(fieldName, value);
     }
   };
 
-  const fetchItems = async () => {
-    setIsLoadingItems(true);
-    setFetchItemsError(null);
-    try {
-      const res = await fetch("/api/save-item");
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({
-          message: `Failed to fetch items: ${res.statusText}`,
-        }));
-        throw new Error(
-          errorData.message || `Failed to fetch items: ${res.statusText}`
-        );
-      }
-      const data: Item[] = await res.json();
-      setItemsList(data);
-    } catch (error) {
-      if (error instanceof Error) {
-        setFetchItemsError(error.message);
-      } else {
-        setFetchItemsError("An unknown error occurred while fetching items.");
-      }
-      setItemsList([]); // Clear list on error
-    } finally {
-      setIsLoadingItems(false);
+  // Handle preparation time input (integers only)
+  const handlePrepTimeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    // Only allow positive integers
+    if (value === "" || /^\d+$/.test(value)) {
+      handleFieldChange("preparation_time", value);
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-    fetchItems();
-  }, []);
-
+  // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
       setUploadedImageFile(file);
 
-      // Create a preview URL
+      // Create preview URL for image
       const imageUrl = URL.createObjectURL(file);
-      setItemImage(imageUrl);
+      handleFieldChange("image", imageUrl);
     }
   };
 
+  // Clear uploaded image
   const clearImage = () => {
-    setItemImage(null);
+    handleFieldChange("image", null);
     setUploadedImageFile(null);
-    // Reset the input field
+
+    // Reset file input
     const inputElement = document.getElementById(
       "itemImage"
     ) as HTMLInputElement;
@@ -142,132 +190,195 @@ export default function CreateItemPage() {
     }
   };
 
-  const validatePrice = (value: string) => {
-    if (value === "") return true;
-    const regex = /^\d+(\.\d{0,2})?$/; // Allow numbers with up to 2 decimal places
-    return regex.test(value);
-  };
+  // Show message (success or error)
+  const showMessage = (type: "success" | "error", message: string) => {
+    setUiState((prev) => ({
+      ...prev,
+      status: type === "success" ? STATUS_TYPES.SUCCESS : STATUS_TYPES.ERROR,
+      message,
+    }));
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (validatePrice(value)) {
-      setItemPrice(value);
+    // Auto-clear success messages after 3 seconds
+    if (type === "success") {
+      setTimeout(() => {
+        setUiState((prev) => ({ ...prev, message: null }));
+      }, 3000);
     }
   };
+  // Fetch data functions - can be executed in parallel
 
+  // Fetch categories for dropdown
+  const fetchCategories = useCallback(async () => {
+    try {
+      setLoadingState((prev) => ({ ...prev, categories: true }));
+      const data = await apiRequest<null, Category[]>(
+        "menu/categories/",
+        routerWrapper,
+        { method: "GET" },
+        true
+      );
+      setCategories(data);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      showMessage(
+        "error",
+        error instanceof Error
+          ? `Error loading categories: ${error.message}`
+          : "An unknown error occurred while loading categories."
+      );
+    } finally {
+      setLoadingState((prev) => ({ ...prev, categories: false }));
+    }
+  }, [routerWrapper]);
+
+  // Fetch all items for the list
+  const fetchItems = useCallback(async () => {
+    try {
+      setLoadingState((prev) => ({ ...prev, items: true }));
+      const data = await apiRequest<null, Item[]>(
+        "menu/items/",
+        routerWrapper,
+        { method: "GET" },
+        true
+      );
+      setItemsList(data);
+    } catch (error) {
+      console.error("Error loading items:", error);
+      showMessage(
+        "error",
+        error instanceof Error
+          ? `Error loading items: ${error.message}`
+          : "An unknown error occurred while loading items."
+      );
+    } finally {
+      setLoadingState((prev) => ({ ...prev, items: false }));
+    }
+  }, [routerWrapper]);
+
+  // Initialize form and data when component mounts
+  useEffect(() => {
+    // Reset UI state to initial state
+    setUiState((prev) => ({
+      ...prev,
+      status: STATUS_TYPES.SUCCESS,
+      message: null,
+    }));
+
+    // Load data in parallel for better performance
+    Promise.all([fetchCategories(), fetchItems()]);
+  }, [fetchCategories, fetchItems]);
+  // Handle form submission to create item
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage({ type: null, text: "" });
 
-    // Validate form data
-    if (!itemName) {
-      setMessage({ type: "error", text: "Item name is required." });
+    // Reset any previous messages
+    setUiState((prev) => ({ ...prev, message: null }));
+
+    // Form validation
+    if (!formData.name.trim()) {
+      showMessage("error", "Item name is required");
       return;
     }
 
-    if (!itemPrice || parseFloat(itemPrice) <= 0) {
-      setMessage({
-        type: "error",
-        text: "Please enter a valid price greater than zero.",
-      });
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      showMessage("error", "Please enter a valid price greater than zero");
       return;
     }
 
-    if (!selectedCategoryId) {
-      setMessage({ type: "error", text: "Please select a category." });
+    if (!formData.category) {
+      showMessage("error", "Please select a category");
       return;
-    } // Upload image if provided
-    let imageUrl = "";
-    if (uploadedImageFile) {
-      try {
-        // Create a FormData object to send the file
-        const formData = new FormData();
-        formData.append("file", uploadedImageFile);
-
-        // Upload the image to our API endpoint
-        const uploadRes = await fetch("/api/upload-image", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!uploadRes.ok) {
-          const errorData = await uploadRes.json().catch(() => ({
-            error: `Failed to upload image: ${uploadRes.statusText}`,
-          }));
-          throw new Error(
-            errorData.error || `Failed to upload image: ${uploadRes.statusText}`
-          );
-        }
-
-        const uploadData = await uploadRes.json();
-        imageUrl = uploadData.imageUrl;
-      } catch (error) {
-        setMessage({
-          type: "error",
-          text:
-            error instanceof Error ? error.message : "Failed to upload image",
-        });
-        return;
-      }
     }
 
-    const newItemPayload = {
-      name: itemName,
-      description: itemDescription,
-      price: parseFloat(itemPrice),
-      categoryId: selectedCategoryId,
-      image: imageUrl || undefined,
-    };
+    setUiState((prev) => ({
+      ...prev,
+      isSubmitting: true,
+      message: null,
+    }));
 
     try {
-      const saveRes = await fetch("/api/save-item", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newItemPayload),
-      });
+      // Create FormData for multipart/form-data submission (needed for file upload)
+      const submitData = new FormData();
+      submitData.append("name", formData.name);
+      submitData.append("description", formData.description);
+      submitData.append("price", formData.price);
+      submitData.append("is_active", formData.is_active.toString());
+      submitData.append("category", formData.category);
 
-      if (!saveRes.ok) {
-        let errorText = `Failed to save item: ${saveRes.statusText}`;
-        try {
-          const errorData = await saveRes.json();
-          errorText = errorData.message || errorText;
-        } catch (jsonError) {
-          console.error(
-            "Could not parse error response from /api/save-item",
-            jsonError
-          );
-        }
-        throw new Error(errorText);
+      // Add optional fields if they have valid values
+      if (formData.cost && parseFloat(formData.cost) >= 0) {
+        submitData.append("cost", formData.cost);
       }
 
-      const savedItemResponse = await saveRes.json();
+      if (
+        formData.preparation_time &&
+        parseInt(formData.preparation_time) >= 0
+      ) {
+        submitData.append("preparation_time", formData.preparation_time);
+      }
 
-      setMessage({
-        type: "success",
-        text: savedItemResponse.message || "Item created successfully!",
+      // Append image file if selected
+      if (uploadedImageFile) {
+        submitData.append("image", uploadedImageFile);
+      }
+
+      // Submit the create request
+      await apiRequest(
+        "menu/items/",
+        routerWrapper,
+        {
+          method: "POST",
+          data: submitData,
+          headers: {
+            "Content-Type": undefined, // Let axios set the correct content type
+          },
+        },
+        true
+      );
+
+      showMessage("success", "Item created successfully!");
+
+      // Reset form after successful creation
+      setFormData({
+        name: "",
+        description: "",
+        price: "",
+        cost: "",
+        is_active: true,
+        preparation_time: "",
+        category: "",
+        image: null,
       });
 
-      // Reset form
-      setItemName("");
-      setItemDescription("");
-      setItemPrice("");
-      setSelectedCategoryId(null);
-      clearImage();
+      setUploadedImageFile(null);
 
-      // Refresh the list
+      // Reset file input if it exists
+      const inputElement = document.getElementById(
+        "itemImage"
+      ) as HTMLInputElement;
+      if (inputElement) {
+        inputElement.value = "";
+      }
+
+      // Refresh items list
       fetchItems();
     } catch (error) {
-      if (error instanceof Error) {
-        setMessage({ type: "error", text: `Error: ${error.message}` });
-      } else {
-        setMessage({ type: "error", text: "An unknown error occurred." });
-      }
-      console.error(error);
+      console.error("Create error:", error);
+      showMessage(
+        "error",
+        error instanceof Error
+          ? `Error: ${error.message}`
+          : "An unexpected error occurred"
+      );
+    } finally {
+      setUiState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
+  // Handle clicking on an item in the list
+  const handleItemClick = (item: Item) => {
+    router.push(`/create/item/${item.id}`);
+  };
   return (
     <AppLayout>
       <div className="px-4">
@@ -276,24 +387,39 @@ export default function CreateItemPage() {
           description="Add new items to your menu."
           className="mb-4"
           actions={
-            <Button
-              variant="outline"
-              onClick={() => router.push("/create")}
-            >
+            <Button variant="outline" onClick={() => router.push("/create")}>
               <ChevronLeft className="mr-2" />
-              Back to Items
+              Back to Create
             </Button>
           }
         />
       </div>
-      <div className="flex flex-1 p-4 gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 p-4  gap-6">
         {/* Left Column: Create Item Form */}
-        <div className="w-1/2 flex flex-col space-y-4">
-          <Card>
+        <div className="w-full lg:w-1/2 flex flex-col">
+          <Card className="flex flex-col h-auto">
             <CardHeader>
               <CardTitle>Create Menu Item</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-grow">
+              {/* Display message alert */}
+              {uiState.message &&
+                (function () {
+                  // Create a temporary string to avoid type comparison issues
+                  const currentStatus = String(uiState.status);
+                  const isError = currentStatus === "error";
+
+                  return (
+                    <Alert
+                      variant={isError ? "destructive" : "default"}
+                      className="mb-4"
+                    >
+                      <AlertTitle>{isError ? "ERROR" : "SUCCESS"}</AlertTitle>
+                      <AlertDescription>{uiState.message}</AlertDescription>
+                    </Alert>
+                  );
+                })()}
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="itemName">Item Name</Label>
@@ -301,14 +427,11 @@ export default function CreateItemPage() {
                     className="mt-2"
                     id="itemName"
                     type="text"
-                    value={itemName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setItemName(e.target.value)
-                    }
+                    value={formData.name}
+                    onChange={handleTextChange}
                     required
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="itemDescription">
                     Description (Optional)
@@ -316,46 +439,80 @@ export default function CreateItemPage() {
                   <Textarea
                     className="mt-2"
                     id="itemDescription"
-                    value={itemDescription}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      setItemDescription(e.target.value)
-                    }
+                    value={formData.description}
+                    onChange={handleTextChange}
                   />
                 </div>
-
-                <div>
-                  <Label htmlFor="itemPrice">Price ($)</Label>
-                  <Input
-                    className="mt-2"
-                    id="itemPrice"
-                    type="text"
-                    inputMode="decimal"
-                    value={itemPrice}
-                    onChange={handlePriceChange}
-                    placeholder="0.00"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="itemPrice">Price ($)</Label>
+                    <Input
+                      className="mt-2"
+                      id="itemPrice"
+                      type="text"
+                      inputMode="decimal"
+                      value={formData.price}
+                      onChange={handleNumericInput}
+                      placeholder="0.00"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="itemCost">Cost ($) (Optional)</Label>
+                    <Input
+                      className="mt-2"
+                      id="itemCost"
+                      type="text"
+                      inputMode="decimal"
+                      value={formData.cost}
+                      onChange={handleNumericInput}
+                      placeholder="0.00"
+                    />
+                  </div>
                 </div>
-
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="prepTime">Preparation Time (minutes)</Label>
+                    <Input
+                      className="mt-2"
+                      id="prepTime"
+                      type="text"
+                      inputMode="numeric"
+                      value={formData.preparation_time}
+                      onChange={handlePrepTimeInput}
+                      placeholder="10"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-end mb-2">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="isActive"
+                        checked={formData.is_active}
+                        onCheckedChange={(checked) =>
+                          handleFieldChange("is_active", checked)
+                        }
+                      />
+                      <Label htmlFor="isActive" className="cursor-pointer">
+                        {formData.is_active ? "Active" : "Inactive"}
+                      </Label>
+                    </div>
+                  </div>
+                </div>
                 <div>
                   <Label htmlFor="categorySelect">Category</Label>
                   <Select
-                    value={selectedCategoryId?.toString() || ""}
+                    value={formData.category}
                     onValueChange={(value) =>
-                      setSelectedCategoryId(Number(value))
+                      handleFieldChange("category", value)
                     }
                   >
                     <SelectTrigger id="categorySelect" className="w-full mt-2">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {isLoadingCategories ? (
+                      {loadingState.categories ? (
                         <SelectItem value="loading" disabled>
                           Loading categories...
-                        </SelectItem>
-                      ) : fetchCategoriesError ? (
-                        <SelectItem value="error" disabled>
-                          Error loading categories
                         </SelectItem>
                       ) : categories.length === 0 ? (
                         <SelectItem value="empty" disabled>
@@ -365,7 +522,7 @@ export default function CreateItemPage() {
                         categories.map((category) => (
                           <SelectItem
                             key={category.id}
-                            value={category.id.toString()}
+                            value={String(category.id)}
                           >
                             {category.name}
                           </SelectItem>
@@ -374,7 +531,6 @@ export default function CreateItemPage() {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <Label htmlFor="itemImage">Item Image (Optional)</Label>
                   <div className="mt-2 flex flex-col space-y-4">
@@ -386,7 +542,7 @@ export default function CreateItemPage() {
                         accept="image/*"
                         className="flex-1"
                       />
-                      {itemImage && (
+                      {formData.image && (
                         <Button
                           type="button"
                           variant="outline"
@@ -396,49 +552,112 @@ export default function CreateItemPage() {
                           <X className="h-4 w-4" />
                         </Button>
                       )}
-                    </div>{" "}
-                    {itemImage && (
+                    </div>
+                    {formData.image && (
                       <div className="relative w-full h-40 bg-muted rounded-md overflow-hidden">
                         <Image
-                          src={itemImage}
+                          src={formData.image}
                           alt="Item Preview"
                           className="w-full h-full object-cover"
                           width={300}
                           height={160}
-                          unoptimized={itemImage.startsWith("blob:")}
+                          unoptimized={formData.image.startsWith("blob:")}
                         />
                       </div>
                     )}
                   </div>
                 </div>
-
-                <Button type="submit">Create Item</Button>
+                <div className="flex space-x-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button" disabled={uiState.isSubmitting}>
+                        {uiState.isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Create Item
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Create New Item</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to create this new menu item?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            document.forms[0].dispatchEvent(
+                              new Event("submit", {
+                                bubbles: true,
+                                cancelable: true,
+                              })
+                            );
+                          }}
+                        >
+                          Create
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/create")}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
+          {uiState.message &&
+            (function () {
+              // Create a temporary string to avoid type comparison issues
+              const currentStatus = String(uiState.status);
+              const isError = currentStatus === "error";
 
-          {message.text && (
-            <Alert
-              variant={message.type === "error" ? "destructive" : "default"}
-            >
-              <AlertTitle>
-                {message.type === "error" ? "Error" : "Success"}
-              </AlertTitle>
-              <AlertDescription>{message.text}</AlertDescription>
-            </Alert>
-          )}
+              return (
+                <Alert
+                  variant={isError ? "destructive" : "default"}
+                  className="mb-4"
+                >
+                  <AlertTitle>{isError ? "ERROR" : "SUCCESS"}</AlertTitle>
+                  <AlertDescription>{uiState.message}</AlertDescription>
+                </Alert>
+              );
+            })()}
         </div>
-
-        <Separator orientation="vertical" className="h-auto" />
-
-        {/* Right Column: Display Added Items */}
-        <div className="w-2/3 flex flex-col">
-          <ItemList
-            items={itemsList}
-            isLoading={isLoadingItems}
-            error={fetchItemsError}
-            title="Added Items"
-          />
+        <Separator orientation="vertical" className="h-auto hidden lg:block" />
+        <Separator className="my-6 lg:hidden" />
+        {/* Right Column: Display All Items */}
+        <div className="w-full lg:w-1/2 flex flex-col">
+          <Card className="h-auto">
+            <CardHeader className="px-4 py-3 sm:px-6 sm:py-4">
+              <CardTitle className="text-lg sm:text-xl">All Items</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ScrollArea className="h-[calc(100vh-250px)]">
+                <div className="px-3 sm:px-6 pb-4">
+                  <ItemList
+                    items={itemsList}
+                    isLoading={loadingState.items}
+                    error={null}
+                    title=""
+                    onItemClick={handleItemClick}
+                  />
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </AppLayout>
