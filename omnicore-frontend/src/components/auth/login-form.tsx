@@ -21,11 +21,11 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Check for expired session on component mount
   useEffect(() => {
     // Check if we have a URL parameter indicating session expiration
@@ -34,7 +34,7 @@ export function LoginForm() {
       setError("Your session has expired. Please log in again.");
     }
   }, [searchParams]);
-  
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -47,8 +47,11 @@ export function LoginForm() {
       // Provide more specific error messages based on the error
       const errorObj = error as { message?: string };
       const errorMessage = errorObj?.message || "Unknown error";
-      
-      if (errorMessage.includes("token") || errorMessage.includes("authentication")) {
+
+      if (
+        errorMessage.includes("token") ||
+        errorMessage.includes("authentication")
+      ) {
         setError("Authentication error. Please log in again.");
       } else {
         setError("Failed to log in. Please check your credentials.");

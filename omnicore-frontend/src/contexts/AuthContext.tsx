@@ -53,10 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     await fetchCurrentUser(); // Get user profile after login
     return response;
-  }  async function logout() {
+  }
+  async function logout() {
     // Use the centralized logout function
     await authApi.logout();
-    
+
     // Update the UI state
     setCurrentUser(null);
     return Promise.resolve();
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function resetPassword(email: string) {
     return authApi.resetPassword(email);
-  }  // Fetch the current user's profile
+  } // Fetch the current user's profile
   async function fetchCurrentUser() {
     try {
       // Import Cookies
@@ -92,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return user;
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
-        // Look for specific error indicating expired token that couldn't be refreshed
+      // Look for specific error indicating expired token that couldn't be refreshed
       // The error might be from axios or fetch, handle both cases
       const axiosError = error as { response?: { status: number } };
       const fetchError = error as { status?: number };
@@ -101,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Ensure we're logged out if token refresh failed
         authApi.logout();
       }
-      
+
       return null;
     }
   }
