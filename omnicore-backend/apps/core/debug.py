@@ -19,13 +19,13 @@ class DebugMiddleware:
             user_email = getattr(request.user, 'email', 'unknown') if is_authenticated else 'anonymous'
             
             # Log headers
-            tenant_slug = request.headers.get("X-Tenant-Slug")
+            tenant_slug = request.headers.get("X-Tenant-Workspace")
             auth_header = request.headers.get("Authorization", "")
             
             print(f"DEBUG Path: {request.path}")
             print(f"DEBUG Method: {request.method}")
             print(f"DEBUG User: {user_email} (Authenticated: {is_authenticated})")
-            print(f"DEBUG X-Tenant-Slug: {tenant_slug}")
+            print(f"DEBUG X-Tenant-Workspace: {tenant_slug}")
             
             # Debug JWT token
             if auth_header and auth_header.startswith('Bearer '):

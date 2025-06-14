@@ -17,7 +17,7 @@ class TableViewSet(viewsets.ModelViewSet):
     - Delete: Delete a table
 
     Access requires an authenticated user with access to the tenant.
-    The tenant is determined from the authenticated user and X-Tenant-Slug header.
+    The tenant is determined from the authenticated user and X-Tenant-Workspace header.
     """
 
     serializer_class = TableSerializer
@@ -57,7 +57,7 @@ class TableViewSet(viewsets.ModelViewSet):
         if hasattr(self.request, "tenant"):
             serializer.save(tenant=self.request.tenant)
         else:
-            raise ValueError("No active tenant found. Set X-Tenant-Slug header.")
+            raise ValueError("No active tenant found. Set X-Tenant-Workspace header.")
 
     def create(self, request, *args, **kwargs):
         """

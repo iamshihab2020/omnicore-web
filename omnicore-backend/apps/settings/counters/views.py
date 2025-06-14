@@ -17,7 +17,7 @@ class CounterViewSet(viewsets.ModelViewSet):
     - Delete: Delete a counter
 
     Access requires an authenticated user with access to the tenant.
-    The tenant is determined from the authenticated user and X-Tenant-Slug header.
+    The tenant is determined from the authenticated user and X-Tenant-Workspace header.
     """
 
     serializer_class = CounterSerializer
@@ -44,7 +44,7 @@ class CounterViewSet(viewsets.ModelViewSet):
 
             # No need to manually set items as the serializer handles this through items field
         else:
-            raise ValueError("No active tenant found. Set X-Tenant-Slug header.")
+            raise ValueError("No active tenant found. Set X-Tenant-Workspace header.")
 
     def validate_items(self, items_data):
         """

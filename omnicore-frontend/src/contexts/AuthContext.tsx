@@ -34,16 +34,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await fetchCurrentUser(); // Get user profile after registration
     return response;
   }
-
   async function login(email: string, password: string) {
     const response = await authApi.login(email, password);
+
+    // Store tokens in localStorage (for backward compatibility)
     setAuthTokens(response);
+
+    // Also store in cookies (new method)
+    const Cookies = (await import("js-cookie")).default;
+    Cookies.set("access", response.access);
+    Cookies.set("refresh", response.refresh);
+
+    // If the response includes tenant info, store selected workspace
+    if (response.tenants && response.tenants.length > 0) {
+      const defaultTenant = response.tenants[0];
+      Cookies.set("workspace", defaultTenant.slug || defaultTenant.name);
+    }
+
     await fetchCurrentUser(); // Get user profile after login
     return response;
   }
-
   async function logout() {
+    // Clear localStorage (old method)
     authApi.logout();
+
+    // Also clear cookies (new method)
+    const Cookies = (await import("js-cookie")).default;
+    Cookies.remove("access");
+    Cookies.remove("refresh");
+    Cookies.remove("workspace");
+
     setCurrentUser(null);
     return Promise.resolve();
   }
@@ -51,10 +71,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function resetPassword(email: string) {
     return authApi.resetPassword(email);
   }
-
   // Fetch the current user's profile
   async function fetchCurrentUser() {
     try {
+      // Import Cookies
+      const Cookies = (await import("js-cookie")).default;
+      const tokenInCookies = Cookies.get("access");
+      const tokenInStorage = localStorage.getItem("accessToken");
+
+      // If we have a token in cookies but not in localStorage, set it for backward compatibility
+      if (tokenInCookies && !tokenInStorage) {
+        localStorage.setItem("accessToken", tokenInCookies);
+      }
+      // If we have a token in localStorage but not in cookies, set it for newer code
+      else if (!tokenInCookies && tokenInStorage) {
+        Cookies.set("access", tokenInStorage);
+      }
+
       const user = await authApi.getUserProfile();
       setCurrentUser(user);
       return user;
@@ -63,13 +96,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return null;
     }
   }
-
   useEffect(() => {
     async function loadUser() {
       try {
-        // Check if we have a token in localStorage
-        const token = localStorage.getItem("accessToken");
-        if (token) {
+        // Check for tokens in either localStorage or cookies
+        const Cookies = (await import("js-cookie")).default;
+        const tokenInCookies = Cookies.get("access");
+        const tokenInStorage = localStorage.getItem("accessToken");
+
+        if (tokenInCookies || tokenInStorage) {
+          // If we have a token in either place, try to get the user
           await fetchCurrentUser();
         }
       } catch (error) {

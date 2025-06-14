@@ -6,17 +6,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { CategoryList, Category } from "@/components/category/category-list"; // Import the new component
+import { CategoryList, Category } from "@/components/category/category-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { apiRequest } from "@/lib/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Define the interface for a working router wrapper compatible with apiRequest
+interface RouterWrapper {
+  push: (url: string) => Promise<boolean | void>;
+}
+
 export default function CreateCategoryPage() {
   const router = useRouter();
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
+  const [displayOrder, setDisplayOrder] = useState<number>(1);
+  const [status, setStatus] = useState<string>("active");
   const [message, setMessage] = useState<{
     type: "success" | "error" | null;
     text: string;
@@ -30,22 +46,27 @@ export default function CreateCategoryPage() {
     string | null
   >(null);
 
+  // Create a router wrapper compatible with apiRequest
+  const routerWrapper = useMemo<RouterWrapper>(
+    () => ({
+      push: async (url: string) => router.push(url),
+    }),
+    [router]
+  );
+
   const fetchCategories = async () => {
     setIsLoadingCategories(true);
     setFetchCategoriesError(null);
     try {
-      const res = await fetch("/api/save-category");
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({
-          message: `Failed to fetch categories: ${res.statusText}`,
-        }));
-        throw new Error(
-          errorData.message || `Failed to fetch categories: ${res.statusText}`
-        );
-      }
-      const data: Category[] = await res.json();
+      const data = await apiRequest<null, Category[]>(
+        "menu/categories/",
+        routerWrapper,
+        { method: "GET" },
+        true
+      );
       setCategoriesList(data);
     } catch (error) {
+      console.error("Error fetching categories:", error);
       if (error instanceof Error) {
         setFetchCategoriesError(error.message);
       } else {
@@ -61,6 +82,7 @@ export default function CreateCategoryPage() {
 
   useEffect(() => {
     fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,40 +93,27 @@ export default function CreateCategoryPage() {
       setMessage({ type: "error", text: "Category name is required." });
       return;
     }
-
     const newCategoryPayload = {
       name: categoryName,
       description: categoryDescription,
+      display_order: displayOrder,
+      status: status,
     };
 
     try {
-      const saveRes = await fetch("/api/save-category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await apiRequest(
+        "menu/categories/",
+        routerWrapper,
+        {
+          method: "POST",
+          data: newCategoryPayload,
         },
-        body: JSON.stringify(newCategoryPayload),
-      });
-
-      if (!saveRes.ok) {
-        let errorText = `Failed to save category: ${saveRes.statusText}`;
-        try {
-          const errorData = await saveRes.json();
-          errorText = errorData.message || errorText;
-        } catch (jsonError) {
-          console.error(
-            "Could not parse error response from /api/save-category",
-            jsonError
-          );
-        }
-        throw new Error(errorText);
-      }
-
-      const savedCategoryResponse = await saveRes.json();
+        true
+      );
 
       setMessage({
         type: "success",
-        text: savedCategoryResponse.message || "Category created successfully!",
+        text: "Category created successfully!",
       });
       setCategoryName("");
       setCategoryDescription("");
@@ -127,10 +136,7 @@ export default function CreateCategoryPage() {
           description="Create a new item category to organize your items."
           className="mb-4"
           actions={
-            <Button
-              variant="outline"
-              onClick={() => router.push("/create")}
-            >
+            <Button variant="outline" onClick={() => router.push("/create")}>
               <ChevronLeft className="mr-2" />
               Back to Items
             </Button>
@@ -162,7 +168,7 @@ export default function CreateCategoryPage() {
                 <div>
                   <Label htmlFor="categoryDescription">
                     Category Description (Optional)
-                  </Label>
+                  </Label>{" "}
                   <Textarea
                     className="mt-2"
                     id="categoryDescription"
@@ -171,6 +177,38 @@ export default function CreateCategoryPage() {
                       setCategoryDescription(e.target.value)
                     }
                   />
+                </div>
+                <div>
+                  <Label htmlFor="displayOrder">Display Order</Label>
+                  <Input
+                    className="mt-2"
+                    id="displayOrder"
+                    type="number"
+                    min="1"
+                    value={displayOrder}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setDisplayOrder(parseInt(e.target.value) || 1)
+                    }
+                    required
+                  />
+                </div>{" "}
+                <div>
+                  <Label htmlFor="status">Status</Label>{" "}
+                  <Select value={status} onValueChange={setStatus}>
+                    {" "}
+                    <SelectTrigger
+                      className="w-full mt-2"
+                      id="status"
+                      aria-label="Category Status"
+                    >
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button type="submit">Create Category</Button>
               </form>

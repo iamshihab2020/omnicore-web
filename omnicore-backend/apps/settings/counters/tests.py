@@ -52,7 +52,7 @@ class CounterAPITest(APITestCase):
         TenantUser.objects.create(tenant=self.tenant, user=self.user, is_owner=True)
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
-        self.client.credentials(HTTP_X_TENANT_SLUG="test-restaurant")
+        self.client.credentials(HTTP_X_TENANT_WORKSPACE="test-restaurant")
 
     def test_list_counters(self):
         # Create test counters

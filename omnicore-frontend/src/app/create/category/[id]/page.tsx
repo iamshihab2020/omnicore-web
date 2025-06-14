@@ -8,19 +8,41 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useParams, useRouter } from "next/navigation";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 import { CategoryList, Category } from "@/components/category/category-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { ChevronLeft } from "lucide-react";
+import { apiRequest } from "@/lib/api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Define the interface for a working router wrapper compatible with apiRequest
+interface RouterWrapper {
+  push: (url: string) => Promise<boolean | void>;
+}
 
 export default function EditCategoryPage() {
   const router = useRouter();
   const params = useParams();
-  const categoryId = params.id ? parseInt(params.id as string, 10) : null;
+  const categoryId = params.id ? (params.id as string) : null;
 
+  // Create a router wrapper compatible with apiRequest
+  const routerWrapper = useMemo<RouterWrapper>(
+    () => ({
+      push: async (url: string) => router.push(url),
+    }),
+    [router]
+  );
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
+  const [displayOrder, setDisplayOrder] = useState<number>(1);
+  const [status, setStatus] = useState<string>("active");
   const [message, setMessage] = useState<{
     type: "success" | "error" | "info" | null;
     text: string;
@@ -41,27 +63,32 @@ export default function EditCategoryPage() {
     setIsLoadingCategories(true);
     setFetchCategoriesError(null);
     try {
-      const res = await fetch("/api/save-category");
-      if (!res.ok) {
-        const errorData = await res
-          .json()
-          .catch(() => ({
-            message: `Failed to fetch categories: ${res.statusText}`,
-          }));
-        throw new Error(
-          errorData.message || `Failed to fetch categories: ${res.statusText}`
-        );
-      }
-      const data: Category[] = await res.json();
+      const data = await apiRequest<null, Category[]>(
+        "menu/categories/",
+        routerWrapper,
+        { method: "GET" },
+        true
+      );
+
       setCategoriesList(data);
 
       // Find the current category and set the form data
       if (categoryId !== null) {
-        const currentCategory = data.find((cat) => cat.id === categoryId);
-        if (currentCategory) {
-          setCategoryName(currentCategory.name);
-          setCategoryDescription(currentCategory.description || "");
-        } else {
+        try {
+          // Get specific category details
+          const categoryDetails = await apiRequest<null, Category>(
+            `menu/categories/${categoryId}/`,
+            routerWrapper,
+            { method: "GET" },
+            true
+          );
+
+          setCategoryName(categoryDetails.name);
+          setCategoryDescription(categoryDetails.description || "");
+          setDisplayOrder(categoryDetails.display_order || 1);
+          setStatus(categoryDetails.status || "active");
+        } catch (fetchError) {
+          console.error("Error fetching category details:", fetchError);
           setMessage({
             type: "error",
             text: `Category with ID ${categoryId} not found.`,
@@ -69,6 +96,7 @@ export default function EditCategoryPage() {
         }
       }
     } catch (error) {
+      console.error("Error fetching categories:", error);
       if (error instanceof Error) {
         setFetchCategoriesError(error.message);
       } else {
@@ -81,8 +109,7 @@ export default function EditCategoryPage() {
       setIsLoadingCategories(false);
       setIsLoading(false); // Main loading state is also done
     }
-  }, [categoryId]);
-
+  }, [categoryId, routerWrapper]);
   useEffect(() => {
     if (categoryId === null) {
       setMessage({ type: "error", text: "Category ID is missing." });
@@ -92,11 +119,9 @@ export default function EditCategoryPage() {
 
     fetchAllCategories();
   }, [categoryId, fetchAllCategories]);
-
   const handleCategoryClick = (category: Category) => {
     router.push(`/create/category/${category.id}`);
   };
-
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (categoryId === null) return;
@@ -107,36 +132,27 @@ export default function EditCategoryPage() {
       setMessage({ type: "error", text: "Category name cannot be empty." });
       return;
     }
-
     const updatedCategory = {
-      id: categoryId,
       name: categoryName,
       description: categoryDescription,
+      display_order: displayOrder,
+      status: status,
     };
 
     try {
-      const res = await fetch(`/api/edit-category/${categoryId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+      await apiRequest(
+        `menu/categories/${categoryId}/`,
+        routerWrapper,
+        {
+          method: "PUT",
+          data: updatedCategory,
         },
-        body: JSON.stringify(updatedCategory),
-      });
+        true
+      );
 
-      if (!res.ok) {
-        const errorData = await res
-          .json()
-          .catch(() => ({
-            message: `Failed to update category: ${res.statusText}`,
-          }));
-        throw new Error(
-          errorData.message || `Failed to update category: ${res.statusText}`
-        );
-      }
-      const responseData = await res.json();
       setMessage({
         type: "success",
-        text: responseData.message || "Category updated successfully!",
+        text: "Category updated successfully!",
       });
 
       // Refresh the category list
@@ -152,7 +168,6 @@ export default function EditCategoryPage() {
       }
     }
   };
-
   const handleDelete = async () => {
     if (categoryId === null) return;
     if (!window.confirm("Are you sure you want to delete this category?"))
@@ -162,26 +177,16 @@ export default function EditCategoryPage() {
     setMessage({ type: null, text: "" });
 
     try {
-      const res = await fetch(`/api/delete-category/${categoryId}`, {
-        method: "DELETE",
-      });
+      await apiRequest(
+        `menu/categories/${categoryId}/`,
+        routerWrapper,
+        { method: "DELETE" },
+        true
+      );
 
-      if (!res.ok) {
-        const errorData = await res
-          .json()
-          .catch(() => ({
-            message: `Failed to delete category: ${res.statusText}`,
-          }));
-        throw new Error(
-          errorData.message || `Failed to delete category: ${res.statusText}`
-        );
-      }
-      const responseData = await res.json();
       setMessage({
         type: "success",
-        text:
-          responseData.message ||
-          "Category deleted successfully! Redirecting...",
+        text: "Category deleted successfully! Redirecting...",
       });
       router.push("/create/category");
     } catch (error) {
@@ -298,6 +303,38 @@ export default function EditCategoryPage() {
                     value={categoryDescription}
                     onChange={(e) => setCategoryDescription(e.target.value)}
                   />
+                </div>
+                <div>
+                  <Label htmlFor="displayOrderEdit">Display Order</Label>
+                  <Input
+                    className="mt-2"
+                    id="displayOrderEdit"
+                    type="number"
+                    min="1"
+                    value={displayOrder}
+                    onChange={(e) =>
+                      setDisplayOrder(parseInt(e.target.value) || 1)
+                    }
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="statusEdit">Status</Label>{" "}
+                  <Select value={status} onValueChange={setStatus}>
+                    {" "}
+                    <SelectTrigger
+                      className="w-full mt-2"
+                      id="statusEdit"
+                      aria-label="Category Status"
+                    >
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex space-x-2">
                   <Button type="submit" disabled={isDeleting || isLoading}>
