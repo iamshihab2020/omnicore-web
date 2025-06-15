@@ -38,6 +38,13 @@ export default function CreatePage() {
       color: "text-amber-500",
     },
     {
+      title: "Create Table",
+      description: "Add new tables to your restaurant layout",
+      icon: <Table className="h-6 w-6" />,
+      href: "/create/table",
+      color: "text-indigo-500",
+    },
+    {
       title: "Create Discount",
       description: "Set up new discount offers and promotions",
       icon: <Percent className="h-6 w-6" />,
@@ -50,13 +57,6 @@ export default function CreatePage() {
       icon: <UserPlus className="h-6 w-6" />,
       href: "/create/waiter",
       color: "text-purple-500",
-    },
-    {
-      title: "Create Table",
-      description: "Add new tables to your restaurant layout",
-      icon: <Table className="h-6 w-6" />,
-      href: "/create/table",
-      color: "text-indigo-500",
     },
     {
       title: "Create Tax Rule",
@@ -86,7 +86,7 @@ export default function CreatePage() {
                   </div>
                   <CardTitle className="mt-4">{option.title}</CardTitle>
                   <CardDescription>{option.description}</CardDescription>
-                </CardHeader>{" "}
+                </CardHeader>
                 <CardFooter>
                   <Button className="w-full transition-colors duration-300 group-hover:bg-primary/90 group-hover:text-white">
                     Create {option.title.split(" ").pop()}

@@ -35,7 +35,7 @@ fi
 
 # Delete the restaurant table
 echo "Deleting restaurant table with ID: $TABLE_ID"
-curl -X DELETE "http://localhost:8000/api/management/table/tables/$TABLE_ID/" \
+curl -X DELETE "http://localhost:8000/api/management/table/$TABLE_ID/" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "X-Tenant-Slug: test-tenant-restaurant" \

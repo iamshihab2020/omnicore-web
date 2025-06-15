@@ -8,15 +8,15 @@ class RestaurantTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantTable
         fields = [
-            "id",
-            "number",
-            "name",
-            "capacity",
-            "status",
-            "area",
-            "is_active",
-            "notes",
-            "created_at",
-            "updated_at",
+            'id',
+            'number',
+            'name',
+            'capacity',
+            'status',
+            'area',
+            'is_active',
+            'notes',
+            'created_at',
+            'updated_at',
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ['id', 'created_at', 'updated_at']

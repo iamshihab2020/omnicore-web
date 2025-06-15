@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/api/management/table/
+  url: http://localhost:8000/api/management/table/
   body: json
   auth: bearer
 }
@@ -16,7 +16,7 @@ headers {
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5OTM0NjU5LCJpYXQiOjE3NDk5MzEwNTksImp0aSI6IjEwYzYzMjI2ZWY5YzRmMGRiOGU4YWUyOTgxNGYwYjE4IiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.w_rkjidF2LYUUjobOJcBecbFyCeSEZzHqSVPHY9VSes
 }
 
 body:json {

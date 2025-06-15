@@ -89,35 +89,36 @@ class RestaurantTableViewSet(viewsets.ModelViewSet):
         """
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-
+        
         # Check if we should include counts
-        include_counts = (
-            request.query_params.get("include_counts", "").lower() == "true"
-        )
-
+        include_counts = request.query_params.get('include_counts', '').lower() == 'true'
+        
         if include_counts and hasattr(request, "tenant"):
             # Get counts by status
             counts = {}
-            counts["total"] = queryset.count()
-
-            status_counts = (
-                RestaurantTable.objects.filter(tenant=request.tenant)
-                .values("status")
-                .annotate(count=Count("status"))
-            )
-
+            counts['total'] = queryset.count()
+            
+            status_counts = RestaurantTable.objects.filter(
+                tenant=request.tenant
+            ).values('status').annotate(count=Count('status'))
+            
             for status_count in status_counts:
-                counts[status_count["status"]] = status_count["count"]
-
+                counts[status_count['status']] = status_count['count']
+            
             # Add default values for statuses that have no tables
-            for status in ["available", "occupied", "reserved", "inactive"]:
+            for status in ['available', 'occupied', 'reserved', 'inactive']:
                 if status not in counts:
                     counts[status] = 0
-
-            return Response({"data": serializer.data, "counts": counts})
-
-        return Response({"data": serializer.data})
-
+            
+            return Response({
+                "data": serializer.data,
+                "counts": counts
+            })
+        
+        return Response({
+            "data": serializer.data
+        })
+        
     def destroy(self, request, *args, **kwargs):
         """
         Delete a table
@@ -125,5 +126,6 @@ class RestaurantTableViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Table deleted successfully"}, status=status.HTTP_200_OK
+            {"message": "Table deleted successfully"}, 
+            status=status.HTTP_200_OK
         )

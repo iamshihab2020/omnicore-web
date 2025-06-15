@@ -25,7 +25,7 @@ if [ -z "$ACCESS_TOKEN" ]; then
 fi
 
 # Build the URL with query parameters
-URL="http://localhost:8000/api/management/table/tables/"
+URL="http://localhost:8000/api/management/table/"
 QUERY_PARAMS=""
 
 # Process command line arguments
