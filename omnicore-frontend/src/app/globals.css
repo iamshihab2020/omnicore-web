@@ -412,3 +412,8 @@
 .product-added-badge {
   animation: simpleSlideIn 0.2s ease-out forwards;
 }
+
+/* Custom class for the dashboard chart clip path */
+.clip-path-70-percent {
+  clip-path: polygon(0% 0%, 70% 0%, 70% 100%, 0% 100%);
+}

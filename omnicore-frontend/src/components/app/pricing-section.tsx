@@ -4,6 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const pricingPlans = [
   {
@@ -64,13 +65,19 @@ const pricingPlans = [
 
 export function PricingSection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
+    <section className="w-full  px-2 lg:px-10 py-12 md:py-24 lg:py-32 bg-muted/40">
       <div className="container">
         <div className="flex flex-col items-center justify-center space-y-6 text-center">
           <div className="space-y-4 max-w-4xl mx-auto">
-            <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-              Pricing
-            </div>
+            {" "}
+            <motion.div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm border border-primary/30 text-primary relative overflow-hidden">
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10"
+                animate={{ x: ["-100%", "100%"] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              />
+              <span className="relative z-10">Pricing</span>
+            </motion.div>
             <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
               Simple, transparent pricing
             </h2>
