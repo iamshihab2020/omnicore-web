@@ -19,7 +19,7 @@ import {
   LayoutDashboard,
   MenuIcon,
   Settings,
-  User,
+  // User,
   ChevronLeft,
   ChevronRight,
   Computer,
@@ -57,13 +57,8 @@ const navItems: NavItem[] = [
     icon: ClipboardPlus,
   },
   {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
     title: "Settings",
-    href: "/user-settings",
+    href: "/settings",
     icon: Settings,
   },
 ];

@@ -176,35 +176,39 @@ export const ItemList: React.FC<ItemListProps> = ({
                       />
                     ) : (
                       <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center">
-                        <span className="text-muted-foreground text-[10px]">No image</span>
+                        <span className="text-muted-foreground text-[10px]">
+                          No image
+                        </span>
                       </div>
                     )}
                     <div>
                       <div className="font-medium">{item.name}</div>
                       <div className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                            item.is_active === false
-                              ? "bg-muted text-muted-foreground"
-                              : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                          }`}
-                        >
-                          {item.is_active === false ? "Inactive" : "Active"}
-                        </span>
+                        
                         {item.categoryName && (
                           <span>Category: {item.categoryName}</span>
                         )}
                         {item.description && (
-                          <span className="line-clamp-1 hidden md:inline">{item.description}</span>
+                          <span className="line-clamp-1 hidden md:inline">
+                            {item.description}
+                          </span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium text-primary">{formatPrice(item.price)}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {item.is_active !== false ? "Active" : "Inactive"}
+                    <div className="font-medium text-primary">
+                      {formatPrice(item.price)}
                     </div>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                        item.is_active === false
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      }`}
+                    >
+                      {item.is_active === false ? "Inactive" : "Active"}
+                    </span>
                   </div>
                 </div>
               </div>

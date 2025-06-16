@@ -14,11 +14,12 @@ import { AppLayout } from "@/components/app/app-layout";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   ShoppingBag,
-  Percent,
-  UserPlus,
+  // Percent,
+  // UserPlus,
   Utensils,
   Table,
-  Receipt,
+  // Receipt,
+  AppWindow,
 } from "lucide-react";
 
 export default function CreatePage() {
@@ -45,26 +46,27 @@ export default function CreatePage() {
       color: "text-indigo-500",
     },
     {
-      title: "Create Discount",
-      description: "Set up new discount offers and promotions",
-      icon: <Percent className="h-6 w-6" />,
-      href: "/create/discount",
-      color: "text-green-500",
+      title: "Create Counter",
+      description: "Set up new sales counters or cash registers",
+      icon: <AppWindow className="h-6 w-6" />,
+      href: "/create/counter",
+      color: "text-cyan-500",
     },
-    {
-      title: "Create Waiter Profile",
-      description: "Add new staff members to your restaurant team",
-      icon: <UserPlus className="h-6 w-6" />,
-      href: "/create/waiter",
-      color: "text-purple-500",
-    },
-    {
-      title: "Create Tax Rule",
-      description: "Configure tax settings for your transactions",
-      icon: <Receipt className="h-6 w-6" />,
-      href: "/create/tax",
-      color: "text-rose-500",
-    },
+    // {
+    //   title: "Create Discount",
+    //   description: "Set up new discount offers and promotions",
+    //   icon: <Percent className="h-6 w-6" />,
+    //   href: "/create/discount",
+    //   color: "text-green-500",
+    // },
+    // {
+    //   title: "Create Waiter Profile",
+    //   description: "Add new staff members to your restaurant team",
+    //   icon: <UserPlus className="h-6 w-6" />,
+    //   href: "/create/waiter",
+    //   color: "text-purple-500",
+    // },
+
   ];
   return (
     <AppLayout>
