@@ -1,15 +1,15 @@
 "use client";
 
-import { Navbar } from "@/components/app/navbar";
-import { AnimatedFeaturesSection } from "@/components/app/animated-features-section";
-import { AnimatedStatsSection } from "@/components/app/animated-stats-section";
-import { AnimatedTestimonialsSection } from "@/components/app/animated-testimonials-section";
-import { FuturePlansSection } from "@/components/app/future-plans-section";
-import { AnimatedCtaSection } from "@/components/app/animated-cta-section";
-import { AnimatedFooter } from "@/components/app/animated-footer";
-import { HowItWorksSection } from "@/components/app/how-it-works-section";
-import { TechStackSection } from "@/components/app/tech-stack-section";
-import { AnimatedHeroSectionNew } from "@/components/app/animated-hero-section-new";
+import { Navbar } from "@/components/app/layout/navbar";
+import { AnimatedFeaturesSection } from "@/components/app/home/animated-features-section";
+import { AnimatedStatsSection } from "@/components/app/home/animated-stats-section";
+import { AnimatedTestimonialsSection } from "@/components/app/home/animated-testimonials-section";
+import { FuturePlansSection } from "@/components/app/home/future-plans-section";
+import { AnimatedCtaSection } from "@/components/app/home/animated-cta-section";
+import { AnimatedFooter } from "@/components/app/home/animated-footer";
+import { HowItWorksSection } from "@/components/app/home/how-it-works-section";
+import { TechStackSection } from "@/components/app/home/tech-stack-section";
+import { AnimatedHeroSectionNew } from "@/components/app/home/animated-hero-section-new";
 
 export default function Home() {
   return (
