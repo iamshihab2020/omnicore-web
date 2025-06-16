@@ -1,8 +1,9 @@
 "use client";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { X } from "lucide-react";
 
 const futurePlans = [
   {
@@ -197,56 +198,29 @@ const futurePlans = [
 
 export function FuturePlansSection() {
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const [expandedCard, setExpandedCard] = useState<number | null>(null);
-  const [animatingGrid, setAnimatingGrid] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    x.set(mouseX);
-    y.set(mouseY);
+  // Simple hover effect
+  const handleMouseEnter = (index: number) => {
+    setActiveCard(index);
   };
 
-  const rotateX = useTransform(y, [0, 300], [2, -2]);
-  const rotateY = useTransform(x, [0, 300], [-2, 2]);
+  const handleMouseLeave = () => {
+    setActiveCard(null);
+  };
 
-  // Function to handle card expansion
+  // Open modal with details
   const handleCardClick = (index: number) => {
-    if (expandedCard === index) {
-      setExpandedCard(null);
-      setTimeout(() => setAnimatingGrid(false), 300);
-    } else {
-      setAnimatingGrid(true);
-      setExpandedCard(index);
-    }
+    setSelectedCard(index);
   };
 
-  useEffect(() => {
-    // When a card is expanded, scroll it into view
-    if (expandedCard !== null && sectionRef.current) {
-      const yOffset = -100;
-      const element = sectionRef.current;
-      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  }, [expandedCard]);
-
-  // Determine grid columns based on expanded state
-  const gridColsClass =
-    expandedCard !== null
-      ? "grid-cols-1"
-      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5";
+  // Close modal
+  const handleCloseModal = () => {
+    setSelectedCard(null);
+  };
 
   return (
-    <section
-      className="py-16 md:py-24  px-2 lg:px-10 relative overflow-hidden"
-      ref={sectionRef}
-    >
+    <section className="py-16 md:py-24 px-2 lg:px-10 relative overflow-hidden">
       {/* Enhanced decorative elements */}
       <div className="absolute top-0 right-0 w-1/4 h-1/3 bg-gradient-to-br from-primary/10 to-transparent blur-3xl rounded-full"></div>
       <div className="absolute bottom-0 left-0 w-1/3 h-1/4 bg-gradient-to-tr from-secondary/10 to-transparent blur-3xl rounded-full"></div>
@@ -287,7 +261,6 @@ export function FuturePlansSection() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          {" "}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -300,7 +273,7 @@ export function FuturePlansSection() {
               animate={{ x: ["-100%", "100%"] }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             />
-            <span className="relative z-10">Interactive Roadmap</span>
+            <span className="relative z-10">Future Roadmap</span>
           </motion.div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
             <motion.span
@@ -320,275 +293,236 @@ export function FuturePlansSection() {
             viewport={{ once: true }}
           >
             We&apos;re constantly innovating to bring you the best restaurant
-            management experience. Explore our roadmap below and click on any
-            feature to learn more.
+            management experience. Explore our roadmap to see what&apos;s
+            coming.
           </motion.p>
         </motion.div>
 
-        <motion.div
-          className={`grid ${gridColsClass} gap-8`}
-          layout
-          transition={{ duration: 0.5 }}
-        >
+        {/* Simple grid of cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {futurePlans.map((plan, index) => (
             <motion.div
               key={index}
-              className={`relative ${
-                expandedCard !== null && expandedCard !== index ? "hidden" : ""
-              }`}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              layout
-              onMouseEnter={() => !animatingGrid && setActiveCard(index)}
-              onMouseLeave={() => !animatingGrid && setActiveCard(null)}
-              onMouseMove={handleMouseMove}
-              onClick={() => !animatingGrid && handleCardClick(index)}
+              className="relative"
+              onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleCardClick(index)}
             >
               <motion.div
-                className={`h-full rounded-lg border p-6 flex flex-col bg-background/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 ${
-                  activeCard === index ? "shadow-lg" : ""
-                } ${
-                  expandedCard === index ? "cursor-pointer" : "cursor-pointer"
+                className={`h-full rounded-lg border p-6 flex flex-col bg-background/80 backdrop-blur-sm transition-all duration-300 cursor-pointer ${
+                  activeCard === index ? "shadow-lg" : "shadow"
                 }`}
-                layout
-                style={
-                  activeCard === index && expandedCard !== index
-                    ? {
-                        rotateX: rotateX,
-                        rotateY: rotateY,
-                        transformPerspective: 1000,
-                        transformStyle: "preserve-3d",
-                      }
-                    : {}
-                }
-                whileHover={{ y: expandedCard === index ? 0 : -5 }}
+                whileHover={{ y: -5 }}
               >
-                {/* Gradient background for hover */}
-                <motion.div
-                  className={`absolute inset-0 rounded-lg bg-gradient-to-br ${plan.color}`}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity:
-                      expandedCard === index
-                        ? 0.1
-                        : activeCard === index
-                        ? 0.05
-                        : 0,
-                  }}
-                  layout
-                />
+                {/* Feature badge for featured items */}
+                {plan.featured && (
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <motion.span
+                      className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                    >
+                      Featured
+                    </motion.span>
+                  </div>
+                )}
 
-                {/* Release and progress indicator */}
+                {/* Card header */}
                 <div className="flex justify-between items-start mb-4">
-                  <motion.div
-                    className={`p-2 rounded-lg bg-primary/10 ${
-                      activeCard === index || expandedCard === index
-                        ? "text-primary"
-                        : ""
-                    }`}
-                    animate={{
-                      scale:
-                        expandedCard === index
-                          ? [1, 1.1, 1]
-                          : activeCard === index
-                          ? [1, 1.05, 1]
-                          : 1,
-                      transition: {
-                        repeat:
-                          expandedCard === index || activeCard === index
-                            ? Infinity
-                            : 0,
-                        duration: 2,
-                      },
-                    }}
-                    layout
-                  >
+                  <div className={`p-2 rounded-lg bg-primary/10`}>
                     {plan.icon}
-                  </motion.div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className="text-xs font-medium rounded-full px-2.5 py-1 border border-muted bg-background/50">
+                  </div>
+                  <div>
+                    <span className="text-xs font-medium rounded-full px-2.5 py-1 border bg-background/50">
                       {plan.estimatedRelease}
                     </span>
-                    {expandedCard === index && (
-                      <motion.div
-                        className="w-full flex items-center gap-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                      >
-                        <span className="text-xs text-muted-foreground">
-                          {plan.status}
-                        </span>
-                        <div className="h-1.5 w-20 bg-muted rounded-full overflow-hidden">
-                          <motion.div
-                            className={`h-full bg-gradient-to-r ${plan.color}`}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${plan.progress}%` }}
-                            transition={{ duration: 1, delay: 0.5 }}
-                          />
-                        </div>
-                      </motion.div>
-                    )}
                   </div>
                 </div>
 
-                <motion.div className="mb-4" layout>
-                  <div className="flex items-center flex-wrap gap-2">
-                    <h3 className="text-xl font-semibold mb-1">{plan.title}</h3>
-                    {plan.featured && (
-                      <motion.span
-                        className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
-                        animate={{
-                          scale: [1, 1.05, 1],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 2,
-                        }}
-                      >
-                        Featured
-                      </motion.span>
-                    )}
-                  </div>
+                {/* Card content */}
+                <div className="mb-4">
+                  <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
+                  <p className="text-muted-foreground line-clamp-3">
+                    {plan.description}
+                  </p>
+                </div>
 
-                  {expandedCard === index ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <p className="text-muted-foreground mb-4">
-                        {plan.longDescription}
-                      </p>
-                      <h4 className="font-semibold mb-2 text-sm">
-                        Key Features:
-                      </h4>{" "}
-                      <div className="space-y-2 mb-6">
-                        {plan.keyFeatures.map((feature, idx) => (
-                          <motion.div
-                            key={idx}
-                            className="flex items-center gap-2 text-sm text-muted-foreground"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + idx * 0.1 }}
-                          >
-                            <span className="text-primary">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
-                            </span>
-                            {feature}
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <p className="text-muted-foreground">{plan.description}</p>
-                  )}
-                </motion.div>
-
-                <motion.div
-                  className="mt-auto flex justify-between items-center"
-                  layout
-                >
-                  <Button
-                    variant={expandedCard === index ? "default" : "ghost"}
-                    size="sm"
-                    className="text-xs"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCardClick(index);
-                    }}
-                  >
-                    {expandedCard === index ? "Close" : "Learn more"}
-                    <span className="ml-1">
-                      {expandedCard === index ? "×" : "→"}
-                    </span>
+                {/* Card footer */}
+                <div className="mt-auto pt-4">
+                  <Button variant="ghost" size="sm" className="text-xs w-full">
+                    Learn more
+                    <span className="ml-1">→</span>
                   </Button>
+                </div>
 
-                  {expandedCard === index && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <Button variant="outline" size="sm" className="text-xs">
-                        Request early access
-                      </Button>
-                    </motion.div>
-                  )}
-                </motion.div>
-
-                {/* Enhanced spotlight effect */}
-                {(activeCard === index || expandedCard === index) && (
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none rounded-lg"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: expandedCard === index ? 0.15 : 0.1 }}
-                    exit={{ opacity: 0 }}
-                    style={{
-                      background:
-                        expandedCard === index
-                          ? `radial-gradient(circle at 50% 30%, white, transparent 70%)`
-                          : `radial-gradient(circle at ${x.get()}px ${y.get()}px, white, transparent 70%)`,
-                    }}
-                  />
-                )}
+                {/* Gradient overlay on hover */}
+                <motion.div
+                  className={`absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-br ${plan.color}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: activeCard === index ? 0.05 : 0 }}
+                  exit={{ opacity: 0 }}
+                />
               </motion.div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {expandedCard === null && (
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <Button asChild className="group relative overflow-hidden">
-              <Link href="/roadmap">
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/0"
-                  animate={{
-                    x: ["0%", "100%", "0%"],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
-                View Full Product Roadmap
-                <motion.span
-                  className="ml-2 inline-block"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  →
-                </motion.span>
-              </Link>
-            </Button>
-          </motion.div>
-        )}
+        {/* View full roadmap button */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Button asChild className="group relative overflow-hidden">
+            <Link href="/roadmap">
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/0"
+                animate={{ x: ["0%", "100%", "0%"] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+              />
+              View Full Product Roadmap
+              <motion.span
+                className="ml-2 inline-block"
+                animate={{ x: [0, 4, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                →
+              </motion.span>
+            </Link>
+          </Button>
+        </motion.div>
       </div>
+
+      {/* Modal for card details */}
+      {selectedCard !== null && (
+        <>
+          {/* Modal overlay */}
+          <motion.div
+            className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleCloseModal}
+          />
+
+          {/* Modal content */}
+          <motion.div
+            className="fixed inset-4 md:inset-auto md:top-[10%] md:left-1/2 md:-translate-x-1/2 md:max-w-2xl md:w-full z-50 bg-background rounded-lg shadow-xl overflow-hidden"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ type: "spring", damping: 25 }}
+          >
+            {/* Modal header */}
+            <div
+              className={`p-6 md:p-8 bg-gradient-to-r ${futurePlans[selectedCard].color} bg-opacity-10`}
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white rounded-md bg-opacity-20 backdrop-blur-sm">
+                    {futurePlans[selectedCard].icon}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold mb-1">
+                      {futurePlans[selectedCard].title}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <span className="bg-background text-sm px-3 py-1 rounded-full">
+                        {futurePlans[selectedCard].estimatedRelease}
+                      </span>
+                      <span className="text-sm">
+                        {futurePlans[selectedCard].status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={handleCloseModal}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <div className="mt-4">
+                <div className="bg-background/40 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                  <motion.div
+                    className={`h-full bg-gradient-to-r ${futurePlans[selectedCard].color}`}
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: `${futurePlans[selectedCard].progress}%`,
+                    }}
+                    transition={{ duration: 1 }}
+                  />
+                </div>
+                <div className="mt-1 text-xs text-right">
+                  {futurePlans[selectedCard].progress}% complete
+                </div>
+              </div>
+            </div>
+
+            {/* Modal body */}
+            <div className="p-6 md:p-8">
+              <p className="text-muted-foreground mb-6">
+                {futurePlans[selectedCard].longDescription}
+              </p>
+
+              <h4 className="font-semibold mb-4 text-sm">Key Features:</h4>
+              <div className="space-y-2 mb-8">
+                {futurePlans[selectedCard].keyFeatures.map((feature, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + idx * 0.1 }}
+                  >
+                    <span className="text-primary">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    {feature}
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mr-2"
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </Button>
+                <Button size="sm">Request early access</Button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </section>
   );
 }
