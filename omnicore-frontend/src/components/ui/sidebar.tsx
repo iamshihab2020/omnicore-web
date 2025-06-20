@@ -18,14 +18,14 @@ export function Sidebar({
 }: SidebarProps) {
   return (
     <div className={cn("pb-12", className)} {...props}>
-      <div className="space-y-4 py-4">
-        <div className="px-4 py-2">
+      <div className="space-y-4 py-2">
+        <div className="px-2 py-1">
           {!hideTitle && (
-            <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
+            <h2 className="mb-3 px-2 text-sm font-semibold tracking-tight text-muted-foreground uppercase">
               Navigation
             </h2>
           )}
-          <div className="space-y-1">{props.children}</div>
+          <div className="space-y-1.5">{props.children}</div>
         </div>
       </div>
     </div>
@@ -55,13 +55,15 @@ export function SidebarItem({
           variant: isActive ? "secondary" : "ghost",
           size: "sm",
         }),
-        isActive && "bg-accent text-accent-foreground",
-        "w-full justify-start",
+        isActive
+          ? "bg-primary/10 text-primary font-medium shadow-sm border-l-2 border-primary rounded-none rounded-r-lg"
+          : "text-muted-foreground hover:text-foreground rounded-lg",
+        "w-full justify-start transition-all duration-200",
         className
       )}
       {...props}
     >
-      {Icon && <Icon className="mr-2 h-4 w-4" />}
+      {Icon && <Icon className={cn("h-4 w-4", text ? "mr-3" : "")} />}
       {text}
     </Link>
   );
@@ -78,10 +80,10 @@ export function SidebarSection({
 }) {
   return (
     <div className={cn("px-4 py-2", className)}>
-      <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
+      <h2 className="mb-2 px-2 text-sm font-semibold tracking-tight text-muted-foreground uppercase">
         {title}
       </h2>
-      <div className="space-y-1">{children}</div>
+      <div className="space-y-1.5">{children}</div>
     </div>
   );
 }
