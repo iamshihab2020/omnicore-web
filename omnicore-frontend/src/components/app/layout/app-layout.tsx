@@ -379,7 +379,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
 
               {/* Footer */}
               <footer className="border-t mt-auto">
-                <div className="max-w-7xl mx-auto p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+                <div className="mx-auto p-2 md:p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/omnicore-icon.svg"

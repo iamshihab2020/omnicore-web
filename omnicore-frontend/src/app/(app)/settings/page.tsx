@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { AnimatedCard } from "@/components/ui/animated-card";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 // Interface for settings section from JSON data
 interface SettingSectionJson {
@@ -99,7 +101,16 @@ export default function SettingsPage() {
 
   return (
     <AppLayout>
+      {" "}
       <div className="w-full mx-auto">
+        {/* Breadcrumb Navigation */}{" "}
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: "Settings" },
+          ]}
+          className="mb-4"
+        />
         <PageHeader
           title="Settings"
           description="Configure system settings and preferences"
@@ -116,7 +127,6 @@ export default function SettingsPage() {
             </Button>
           }
         />
-
         <div className="flex flex-col space-y-6">
           {/* Settings Categories */}
           <Tabs defaultValue="all" className="w-full">
@@ -138,54 +148,54 @@ export default function SettingsPage() {
                 />
               </div>
             </div>
-
-            {/* Business Settings */}
+            {/* Business Settings */}{" "}
             <TabsContent value="business" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {getSettingsByCategory("business").map((section) => (
+                {getSettingsByCategory("business").map((section, index) => (
                   <SettingCard
                     key={section.path}
                     section={section}
                     onClick={() => handleNavigate(section.path)}
+                    index={index}
                   />
                 ))}
               </div>
             </TabsContent>
-
-            {/* User Settings */}
+            {/* User Settings */}{" "}
             <TabsContent value="user" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {getSettingsByCategory("user").map((section) => (
+                {getSettingsByCategory("user").map((section, index) => (
                   <SettingCard
                     key={section.path}
                     section={section}
                     onClick={() => handleNavigate(section.path)}
+                    index={index}
                   />
                 ))}
               </div>
             </TabsContent>
-
-            {/* System Settings */}
+            {/* System Settings */}{" "}
             <TabsContent value="system" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {getSettingsByCategory("system").map((section) => (
+                {getSettingsByCategory("system").map((section, index) => (
                   <SettingCard
                     key={section.path}
                     section={section}
                     onClick={() => handleNavigate(section.path)}
+                    index={index}
                   />
                 ))}
               </div>
             </TabsContent>
-
-            {/* All Settings */}
+            {/* All Settings */}{" "}
             <TabsContent value="all" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filteredSettings.map((section) => (
+                {filteredSettings.map((section, index) => (
                   <SettingCard
                     key={section.path}
                     section={section}
                     onClick={() => handleNavigate(section.path)}
+                    index={index}
                   />
                 ))}
               </div>
@@ -201,45 +211,47 @@ export default function SettingsPage() {
 function SettingCard({
   section,
   onClick,
+  index = 0,
 }: {
   section: SettingSection;
   onClick: () => void;
+  index?: number;
 }) {
   return (
-    <Card
-      className="overflow-hidden transition-all hover:shadow-md hover:border-primary/50 cursor-pointer h-full"
-      onClick={onClick}
-    >
-      <CardContent className="p-0">
-        <div className="flex items-start p-5 gap-4">
-          <div
-            className={`rounded-full p-3 bg-primary/10 text-primary flex items-center justify-center ${
-              section.isNew ? "ring-2 ring-primary ring-offset-2" : ""
-            }`}
-          >
-            {section.icon}
-          </div>
-
-          <div className="flex-1 pt-1">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="font-medium text-lg">{section.title}</h3>
-              {section.badge && (
-                <Badge
-                  variant={section.badgeVariant || "default"}
-                  className="ml-2 text-xs"
-                >
-                  {section.badge}
-                </Badge>
-              )}
+    <AnimatedCard index={index} hoverEffect="grow">
+      <Card
+        className="overflow-hidden transition-all hover:shadow-md hover:border-primary/50 cursor-pointer h-full"
+        onClick={onClick}
+      >
+        <CardContent className="p-0">
+          <div className="flex items-start p-5 gap-4">
+            <div
+              className={`rounded-full p-3 bg-primary/10 text-primary flex items-center justify-center ${
+                section.isNew ? "ring-2 ring-primary ring-offset-2" : ""
+              }`}
+            >
+              {section.icon}
             </div>
-            <p className="text-muted-foreground text-sm">
-              {section.description}
-            </p>
+            <div className="flex-1 pt-1">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="font-medium text-lg">{section.title}</h3>
+                {section.badge && (
+                  <Badge
+                    variant={section.badgeVariant || "default"}
+                    className="ml-2 text-xs"
+                  >
+                    {section.badge}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {section.description}
+              </p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground self-center flex-shrink-0" />{" "}
           </div>
-
-          <ChevronRight className="h-5 w-5 text-muted-foreground self-center flex-shrink-0" />
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </AnimatedCard>
   );
 }
