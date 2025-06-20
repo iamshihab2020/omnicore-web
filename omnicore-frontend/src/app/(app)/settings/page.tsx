@@ -13,54 +13,84 @@ import {
   Calculator,
   ChevronRight,
   Receipt,
+  Shield,
+  Globe,
+  Bell,
+  HardDrive,
+  BookOpen,
 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
-// Interface for settings section
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+
+// Interface for settings section from JSON data
+interface SettingSectionJson {
+  title: string;
+  description: string;
+  icon: string;
+  path: string;
+  category: "business" | "user" | "system";
+  badge?: string;
+  badgeVariant?: "default" | "outline" | "secondary" | "destructive";
+  isNew?: boolean;
+}
+
+// Interface for settings section with React node
 interface SettingSection {
   title: string;
   description: string;
   icon: React.ReactNode;
   path: string;
+  category: "business" | "user" | "system";
+  badge?: string;
+  badgeVariant?: "default" | "outline" | "secondary" | "destructive";
+  isNew?: boolean;
 }
+
+// Import settings sections data
+import settingsSectionsData from "@/json/settings-sections.json";
+
+// Map of icon names to icon components
+const iconComponents: Record<string, React.ElementType> = {
+  Store,
+  User,
+  UserCog,
+  Calculator,
+  Receipt,
+  Shield,
+  Globe,
+  Bell,
+  HardDrive,
+  BookOpen,
+};
 
 export default function SettingsPage() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  // Transform JSON data to include React components
+  const settingsSections: SettingSection[] = (
+    settingsSectionsData.settings as SettingSectionJson[]
+  ).map((section) => {
+    const IconComponent = iconComponents[section.icon];
+    return {
+      ...section,
+      icon: <IconComponent className="h-6 w-6" />,
+    } as SettingSection;
+  });
 
-  // Define settings sections
-  const settingsSections: SettingSection[] = [
-    {
-      title: "Counters",
-      description: "Manage your point of sale counters and assign menu items",
-      icon: <Store className="h-8 w-8" />,
-      path: "/settings/counters",
-    },
-    {
-      title: "Create Tax Rule",
-      description: "Configure tax settings for your transactions",
-      icon: <Receipt className="h-8 w-8" />,
-      path: "/create/tax",
-    },
-    {
-      title: "Finance",
-      description: "Configure financial settings, taxes, and payment methods",
-      icon: <Calculator className="h-8 w-8" />,
-      path: "/settings/finance",
-    },
-    {
-      title: "Profile",
-      description: "Update your personal profile and preferences",
-      icon: <User className="h-8 w-8" />,
-      path: "/settings/profile",
-    },
-    {
-      title: "User Settings",
-      description:
-        "Configure application settings and notification preferences",
-      icon: <UserCog className="h-8 w-8" />,
-      path: "/settings/user-settings",
-    },
-  ];
+  // Filter settings based on search query
+  const filteredSettings = settingsSections.filter(
+    (section) =>
+      section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      section.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Get settings by category
+  const getSettingsByCategory = (category: "business" | "user" | "system") => {
+    return filteredSettings.filter((section) => section.category === category);
+  };
 
   // Navigate to section
   const handleNavigate = (path: string) => {
@@ -69,57 +99,147 @@ export default function SettingsPage() {
 
   return (
     <AppLayout>
-      <div className="px-2 sm:px-4">
+      <div className="w-full mx-auto">
         <PageHeader
           title="Settings"
-          description="Configure application settings and preferences"
-          className="mb-2 sm:mb-4"
+          description="Configure system settings and preferences"
+          className="mb-6"
           actions={
             <Button
               variant="outline"
               onClick={() => router.push("/dashboard")}
               size="sm"
-              className="sm:size-default"
+              className="h-9"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              <span className="sm:block">Back to Dashboard</span>
+              Back to Dashboard
             </Button>
           }
         />
-      </div>
 
-      <div className="p-2 sm:p-4 flex-1 flex flex-col">
-        <Card className="w-full flex flex-col flex-1">
-          <CardContent className="p-0 flex-1 flex flex-col">
-            <ScrollArea className="h-screen max-h-[calc(100vh-180px)] flex-1 w-full">
-              <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {settingsSections.map((section) => (
-                  <div
+        <div className="flex flex-col space-y-6">
+          {/* Settings Categories */}
+          <Tabs defaultValue="all" className="w-full">
+            <div className="flex items-center justify-between mb-3">
+              <TabsList className="mb-4">
+                <TabsTrigger value="all">All Settings</TabsTrigger>
+                <TabsTrigger value="business">Business</TabsTrigger>
+                <TabsTrigger value="user">User</TabsTrigger>
+                <TabsTrigger value="system">System</TabsTrigger>
+              </TabsList>
+              {/* Search Bar */}
+              <div className="relative max-w-sm w-full">
+                <Input
+                  type="search"
+                  placeholder="Search settings..."
+                  className="w-full "
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Business Settings */}
+            <TabsContent value="business" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {getSettingsByCategory("business").map((section) => (
+                  <SettingCard
                     key={section.path}
-                    className="border rounded-lg p-4 sm:p-6 hover:bg-accent/5 hover:border-primary cursor-pointer transition-all duration-300 shadow-lg hover:shadow flex justify-between items-start"
+                    section={section}
                     onClick={() => handleNavigate(section.path)}
-                  >
-                    <div className="flex gap-4">
-                      <div className="rounded-md bg-primary p-2 flex items-center justify-center">
-                        {section.icon}
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-lg mb-1.5">
-                          {section.title}
-                        </h3>
-                        <p className="text-muted-foreground text-sm">
-                          {section.description}
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground mt-2" />
-                  </div>
+                  />
                 ))}
               </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
+            </TabsContent>
+
+            {/* User Settings */}
+            <TabsContent value="user" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {getSettingsByCategory("user").map((section) => (
+                  <SettingCard
+                    key={section.path}
+                    section={section}
+                    onClick={() => handleNavigate(section.path)}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* System Settings */}
+            <TabsContent value="system" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {getSettingsByCategory("system").map((section) => (
+                  <SettingCard
+                    key={section.path}
+                    section={section}
+                    onClick={() => handleNavigate(section.path)}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* All Settings */}
+            <TabsContent value="all" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredSettings.map((section) => (
+                  <SettingCard
+                    key={section.path}
+                    section={section}
+                    onClick={() => handleNavigate(section.path)}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </AppLayout>
+  );
+}
+
+// Setting Card Component
+function SettingCard({
+  section,
+  onClick,
+}: {
+  section: SettingSection;
+  onClick: () => void;
+}) {
+  return (
+    <Card
+      className="overflow-hidden transition-all hover:shadow-md hover:border-primary/50 cursor-pointer h-full"
+      onClick={onClick}
+    >
+      <CardContent className="p-0">
+        <div className="flex items-start p-5 gap-4">
+          <div
+            className={`rounded-full p-3 bg-primary/10 text-primary flex items-center justify-center ${
+              section.isNew ? "ring-2 ring-primary ring-offset-2" : ""
+            }`}
+          >
+            {section.icon}
+          </div>
+
+          <div className="flex-1 pt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-medium text-lg">{section.title}</h3>
+              {section.badge && (
+                <Badge
+                  variant={section.badgeVariant || "default"}
+                  className="ml-2 text-xs"
+                >
+                  {section.badge}
+                </Badge>
+              )}
+            </div>
+            <p className="text-muted-foreground text-sm">
+              {section.description}
+            </p>
+          </div>
+
+          <ChevronRight className="h-5 w-5 text-muted-foreground self-center flex-shrink-0" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
