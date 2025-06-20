@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ItemList, Item } from "@/components/item/item-list";
@@ -382,243 +384,260 @@ export default function CreateItemPage() {
   return (
     <AppLayout>
       <div className="px-4">
-        <PageHeader
-          title="Create Menu Item"
-          description="Add new items to your menu."
+        <Breadcrumb
+          items={[{ label: "Create", href: "/create" }, { label: "Items" }]}
           className="mb-4"
-          actions={
-            <Button variant="outline" onClick={() => router.push("/create")}>
-              <ChevronLeft className="mr-2" />
-              Back to Create
-            </Button>
-          }
         />
+
+        <AnimatedCard variant="fadeIn" duration={0.4}>
+          <PageHeader
+            title="Create Menu Item"
+            description="Add new items to your menu."
+            className="mb-4"
+            actions={
+              <Button variant="outline" onClick={() => router.push("/create")}>
+                <ChevronLeft className="mr-2" />
+                Back to Create
+              </Button>
+            }
+          />
+        </AnimatedCard>
       </div>
-      <div className="flex flex-col lg:flex-row flex-1 p-4  gap-6">
+      <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6">
         {/* Left Column: Create Item Form */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="flex flex-col h-auto">
-            <CardHeader>
-              <CardTitle>Create Menu Item</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              {/* Display message alert */}
-              {uiState.message &&
-                (function () {
-                  // Create a temporary string to avoid type comparison issues
-                  const currentStatus = String(uiState.status);
-                  const isError = currentStatus === "error";
-
-                  return (
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="flex flex-col h-auto">
+              <CardHeader>
+                <CardTitle>Create Menu Item</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                {/* Display message alert */}
+                {uiState.message && (
+                  <AnimatedCard variant="fadeIn" duration={0.3}>
                     <Alert
-                      variant={isError ? "destructive" : "default"}
+                      variant={
+                        String(uiState.status) === "error"
+                          ? "destructive"
+                          : "default"
+                      }
                       className="mb-4"
                     >
-                      <AlertTitle>{isError ? "ERROR" : "SUCCESS"}</AlertTitle>
+                      <AlertTitle>
+                        {String(uiState.status) === "error"
+                          ? "ERROR"
+                          : "SUCCESS"}
+                      </AlertTitle>
                       <AlertDescription>{uiState.message}</AlertDescription>
                     </Alert>
-                  );
-                })()}
+                  </AnimatedCard>
+                )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="itemName">Item Name</Label>
-                  <Input
-                    className="mt-2"
-                    id="itemName"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleTextChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="itemDescription">
-                    Description (Optional)
-                  </Label>
-                  <Textarea
-                    className="mt-2"
-                    id="itemDescription"
-                    value={formData.description}
-                    onChange={handleTextChange}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="itemPrice">Price ($)</Label>
+                    <Label htmlFor="itemName">Item Name</Label>
                     <Input
                       className="mt-2"
-                      id="itemPrice"
+                      id="itemName"
                       type="text"
-                      inputMode="decimal"
-                      value={formData.price}
-                      onChange={handleNumericInput}
-                      placeholder="0.00"
+                      value={formData.name}
+                      onChange={handleTextChange}
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="itemCost">Cost ($) (Optional)</Label>
-                    <Input
+                    <Label htmlFor="itemDescription">
+                      Description (Optional)
+                    </Label>
+                    <Textarea
                       className="mt-2"
-                      id="itemCost"
-                      type="text"
-                      inputMode="decimal"
-                      value={formData.cost}
-                      onChange={handleNumericInput}
-                      placeholder="0.00"
+                      id="itemDescription"
+                      value={formData.description}
+                      onChange={handleTextChange}
                     />
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="prepTime">Preparation Time (minutes)</Label>
-                    <Input
-                      className="mt-2"
-                      id="prepTime"
-                      type="text"
-                      inputMode="numeric"
-                      value={formData.preparation_time}
-                      onChange={handlePrepTimeInput}
-                      placeholder="10"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-end mb-2">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="isActive"
-                        checked={formData.is_active}
-                        onCheckedChange={(checked) =>
-                          handleFieldChange("is_active", checked)
-                        }
-                      />
-                      <Label htmlFor="isActive" className="cursor-pointer">
-                        {formData.is_active ? "Active" : "Inactive"}
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="categorySelect">Category</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) =>
-                      handleFieldChange("category", value)
-                    }
-                  >
-                    <SelectTrigger id="categorySelect" className="w-full mt-2">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loadingState.categories ? (
-                        <SelectItem value="loading" disabled>
-                          Loading categories...
-                        </SelectItem>
-                      ) : categories.length === 0 ? (
-                        <SelectItem value="empty" disabled>
-                          No categories available
-                        </SelectItem>
-                      ) : (
-                        categories.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={String(category.id)}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="itemImage">Item Image (Optional)</Label>
-                  <div className="mt-2 flex flex-col space-y-4">
-                    <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="itemPrice">Price ($)</Label>
                       <Input
-                        id="itemImage"
-                        type="file"
-                        onChange={handleImageChange}
-                        accept="image/*"
-                        className="flex-1"
+                        className="mt-2"
+                        id="itemPrice"
+                        type="text"
+                        inputMode="decimal"
+                        value={formData.price}
+                        onChange={handleNumericInput}
+                        placeholder="0.00"
+                        required
                       />
+                    </div>
+                    <div>
+                      <Label htmlFor="itemCost">Cost ($) (Optional)</Label>
+                      <Input
+                        className="mt-2"
+                        id="itemCost"
+                        type="text"
+                        inputMode="decimal"
+                        value={formData.cost}
+                        onChange={handleNumericInput}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="prepTime">
+                        Preparation Time (minutes)
+                      </Label>
+                      <Input
+                        className="mt-2"
+                        id="prepTime"
+                        type="text"
+                        inputMode="numeric"
+                        value={formData.preparation_time}
+                        onChange={handlePrepTimeInput}
+                        placeholder="10"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-end mb-2">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          id="isActive"
+                          checked={formData.is_active}
+                          onCheckedChange={(checked) =>
+                            handleFieldChange("is_active", checked)
+                          }
+                        />
+                        <Label htmlFor="isActive" className="cursor-pointer">
+                          {formData.is_active ? "Active" : "Inactive"}
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="categorySelect">Category</Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) =>
+                        handleFieldChange("category", value)
+                      }
+                    >
+                      <SelectTrigger
+                        id="categorySelect"
+                        className="w-full mt-2"
+                      >
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loadingState.categories ? (
+                          <SelectItem value="loading" disabled>
+                            Loading categories...
+                          </SelectItem>
+                        ) : categories.length === 0 ? (
+                          <SelectItem value="empty" disabled>
+                            No categories available
+                          </SelectItem>
+                        ) : (
+                          categories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={String(category.id)}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="itemImage">Item Image (Optional)</Label>
+                    <div className="mt-2 flex flex-col space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="itemImage"
+                          type="file"
+                          onChange={handleImageChange}
+                          accept="image/*"
+                          className="flex-1"
+                        />
+                        {formData.image && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={clearImage}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                       {formData.image && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={clearImage}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <div className="relative w-full h-40 bg-muted rounded-md overflow-hidden">
+                          <Image
+                            src={formData.image}
+                            alt="Item Preview"
+                            className="w-full h-full object-cover"
+                            width={300}
+                            height={160}
+                            unoptimized={formData.image.startsWith("blob:")}
+                          />
+                        </div>
                       )}
                     </div>
-                    {formData.image && (
-                      <div className="relative w-full h-40 bg-muted rounded-md overflow-hidden">
-                        <Image
-                          src={formData.image}
-                          alt="Item Preview"
-                          className="w-full h-full object-cover"
-                          width={300}
-                          height={160}
-                          unoptimized={formData.image.startsWith("blob:")}
-                        />
-                      </div>
-                    )}
                   </div>
-                </div>
-                <div className="flex space-x-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button type="button" disabled={uiState.isSubmitting}>
-                        {uiState.isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="mr-2 h-4 w-4" />
-                            Create Item
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Create New Item</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to create this new menu item?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => {
-                            document.forms[0].dispatchEvent(
-                              new Event("submit", {
-                                bubbles: true,
-                                cancelable: true,
-                              })
-                            );
-                          }}
-                        >
-                          Create
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/create")}
-                    type="button"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                  <div className="flex space-x-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button type="button" disabled={uiState.isSubmitting}>
+                          {uiState.isSubmitting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Creating...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="mr-2 h-4 w-4" />
+                              Create Item
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Create New Item</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to create this new menu item?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => {
+                              document.forms[0].dispatchEvent(
+                                new Event("submit", {
+                                  bubbles: true,
+                                  cancelable: true,
+                                })
+                              );
+                            }}
+                          >
+                            Create
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/create")}
+                      type="button"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
           {uiState.message &&
             (function () {
               // Create a temporary string to avoid type comparison issues
@@ -640,24 +659,26 @@ export default function CreateItemPage() {
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display All Items */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-3 sm:px-6 sm:py-4">
-              <CardTitle className="text-lg sm:text-xl">All Items</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-290px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <ItemList
-                    items={itemsList}
-                    isLoading={loadingState.items}
-                    error={null}
-                    title=""
-                    onItemClick={handleItemClick}
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-3 sm:px-6 sm:py-4">
+                <CardTitle className="text-lg sm:text-xl">All Items</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-290px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <ItemList
+                      items={itemsList}
+                      isLoading={loadingState.items}
+                      error={null}
+                      title=""
+                      onItemClick={handleItemClick}
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>

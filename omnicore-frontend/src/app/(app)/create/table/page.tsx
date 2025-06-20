@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, Loader2, Save } from "lucide-react";
@@ -289,190 +291,201 @@ export default function CreateTablePage() {
   return (
     <AppLayout>
       <div className="px-4">
-        <PageHeader
-          title="Create Table"
-          description="Add new tables to your restaurant."
+        <Breadcrumb
+          items={[{ label: "Create", href: "/create" }, { label: "Tables" }]}
           className="mb-4"
-          actions={
-            <Button variant="outline" onClick={() => router.push("/create")}>
-              <ChevronLeft className="mr-2" />
-              Back to Create
-            </Button>
-          }
         />
+
+        <AnimatedCard variant="fadeIn" duration={0.4}>
+          <PageHeader
+            title="Create Table"
+            description="Add new tables to your restaurant."
+            className="mb-4"
+            actions={
+              <Button variant="outline" onClick={() => router.push("/create")}>
+                <ChevronLeft className="mr-2" />
+                Back to Create
+              </Button>
+            }
+          />
+        </AnimatedCard>
       </div>
       <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6">
         {/* Left Column: Create Table Form */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="flex flex-col h-auto">
-            <CardHeader>
-              <CardTitle>Create Table</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              {/* Display message alert */}
-              {uiState.message && (
-                <Alert
-                  variant={
-                    uiState.status === STATUS_TYPES.ERROR
-                      ? "destructive"
-                      : "default"
-                  }
-                  className="mb-4"
-                >
-                  <AlertTitle>
-                    {uiState.status === STATUS_TYPES.ERROR
-                      ? "ERROR"
-                      : "SUCCESS"}
-                  </AlertTitle>
-                  <AlertDescription>{uiState.message}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="tableNumber">Table Number *</Label>
-                    <Input
-                      className="mt-2"
-                      id="tableNumber"
-                      type="text"
-                      value={formData.number}
-                      onChange={handleTextChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="tableName">Table Name (Optional)</Label>
-                    <Input
-                      className="mt-2"
-                      id="tableName"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleTextChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="tableCapacity">Capacity *</Label>
-                    <Input
-                      className="mt-2"
-                      id="tableCapacity"
-                      type="text"
-                      inputMode="numeric"
-                      value={formData.capacity}
-                      onChange={handleCapacityInput}
-                      placeholder="4"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="tableStatus">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value) =>
-                        handleFieldChange("status", value)
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="flex flex-col h-auto">
+              <CardHeader>
+                <CardTitle>Create Table</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                {/* Display message alert */}
+                {uiState.message && (
+                  <AnimatedCard variant="fadeIn" duration={0.3}>
+                    <Alert
+                      variant={
+                        uiState.status === STATUS_TYPES.ERROR
+                          ? "destructive"
+                          : "default"
                       }
+                      className="mb-4"
                     >
-                      <SelectTrigger id="tableStatus" className="mt-2">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statusOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      <AlertTitle>
+                        {uiState.status === STATUS_TYPES.ERROR
+                          ? "ERROR"
+                          : "SUCCESS"}
+                      </AlertTitle>
+                      <AlertDescription>{uiState.message}</AlertDescription>
+                    </Alert>
+                  </AnimatedCard>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="tableNumber">Table Number *</Label>
+                      <Input
+                        className="mt-2"
+                        id="tableNumber"
+                        type="text"
+                        value={formData.number}
+                        onChange={handleTextChange}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tableName">Table Name (Optional)</Label>
+                      <Input
+                        className="mt-2"
+                        id="tableName"
+                        type="text"
+                        value={formData.name}
+                        onChange={handleTextChange}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="tableArea">Area (Optional)</Label>
-                  <Input
-                    className="mt-2"
-                    id="tableArea"
-                    type="text"
-                    value={formData.area}
-                    onChange={handleTextChange}
-                    placeholder="e.g., Main Hall, Patio"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id="tableIsActive"
-                    checked={formData.is_active}
-                    onCheckedChange={(checked) =>
-                      handleFieldChange("is_active", checked)
-                    }
-                  />
-                  <Label htmlFor="tableIsActive" className="cursor-pointer">
-                    {formData.is_active ? "Active" : "Inactive"}
-                  </Label>
-                </div>
-                <div>
-                  <Label htmlFor="tableNotes">Notes (Optional)</Label>
-                  <Textarea
-                    className="mt-2"
-                    id="tableNotes"
-                    value={formData.notes}
-                    onChange={handleTextChange}
-                    placeholder="Any additional details about the table"
-                  />
-                </div>
-                <div className="flex space-x-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button type="button" disabled={uiState.isSubmitting}>
-                        {uiState.isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="mr-2 h-4 w-4" />
-                            Create Table
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Create New Table</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to create this new restaurant
-                          table?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => {
-                            document.forms[0].dispatchEvent(
-                              new Event("submit", {
-                                bubbles: true,
-                                cancelable: true,
-                              })
-                            );
-                          }}
-                        >
-                          Create
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/create")}
-                    type="button"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="tableCapacity">Capacity *</Label>
+                      <Input
+                        className="mt-2"
+                        id="tableCapacity"
+                        type="text"
+                        inputMode="numeric"
+                        value={formData.capacity}
+                        onChange={handleCapacityInput}
+                        placeholder="4"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tableStatus">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) =>
+                          handleFieldChange("status", value)
+                        }
+                      >
+                        <SelectTrigger id="tableStatus" className="mt-2">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="tableArea">Area (Optional)</Label>
+                    <Input
+                      className="mt-2"
+                      id="tableArea"
+                      type="text"
+                      value={formData.area}
+                      onChange={handleTextChange}
+                      placeholder="e.g., Main Hall, Patio"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="tableIsActive"
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) =>
+                        handleFieldChange("is_active", checked)
+                      }
+                    />
+                    <Label htmlFor="tableIsActive" className="cursor-pointer">
+                      {formData.is_active ? "Active" : "Inactive"}
+                    </Label>
+                  </div>
+                  <div>
+                    <Label htmlFor="tableNotes">Notes (Optional)</Label>
+                    <Textarea
+                      className="mt-2"
+                      id="tableNotes"
+                      value={formData.notes}
+                      onChange={handleTextChange}
+                      placeholder="Any additional details about the table"
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button type="button" disabled={uiState.isSubmitting}>
+                          {uiState.isSubmitting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Creating...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="mr-2 h-4 w-4" />
+                              Create Table
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Create New Table</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to create this new restaurant
+                            table?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => {
+                              document.forms[0].dispatchEvent(
+                                new Event("submit", {
+                                  bubbles: true,
+                                  cancelable: true,
+                                })
+                              );
+                            }}
+                          >
+                            Create
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/create")}
+                      type="button"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
 
         <Separator orientation="vertical" className="h-auto hidden lg:block" />
@@ -480,25 +493,29 @@ export default function CreateTablePage() {
 
         {/* Right Column: Display All Tables */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-3 sm:px-6 sm:py-4">
-              <CardTitle className="text-lg sm:text-xl">All Tables</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-290px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <TableList
-                    tables={tablesList}
-                    isLoading={loadingState.tables}
-                    error={null}
-                    title=""
-                    onTableClick={handleTableClick}
-                    showCounts={true}
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  All Tables
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-280px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <TableList
+                      tables={tablesList}
+                      isLoading={loadingState.tables}
+                      error={null}
+                      title=""
+                      onTableClick={handleTableClick}
+                      showCounts={true}
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>

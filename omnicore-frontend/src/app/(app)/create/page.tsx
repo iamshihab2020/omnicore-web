@@ -30,7 +30,7 @@ export default function CreatePage() {
   const createOptions = [
     {
       title: "Create Menu Item",
-      description: "Add new food or beverage items to your menu",
+      description: "Add new food items to your menu",
       icon: <ShoppingBag className="h-6 w-6" />,
       href: "/create/item",
       color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
@@ -62,7 +62,7 @@ export default function CreatePage() {
       title: "Create Counter",
       description: "Set up new sales counters or cash registers",
       icon: <AppWindow className="h-6 w-6" />,
-      href: "/create/counter",
+      href: "/settings/counters",
       color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
       gradientFrom: "from-cyan-500/20",
       gradientTo: "to-cyan-500/5",

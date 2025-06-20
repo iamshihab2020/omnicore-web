@@ -218,7 +218,7 @@ function SettingCard({
   index?: number;
 }) {
   return (
-    <AnimatedCard index={index} hoverEffect="grow">
+    <AnimatedCard index={index} className="w-full gap-10" hoverEffect="lift">
       <Card
         className="overflow-hidden transition-all hover:shadow-md hover:border-primary/50 cursor-pointer h-full"
         onClick={onClick}

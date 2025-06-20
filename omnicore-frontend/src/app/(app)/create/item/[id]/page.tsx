@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -430,10 +432,24 @@ export default function EditItemPage() {
   if (loadingState.currentItem || uiState.status === STATUS_TYPES.LOADING) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center h-full p-4">
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Items", href: "/create/item" },
+              { label: "Loading..." },
+            ]}
+            className="mb-4"
+          />
+        </div>
+        <AnimatedCard
+          variant="fadeIn"
+          duration={0.4}
+          className="flex flex-col items-center justify-center h-full p-4"
+        >
           <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
           <p className="text-lg">Loading item details...</p>
-        </div>
+        </AnimatedCard>
       </AppLayout>
     );
   }
@@ -441,7 +457,17 @@ export default function EditItemPage() {
   if (uiState.status === STATUS_TYPES.ERROR || !formData.name) {
     return (
       <AppLayout>
-        <div className="p-4">
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Items", href: "/create/item" },
+              { label: "Error" },
+            ]}
+            className="mb-4"
+          />
+        </div>
+        <AnimatedCard variant="fadeIn" duration={0.4} className="p-4">
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
@@ -451,365 +477,387 @@ export default function EditItemPage() {
           <Button onClick={() => router.push("/create/item")} className="mt-4">
             Back to Items
           </Button>
-        </div>
+        </AnimatedCard>
       </AppLayout>
     );
   }
 
   return (
     <AppLayout>
-      <div className="px-4">
-        <PageHeader
-          title="Edit Menu Item"
-          description="Update the details of your menu item"
-          className="mb-4"
-          actions={
-            <Button
-              variant="outline"
-              onClick={() => router.push("/create/item")}
-            >
-              <ChevronLeft className="mr-2" />
-              Back to Items
-            </Button>
-          }
-        />
+      <div className="px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-muted/20 to-background opacity-80 pointer-events-none z-0"></div>
+        <div className="relative z-10">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Items", href: "/create/item" },
+              { label: formData.name || `Item ${itemId}` },
+            ]}
+            className="mb-4"
+          />
+
+          <AnimatedCard variant="fadeIn" duration={0.4}>
+            <PageHeader
+              title="Edit Menu Item"
+              description="Update the details of your menu item"
+              className="mb-4"
+              actions={
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/create/item")}
+                >
+                  <ChevronLeft className="mr-2" />
+                  Back to Items
+                </Button>
+              }
+            />
+          </AnimatedCard>
+        </div>
       </div>
       <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6 ">
         {/* Left Column: Edit Form */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="flex flex-col h-auto">
-            <CardHeader>
-              <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
-                <div className="text-base sm:text-lg md:text-xl">
-                  {isEditMode ? "Edit Item" : "Item Details"}:
-                  <span className="font-normal ml-1 text-sm sm:text-base max-w-[150px] sm:max-w-xs md:max-w-md truncate inline-block">
-                    {formData.name}
-                  </span>
-                </div>
-                <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
-                  <Button
-                    type="button"
-                    variant={isEditMode ? "outline" : "default"}
-                    onClick={() => setIsEditMode(!isEditMode)}
-                    disabled={uiState.isSubmitting || uiState.isDeleting}
-                    size="sm"
-                    className="h-9 px-3"
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    {isEditMode ? "Cancel" : "Edit"}
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        type="button"
-                        disabled={uiState.isSubmitting || uiState.isDeleting}
-                      >
-                        {uiState.isDeleting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this menu item from your system.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDelete}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              {/* Display message alert */}
-              {uiState.message &&
-                (function () {
-                  // Create a temporary string to avoid type comparison issues
-                  const currentStatus = String(uiState.status);
-                  const isError = currentStatus === "error";
-
-                  return (
-                    <Alert
-                      variant={isError ? "destructive" : "default"}
-                      className="mb-4"
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="flex flex-col h-auto">
+              <CardHeader>
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
+                  <div className="text-base sm:text-lg md:text-xl">
+                    {isEditMode ? "Edit Item" : "Item Details"}:
+                    <span className="font-normal ml-1 text-sm sm:text-base max-w-[150px] sm:max-w-xs md:max-w-md truncate inline-block">
+                      {formData.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
+                    <Button
+                      type="button"
+                      variant={isEditMode ? "outline" : "default"}
+                      onClick={() => setIsEditMode(!isEditMode)}
+                      disabled={uiState.isSubmitting || uiState.isDeleting}
+                      size="sm"
+                      className="h-9 px-3"
                     >
-                      <AlertTitle>{isError ? "ERROR" : "SUCCESS"}</AlertTitle>
-                      <AlertDescription>{uiState.message}</AlertDescription>
-                    </Alert>
-                  );
-                })()}
-
-              <form onSubmit={handleUpdate} className="space-y-4">
-                <div>
-                  <Label htmlFor="itemNameEdit">Item Name</Label>
-                  <Input
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    id="itemNameEdit"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleTextChange}
-                    disabled={!isEditMode}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="itemDescriptionEdit">
-                    Description (Optional)
-                  </Label>
-                  <Textarea
-                    id="itemDescriptionEdit"
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    value={formData.description}
-                    onChange={handleTextChange}
-                    disabled={!isEditMode}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="itemPriceEdit">Price ($)</Label>
-                    <Input
-                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="itemPriceEdit"
-                      type="text"
-                      inputMode="decimal"
-                      value={formData.price}
-                      onChange={handleNumericInput}
-                      placeholder="0.00"
-                      required
-                      disabled={!isEditMode}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="itemCostEdit">Cost ($)</Label>
-                    <Input
-                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="itemCostEdit"
-                      type="text"
-                      inputMode="decimal"
-                      value={formData.cost}
-                      onChange={handleNumericInput}
-                      placeholder="0.00"
-                      disabled={!isEditMode}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="preparation_timeEdit">
-                      Preparation Time (mins)
-                    </Label>
-                    <Input
-                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="preparation_timeEdit"
-                      type="text"
-                      inputMode="numeric"
-                      value={formData.preparation_time}
-                      onChange={handlePrepTimeInput}
-                      placeholder="e.g., 30"
-                      disabled={!isEditMode}
-                    />
-                  </div>
-
-                  <div className="flex flex-col justify-end mb-2">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="is_activeEdit"
-                        checked={formData.is_active}
-                        onCheckedChange={(checked) =>
-                          handleFieldChange("is_active", checked)
-                        }
-                        disabled={!isEditMode}
-                      />
-                      <Label htmlFor="is_activeEdit" className="cursor-pointer">
-                        {formData.is_active ? "Active" : "Inactive"}
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="categoryEdit">Category</Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) =>
-                      handleFieldChange("category", value)
-                    }
-                    disabled={!isEditMode}
-                  >
-                    <SelectTrigger
-                      id="categoryEdit"
-                      className={`w-full mt-2 ${!isEditMode && "opacity-90"}`}
-                    >
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loadingState.categories ? (
-                        <SelectItem value="loading" disabled>
-                          Loading categories...
-                        </SelectItem>
-                      ) : categories.length === 0 ? (
-                        <SelectItem value="empty" disabled>
-                          No categories available
-                        </SelectItem>
-                      ) : (
-                        categories.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={String(category.id)}
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="itemImageEdit">Item Image (Optional)</Label>
-                  <div className="mt-2 flex flex-col space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="itemImageEdit"
-                        type="file"
-                        onChange={handleImageChange}
-                        accept="image/*"
-                        className={`flex-1 ${!isEditMode && "opacity-90"}`}
-                        disabled={!isEditMode}
-                      />
-                      {formData.image && isEditMode && (
+                      <Pencil className="mr-2 h-4 w-4" />
+                      {isEditMode ? "Cancel" : "Edit"}
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
                         <Button
+                          variant="destructive"
                           type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={clearImage}
+                          disabled={uiState.isSubmitting || uiState.isDeleting}
                         >
-                          <X className="h-4 w-4" />
+                          {uiState.isDeleting ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </>
+                          )}
                         </Button>
-                      )}
-                    </div>
-                    {formData.image && (
-                      <div className="relative w-full h-40 bg-muted rounded-md overflow-hidden">
-                        <Image
-                          src={formData.image}
-                          alt="Item Preview"
-                          className="w-full h-full object-cover"
-                          width={300}
-                          height={160}
-                          unoptimized={formData.image.startsWith("blob:")}
-                        />
-                      </div>
-                    )}
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this menu item from your system.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                </div>
-                <div className="flex space-x-2">
-                  {isEditMode && (
-                    <>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                {/* Display message alert */}
+                {uiState.message &&
+                  (function () {
+                    // Create a temporary string to avoid type comparison issues
+                    const currentStatus = String(uiState.status);
+                    const isError = currentStatus === "error";
+
+                    return (
+                      <Alert
+                        variant={isError ? "destructive" : "default"}
+                        className="mb-4"
+                      >
+                        <AlertTitle>{isError ? "ERROR" : "SUCCESS"}</AlertTitle>
+                        <AlertDescription>{uiState.message}</AlertDescription>
+                      </Alert>
+                    );
+                  })()}
+
+                <form onSubmit={handleUpdate} className="space-y-4">
+                  <div>
+                    <Label htmlFor="itemNameEdit">Item Name</Label>
+                    <Input
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      id="itemNameEdit"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleTextChange}
+                      disabled={!isEditMode}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="itemDescriptionEdit">
+                      Description (Optional)
+                    </Label>
+                    <Textarea
+                      id="itemDescriptionEdit"
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      value={formData.description}
+                      onChange={handleTextChange}
+                      disabled={!isEditMode}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="itemPriceEdit">Price ($)</Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="itemPriceEdit"
+                        type="text"
+                        inputMode="decimal"
+                        value={formData.price}
+                        onChange={handleNumericInput}
+                        placeholder="0.00"
+                        required
+                        disabled={!isEditMode}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="itemCostEdit">Cost ($)</Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="itemCostEdit"
+                        type="text"
+                        inputMode="decimal"
+                        value={formData.cost}
+                        onChange={handleNumericInput}
+                        placeholder="0.00"
+                        disabled={!isEditMode}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="preparation_timeEdit">
+                        Preparation Time (mins)
+                      </Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="preparation_timeEdit"
+                        type="text"
+                        inputMode="numeric"
+                        value={formData.preparation_time}
+                        onChange={handlePrepTimeInput}
+                        placeholder="e.g., 30"
+                        disabled={!isEditMode}
+                      />
+                    </div>
+
+                    <div className="flex flex-col justify-end mb-2">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          id="is_activeEdit"
+                          checked={formData.is_active}
+                          onCheckedChange={(checked) =>
+                            handleFieldChange("is_active", checked)
+                          }
+                          disabled={!isEditMode}
+                        />
+                        <Label
+                          htmlFor="is_activeEdit"
+                          className="cursor-pointer"
+                        >
+                          {formData.is_active ? "Active" : "Inactive"}
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="categoryEdit">Category</Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) =>
+                        handleFieldChange("category", value)
+                      }
+                      disabled={!isEditMode}
+                    >
+                      <SelectTrigger
+                        id="categoryEdit"
+                        className={`w-full mt-2 ${!isEditMode && "opacity-90"}`}
+                      >
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loadingState.categories ? (
+                          <SelectItem value="loading" disabled>
+                            Loading categories...
+                          </SelectItem>
+                        ) : categories.length === 0 ? (
+                          <SelectItem value="empty" disabled>
+                            No categories available
+                          </SelectItem>
+                        ) : (
+                          categories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={String(category.id)}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="itemImageEdit">Item Image (Optional)</Label>
+                    <div className="mt-2 flex flex-col space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="itemImageEdit"
+                          type="file"
+                          onChange={handleImageChange}
+                          accept="image/*"
+                          className={`flex-1 ${!isEditMode && "opacity-90"}`}
+                          disabled={!isEditMode}
+                        />
+                        {formData.image && isEditMode && (
                           <Button
                             type="button"
-                            disabled={
-                              uiState.isSubmitting || uiState.isDeleting
-                            }
+                            variant="outline"
+                            size="icon"
+                            onClick={clearImage}
                           >
-                            {uiState.isSubmitting ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Saving...
-                              </>
-                            ) : (
-                              <>
-                                <Save className="mr-2 h-4 w-4" />
-                                Save Changes
-                              </>
-                            )}
+                            <X className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Save Changes</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to save these changes to the
-                              menu item?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => {
-                                document.forms[0].dispatchEvent(
-                                  new Event("submit", {
-                                    bubbles: true,
-                                    cancelable: true,
-                                  })
-                                );
-                              }}
+                        )}
+                      </div>
+                      {formData.image && (
+                        <div className="relative w-full h-40 bg-muted rounded-md overflow-hidden">
+                          <Image
+                            src={formData.image}
+                            alt="Item Preview"
+                            className="w-full h-full object-cover"
+                            width={300}
+                            height={160}
+                            unoptimized={formData.image.startsWith("blob:")}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    {isEditMode && (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              type="button"
+                              disabled={
+                                uiState.isSubmitting || uiState.isDeleting
+                              }
                             >
-                              Save
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
-                  )}
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/create/item")}
-                    type="button"
-                    disabled={uiState.isSubmitting || uiState.isDeleting}
-                  >
-                    Back to Items
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                              {uiState.isSubmitting ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Saving...
+                                </>
+                              ) : (
+                                <>
+                                  <Save className="mr-2 h-4 w-4" />
+                                  Save Changes
+                                </>
+                              )}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Save Changes</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to save these changes to
+                                the menu item?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => {
+                                  document.forms[0].dispatchEvent(
+                                    new Event("submit", {
+                                      bubbles: true,
+                                      cancelable: true,
+                                    })
+                                  );
+                                }}
+                              >
+                                Save
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/create/item")}
+                      type="button"
+                      disabled={uiState.isSubmitting || uiState.isDeleting}
+                    >
+                      Back to Items
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
         <Separator orientation="vertical" className="h-auto hidden lg:block" />
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display All Items */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
-              <CardTitle className="text-base sm:text-lg md:text-xl">
-                All Items
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-280px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <ItemList
-                    items={itemsList}
-                    isLoading={loadingState.items}
-                    error={null}
-                    title=""
-                    highlightId={itemId ? Number(itemId) : undefined}
-                    onItemClick={handleItemClick}
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  All Items
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-280px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <ItemList
+                      items={itemsList}
+                      isLoading={loadingState.items}
+                      error={null}
+                      title=""
+                      highlightId={itemId ? Number(itemId) : undefined}
+                      onItemClick={handleItemClick}
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>

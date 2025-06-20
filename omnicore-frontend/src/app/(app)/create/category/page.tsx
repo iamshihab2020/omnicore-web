@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useState, useEffect, useMemo } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { Separator } from "@/components/ui/separator";
 import { CategoryList, Category } from "@/components/category/category-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -151,156 +153,174 @@ export default function CreateCategoryPage() {
   return (
     <AppLayout>
       <div className="px-4">
-        <PageHeader
-          title="Create Category"
-          description="Create a new item category to organize your items."
+        <Breadcrumb
+          items={[
+            { label: "Create", href: "/create" },
+            { label: "Categories" },
+          ]}
           className="mb-4"
-          actions={
-            <Button variant="outline" onClick={() => router.push("/create")}>
-              <ChevronLeft />
-              Back to Create
-            </Button>
-          }
         />
+
+        <AnimatedCard variant="fadeIn" duration={0.4}>
+          <PageHeader
+            title="Create Category"
+            description="Create a new item category to organize your items."
+            className="mb-4"
+            actions={
+              <Button variant="outline" onClick={() => router.push("/create")}>
+                <ChevronLeft className="mr-2" />
+                Back to Create
+              </Button>
+            }
+          />
+        </AnimatedCard>
       </div>
       <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6 h-[calc(100vh-110px)]">
         {/* Left Column: Create Category Form */}
         <div className="w-full lg:w-1/2 flex flex-col space-y-4">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
-              <CardTitle className="text-base sm:text-lg md:text-xl">
-                Create Item Category
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* Display message alert */}
-              {message.text && (
-                <Alert
-                  variant={message.type === "error" ? "destructive" : "default"}
-                  className="mb-4"
-                >
-                  <AlertTitle>
-                    {message.type === "error" ? "Error" : "Success"}
-                  </AlertTitle>
-                  <AlertDescription>{message.text}</AlertDescription>
-                </Alert>
-              )}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="categoryName">Category Name</Label>
-                  <Input
-                    className="mt-2"
-                    id="categoryName"
-                    type="text"
-                    value={categoryName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setCategoryName(e.target.value)
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="categoryDescription">
-                    Category Description (Optional)
-                  </Label>
-                  <Textarea
-                    className="mt-2"
-                    id="categoryDescription"
-                    value={categoryDescription}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      setCategoryDescription(e.target.value)
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="displayOrder">Display Order</Label>
-                  <Input
-                    className="mt-2"
-                    id="displayOrder"
-                    type="number"
-                    min="1"
-                    value={displayOrder}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setDisplayOrder(parseInt(e.target.value) || 1)
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger
-                      className="w-full mt-2"
-                      id="status"
-                      aria-label="Category Status"
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  Create Item Category
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Display message alert */}
+                {message.text && (
+                  <AnimatedCard variant="fadeIn" duration={0.3}>
+                    <Alert
+                      variant={
+                        message.type === "error" ? "destructive" : "default"
+                      }
+                      className="mb-4"
                     >
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button type="button">
-                      <Save className="mr-2 h-4 w-4" />
-                      Create Category
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Create New Category</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to create this new category?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => {
-                          document.forms[0].dispatchEvent(
-                            new Event("submit", {
-                              bubbles: true,
-                              cancelable: true,
-                            })
-                          );
-                        }}
+                      <AlertTitle>
+                        {message.type === "error" ? "Error" : "Success"}
+                      </AlertTitle>
+                      <AlertDescription>{message.text}</AlertDescription>
+                    </Alert>
+                  </AnimatedCard>
+                )}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="categoryName">Category Name</Label>
+                    <Input
+                      className="mt-2"
+                      id="categoryName"
+                      type="text"
+                      value={categoryName}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setCategoryName(e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="categoryDescription">
+                      Category Description (Optional)
+                    </Label>
+                    <Textarea
+                      className="mt-2"
+                      id="categoryDescription"
+                      value={categoryDescription}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setCategoryDescription(e.target.value)
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="displayOrder">Display Order</Label>
+                    <Input
+                      className="mt-2"
+                      id="displayOrder"
+                      type="number"
+                      min="1"
+                      value={displayOrder}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setDisplayOrder(parseInt(e.target.value) || 1)
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="status">Status</Label>
+                    <Select value={status} onValueChange={setStatus}>
+                      <SelectTrigger
+                        className="w-full mt-2"
+                        id="status"
+                        aria-label="Category Status"
                       >
-                        Create
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </form>
-            </CardContent>
-          </Card>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button type="button">
+                        <Save className="mr-2 h-4 w-4" />
+                        Create Category
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Create New Category</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to create this new category?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            document.forms[0].dispatchEvent(
+                              new Event("submit", {
+                                bubbles: true,
+                                cancelable: true,
+                              })
+                            );
+                          }}
+                        >
+                          Create
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
         <Separator orientation="vertical" className="h-auto hidden lg:block" />
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display Added Categories */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
-              <CardTitle className="text-base sm:text-lg md:text-xl">
-                Added Categories
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-280px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <CategoryList
-                    categories={categoriesList}
-                    isLoading={isLoadingCategories}
-                    error={fetchCategoriesError}
-                    title=""
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  Added Categories
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-280px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <CategoryList
+                      categories={categoriesList}
+                      isLoading={isLoadingCategories}
+                      error={fetchCategoriesError}
+                      title=""
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>

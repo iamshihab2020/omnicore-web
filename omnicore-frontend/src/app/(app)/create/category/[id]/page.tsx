@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
@@ -219,9 +221,24 @@ export default function EditCategoryPage() {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="p-4 flex justify-center items-center h-full">
-          <p>Loading category details...</p>
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Categories", href: "/create/category" },
+              { label: "Loading..." },
+            ]}
+            className="mb-4"
+          />
         </div>
+        <AnimatedCard
+          variant="fadeIn"
+          duration={0.4}
+          className="p-4 flex justify-center items-center h-full"
+        >
+          <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+          <p className="text-lg ml-3">Loading category details...</p>
+        </AnimatedCard>
       </AppLayout>
     );
   }
@@ -232,7 +249,17 @@ export default function EditCategoryPage() {
   ) {
     return (
       <AppLayout>
-        <div className="p-4">
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Categories", href: "/create/category" },
+              { label: "Error" },
+            ]}
+            className="mb-4"
+          />
+        </div>
+        <AnimatedCard variant="fadeIn" duration={0.4} className="p-4">
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
@@ -246,7 +273,7 @@ export default function EditCategoryPage() {
           >
             Back to Categories
           </Button>
-        </div>
+        </AnimatedCard>
       </AppLayout>
     );
   }
@@ -254,247 +281,262 @@ export default function EditCategoryPage() {
   return (
     <AppLayout>
       <div className="px-4">
-        <PageHeader
-          title="Edit Category"
-          description="Modify the details of your category."
+        <Breadcrumb
+          items={[
+            { label: "Create", href: "/create" },
+            { label: "Categories", href: "/create/category" },
+            { label: categoryName || `Category ${categoryId}` },
+          ]}
           className="mb-4"
-          actions={
-            <Button
-              variant="outline"
-              onClick={() => router.push("/create/category")}
-            >
-              <ChevronLeft className="" />
-              Back
-            </Button>
-          }
         />
+
+        <AnimatedCard variant="fadeIn" duration={0.4}>
+          <PageHeader
+            title="Edit Category"
+            description="Modify the details of your category."
+            className="mb-4"
+            actions={
+              <Button
+                variant="outline"
+                onClick={() => router.push("/create/category")}
+              >
+                <ChevronLeft className="mr-2" />
+                Back
+              </Button>
+            }
+          />
+        </AnimatedCard>
       </div>
       <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6 h-[calc(100vh-110px)]">
         {/* Left Column: Edit Form */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="flex flex-col h-auto">
-            {" "}
-            <CardHeader>
-              {" "}
-              <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
-                <div className="text-base sm:text-lg md:text-xl">
-                  {isEditMode ? "Edit Category" : "Category Details"}:
-                  <span> {categoryName || `ID: ${categoryId}`}</span>
-                </div>
-                <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
-                  <Button
-                    type="button"
-                    variant={isEditMode ? "outline" : "default"}
-                    onClick={() => setIsEditMode(!isEditMode)}
-                    disabled={isDeleting || isLoading}
-                    size="sm"
-                    className="h-9 px-3"
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    {isEditMode ? "Cancel" : "Edit"}
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        type="button"
-                        disabled={isDeleting || isLoading}
-                        size="sm"
-                        className="h-9 px-3"
-                      >
-                        {isDeleting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this category from your system.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDelete}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {message.text && (
-                <Alert
-                  variant={
-                    message.type === "error"
-                      ? "destructive"
-                      : message.type === "success"
-                      ? "default"
-                      : "default"
-                  }
-                  className="mb-4"
-                >
-                  <AlertTitle>{message.type?.toUpperCase()}</AlertTitle>
-                  <AlertDescription>{message.text}</AlertDescription>
-                </Alert>
-              )}
-              <form onSubmit={handleUpdate} className="space-y-4">
-                <div>
-                  {" "}
-                  <Label htmlFor="categoryNameEdit">Category Name</Label>{" "}
-                  <Input
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    id="categoryNameEdit"
-                    type="text"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    disabled={!isEditMode}
-                    required
-                  />
-                </div>
-                <div>
-                  {" "}
-                  <Label htmlFor="categoryDescriptionEdit">
-                    Category Description (Optional)
-                  </Label>{" "}
-                  <Textarea
-                    id="categoryDescriptionEdit"
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    value={categoryDescription}
-                    onChange={(e) => setCategoryDescription(e.target.value)}
-                    disabled={!isEditMode}
-                  />
-                </div>
-                <div>
-                  {" "}
-                  <Label htmlFor="displayOrderEdit">Display Order</Label>{" "}
-                  <Input
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    id="displayOrderEdit"
-                    type="number"
-                    min="1"
-                    value={displayOrder}
-                    onChange={(e) =>
-                      setDisplayOrder(parseInt(e.target.value) || 1)
-                    }
-                    disabled={!isEditMode}
-                    required
-                  />
-                </div>
-                <div>
-                  {" "}
-                  <Label htmlFor="statusEdit">Status</Label>
-                  <Select
-                    value={status}
-                    onValueChange={setStatus}
-                    disabled={!isEditMode}
-                  >
-                    <SelectTrigger
-                      className={`w-full mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="statusEdit"
-                      aria-label="Category Status"
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="flex flex-col h-auto">
+              <CardHeader>
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
+                  <div className="text-base sm:text-lg md:text-xl">
+                    {isEditMode ? "Edit Category" : "Category Details"}:
+                    <span className="ml-2">
+                      {categoryName || `ID: ${categoryId}`}
+                    </span>
+                  </div>
+                  <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
+                    <Button
+                      type="button"
+                      variant={isEditMode ? "outline" : "default"}
+                      onClick={() => setIsEditMode(!isEditMode)}
+                      disabled={isDeleting || isLoading}
+                      size="sm"
+                      className="h-9 px-3"
                     >
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>{" "}
-                {isEditMode && (
-                  <div className="flex flex-wrap gap-2">
+                      <Pencil className="mr-2 h-4 w-4" />
+                      {isEditMode ? "Cancel" : "Edit"}
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
+                          variant="destructive"
                           type="button"
                           disabled={isDeleting || isLoading}
+                          size="sm"
+                          className="h-9 px-3"
                         >
-                          {isLoading ? (
+                          {isDeleting ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Saving...
+                              Deleting...
                             </>
                           ) : (
                             <>
-                              <Save className="mr-2 h-4 w-4" />
-                              Save Changes
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
                             </>
                           )}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Save Changes</AlertDialogTitle>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to save these changes to the
-                            category?
+                            This action cannot be undone. This will permanently
+                            delete this category from your system.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => {
-                              document.forms[0].dispatchEvent(
-                                new Event("submit", {
-                                  bubbles: true,
-                                  cancelable: true,
-                                })
-                              );
-                            }}
+                            onClick={handleDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            Save
+                            Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {message.text && (
+                  <Alert
+                    variant={
+                      message.type === "error"
+                        ? "destructive"
+                        : message.type === "success"
+                        ? "default"
+                        : "default"
+                    }
+                    className="mb-4"
+                  >
+                    <AlertTitle>{message.type?.toUpperCase()}</AlertTitle>
+                    <AlertDescription>{message.text}</AlertDescription>
+                  </Alert>
                 )}
-              </form>
-            </CardContent>
-          </Card>
+                <form onSubmit={handleUpdate} className="space-y-4">
+                  <div>
+                    {" "}
+                    <Label htmlFor="categoryNameEdit">Category Name</Label>{" "}
+                    <Input
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      id="categoryNameEdit"
+                      type="text"
+                      value={categoryName}
+                      onChange={(e) => setCategoryName(e.target.value)}
+                      disabled={!isEditMode}
+                      required
+                    />
+                  </div>
+                  <div>
+                    {" "}
+                    <Label htmlFor="categoryDescriptionEdit">
+                      Category Description (Optional)
+                    </Label>{" "}
+                    <Textarea
+                      id="categoryDescriptionEdit"
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      value={categoryDescription}
+                      onChange={(e) => setCategoryDescription(e.target.value)}
+                      disabled={!isEditMode}
+                    />
+                  </div>
+                  <div>
+                    {" "}
+                    <Label htmlFor="displayOrderEdit">Display Order</Label>{" "}
+                    <Input
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      id="displayOrderEdit"
+                      type="number"
+                      min="1"
+                      value={displayOrder}
+                      onChange={(e) =>
+                        setDisplayOrder(parseInt(e.target.value) || 1)
+                      }
+                      disabled={!isEditMode}
+                      required
+                    />
+                  </div>
+                  <div>
+                    {" "}
+                    <Label htmlFor="statusEdit">Status</Label>
+                    <Select
+                      value={status}
+                      onValueChange={setStatus}
+                      disabled={!isEditMode}
+                    >
+                      <SelectTrigger
+                        className={`w-full mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="statusEdit"
+                        aria-label="Category Status"
+                      >
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>{" "}
+                  {isEditMode && (
+                    <div className="flex flex-wrap gap-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            disabled={isDeleting || isLoading}
+                          >
+                            {isLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Saving...
+                              </>
+                            ) : (
+                              <>
+                                <Save className="mr-2 h-4 w-4" />
+                                Save Changes
+                              </>
+                            )}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Save Changes</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to save these changes to the
+                              category?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                document.forms[0].dispatchEvent(
+                                  new Event("submit", {
+                                    bubbles: true,
+                                    cancelable: true,
+                                  })
+                                );
+                              }}
+                            >
+                              Save
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
         <Separator orientation="vertical" className="h-auto hidden lg:block" />
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display All Categories */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
-              <CardTitle className="text-base sm:text-lg md:text-xl">
-                All Categories
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-250px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <CategoryList
-                    categories={categoriesList}
-                    isLoading={isLoadingCategories}
-                    error={fetchCategoriesError}
-                    title=""
-                    highlightId={categoryId || undefined}
-                    onCategoryClick={handleCategoryClick}
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  All Categories
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-250px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <CategoryList
+                      categories={categoriesList}
+                      isLoading={isLoadingCategories}
+                      error={fetchCategoriesError}
+                      title=""
+                      highlightId={categoryId || undefined}
+                      onCategoryClick={handleCategoryClick}
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>

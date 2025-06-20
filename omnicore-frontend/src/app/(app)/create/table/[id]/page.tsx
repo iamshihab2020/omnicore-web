@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { useParams, useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
@@ -358,10 +360,24 @@ export default function EditTablePage() {
   if (loadingState.currentTable || uiState.status === STATUS_TYPES.LOADING) {
     return (
       <AppLayout>
-        <div className="flex flex-col items-center justify-center h-full p-4">
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Tables", href: "/create/table" },
+              { label: "Loading..." },
+            ]}
+            className="mb-4"
+          />
+        </div>
+        <AnimatedCard
+          variant="fadeIn"
+          duration={0.4}
+          className="flex flex-col items-center justify-center h-full p-4"
+        >
           <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
           <p className="text-lg">Loading table details...</p>
-        </div>
+        </AnimatedCard>
       </AppLayout>
     );
   }
@@ -370,7 +386,17 @@ export default function EditTablePage() {
   if (uiState.status === STATUS_TYPES.ERROR || !formData.number) {
     return (
       <AppLayout>
-        <div className="p-4">
+        <div className="px-4">
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Tables", href: "/create/table" },
+              { label: "Error" },
+            ]}
+            className="mb-4"
+          />
+        </div>
+        <AnimatedCard variant="fadeIn" duration={0.4} className="p-4">
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
@@ -380,303 +406,329 @@ export default function EditTablePage() {
           <Button onClick={() => router.push("/create/table")} className="mt-4">
             Back to Tables
           </Button>
-        </div>
+        </AnimatedCard>
       </AppLayout>
     );
   }
 
   return (
     <AppLayout>
-      <div className="px-4">
-        <PageHeader
-          title="Edit Table"
-          description="Update the details of your restaurant table"
-          className="mb-4"
-          actions={
-            <Button
-              variant="outline"
-              onClick={() => router.push("/create/table")}
-            >
-              <ChevronLeft className="mr-2" />
-              Back to Tables
-            </Button>
-          }
-        />
+      <div className="px-4 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-muted/20 to-background opacity-80 pointer-events-none z-0"></div>
+        <div className="relative z-10">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb
+            items={[
+              { label: "Create", href: "/create" },
+              { label: "Tables", href: "/create/table" },
+              { label: `Table ${formData.number}` },
+            ]}
+            className="mb-4"
+          />
+
+          <AnimatedCard variant="fadeIn" duration={0.4}>
+            <PageHeader
+              title="Edit Table"
+              description="Update the details of your restaurant table"
+              className="mb-4"
+              actions={
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/create/table")}
+                >
+                  <ChevronLeft className="mr-2" />
+                  Back to Tables
+                </Button>
+              }
+            />
+          </AnimatedCard>
+        </div>
       </div>
       <div className="flex flex-col lg:flex-row flex-1 p-4 gap-6">
         {/* Left Column: Edit Form */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="flex flex-col h-auto">
-            <CardHeader>
-              <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
-                <div className="text-base sm:text-lg md:text-xl">
-                  {isEditMode ? "Edit Table" : "Table Details"}:
-                  <Badge variant={"default"} className="text-lg rounded-full">
-                    {formData.number}
-                  </Badge>
-                </div>
-                <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
-                  <Button
-                    type="button"
-                    variant={isEditMode ? "outline" : "default"}
-                    onClick={() => setIsEditMode(!isEditMode)}
-                    disabled={uiState.isSubmitting || uiState.isDeleting}
-                    size="sm"
-                    className="h-9 px-3"
-                  >
-                    <Pencil className=" h-4 w-4" />
-                    {isEditMode ? "Cancel" : "Edit"}
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        type="button"
-                        disabled={uiState.isSubmitting || uiState.isDeleting}
-                      >
-                        {uiState.isDeleting ? (
-                          <>
-                            <Loader2 className=" h-4 w-4 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className=" h-4 w-4" />
-                            Delete
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this table from your system.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDelete}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          <AnimatedCard variant="slideUp" delay={0.1} duration={0.4}>
+            <Card className="flex flex-col h-auto">
+              <CardHeader>
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-y-2">
+                  <div className="text-base sm:text-lg md:text-xl">
+                    {isEditMode ? "Edit Table" : "Table Details"}:
+                    <Badge
+                      variant={"default"}
+                      className="text-lg rounded-full ml-2"
+                    >
+                      {formData.number}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-start sm:justify-end gap-x-2 w-full sm:w-auto">
+                    <Button
+                      type="button"
+                      variant={isEditMode ? "outline" : "default"}
+                      onClick={() => setIsEditMode(!isEditMode)}
+                      disabled={uiState.isSubmitting || uiState.isDeleting}
+                      size="sm"
+                      className="h-9 px-3"
+                    >
+                      <Pencil className="h-4 w-4 mr-1" />
+                      {isEditMode ? "Cancel" : "Edit"}
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          disabled={uiState.isSubmitting || uiState.isDeleting}
+                          size="sm"
+                          className="h-9"
                         >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              {/* Display message alert */}
-              {uiState.message && (
-                <Alert
-                  variant={
-                    String(uiState.status) === String(STATUS_TYPES.ERROR)
-                      ? "destructive"
-                      : "default"
-                  }
-                  className="mb-4"
-                >
-                  <AlertTitle>
-                    {String(uiState.status) === String(STATUS_TYPES.ERROR)
-                      ? "ERROR"
-                      : "SUCCESS"}
-                  </AlertTitle>
-                  <AlertDescription>{uiState.message}</AlertDescription>
-                </Alert>
-              )}
-              <form onSubmit={handleUpdate} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                          {uiState.isDeleting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this table from your system.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                {/* Display message alert */}
+                {uiState.message && (
+                  <AnimatedCard variant="fadeIn" duration={0.3}>
+                    <Alert
+                      variant={
+                        String(uiState.status) === String(STATUS_TYPES.ERROR)
+                          ? "destructive"
+                          : "default"
+                      }
+                      className="mb-4"
+                    >
+                      <AlertTitle>
+                        {String(uiState.status) === String(STATUS_TYPES.ERROR)
+                          ? "ERROR"
+                          : "SUCCESS"}
+                      </AlertTitle>
+                      <AlertDescription>{uiState.message}</AlertDescription>
+                    </Alert>
+                  </AnimatedCard>
+                )}
+                <form onSubmit={handleUpdate} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="numberEdit">Table Number *</Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="numberEdit"
+                        type="text"
+                        value={formData.number}
+                        onChange={handleTextChange}
+                        disabled={!isEditMode}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="nameEdit">Table Name</Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="nameEdit"
+                        type="text"
+                        value={formData.name}
+                        onChange={handleTextChange}
+                        disabled={!isEditMode}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="capacityEdit">Capacity *</Label>
+                      <Input
+                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        id="capacityEdit"
+                        type="text"
+                        inputMode="numeric"
+                        value={formData.capacity}
+                        onChange={handleCapacityInput}
+                        disabled={!isEditMode}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="statusEdit">Status</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) =>
+                          handleFieldChange("status", value)
+                        }
+                        disabled={!isEditMode}
+                      >
+                        <SelectTrigger
+                          id="statusEdit"
+                          className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                        >
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                   <div>
-                    <Label htmlFor="numberEdit">Table Number *</Label>
+                    <Label htmlFor="areaEdit">Area</Label>
                     <Input
                       className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="numberEdit"
+                      id="areaEdit"
                       type="text"
-                      value={formData.number}
+                      value={formData.area}
                       onChange={handleTextChange}
                       disabled={!isEditMode}
-                      required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="nameEdit">Table Name</Label>
-                    <Input
-                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="nameEdit"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleTextChange}
-                      disabled={!isEditMode}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="capacityEdit">Capacity *</Label>
-                    <Input
-                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      id="capacityEdit"
-                      type="text"
-                      inputMode="numeric"
-                      value={formData.capacity}
-                      onChange={handleCapacityInput}
-                      disabled={!isEditMode}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="statusEdit">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value) =>
-                        handleFieldChange("status", value)
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="is_activeEdit"
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) =>
+                        handleFieldChange("is_active", checked)
                       }
                       disabled={!isEditMode}
-                    >
-                      <SelectTrigger
-                        id="statusEdit"
-                        className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                      >
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statusOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
+                    <Label htmlFor="is_activeEdit" className="cursor-pointer">
+                      {formData.is_active ? "Active" : "Inactive"}
+                    </Label>
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="areaEdit">Area</Label>
-                  <Input
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    id="areaEdit"
-                    type="text"
-                    value={formData.area}
-                    onChange={handleTextChange}
-                    disabled={!isEditMode}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id="is_activeEdit"
-                    checked={formData.is_active}
-                    onCheckedChange={(checked) =>
-                      handleFieldChange("is_active", checked)
-                    }
-                    disabled={!isEditMode}
-                  />
-                  <Label htmlFor="is_activeEdit" className="cursor-pointer">
-                    {formData.is_active ? "Active" : "Inactive"}
-                  </Label>
-                </div>
-                <div>
-                  <Label htmlFor="notesEdit">Notes</Label>
-                  <Textarea
-                    className={`mt-2 ${!isEditMode && "opacity-90"}`}
-                    id="notesEdit"
-                    value={formData.notes}
-                    onChange={handleTextChange}
-                    disabled={!isEditMode}
-                  />
-                </div>
-                <div className="flex space-x-2">
-                  {isEditMode && (
-                    <>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            disabled={
-                              uiState.isSubmitting || uiState.isDeleting
-                            }
-                          >
-                            {uiState.isSubmitting ? (
-                              <>
-                                <Loader2 className=" h-4 w-4 animate-spin" />
-                                Saving...
-                              </>
-                            ) : (
-                              <>
-                                <Save className=" h-4 w-4" />
-                                Save Changes
-                              </>
-                            )}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Save Changes</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to save these changes to the
-                              table?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => {
-                                document.forms[0].dispatchEvent(
-                                  new Event("submit", {
-                                    bubbles: true,
-                                    cancelable: true,
-                                  })
-                                );
-                              }}
+                  <div>
+                    <Label htmlFor="notesEdit">Notes</Label>
+                    <Textarea
+                      className={`mt-2 ${!isEditMode && "opacity-90"}`}
+                      id="notesEdit"
+                      value={formData.notes}
+                      onChange={handleTextChange}
+                      disabled={!isEditMode}
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    {isEditMode && (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              type="button"
+                              disabled={
+                                uiState.isSubmitting || uiState.isDeleting
+                              }
                             >
-                              Save
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </>
-                  )}
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push("/create/table")}
-                    type="button"
-                    disabled={uiState.isSubmitting || uiState.isDeleting}
-                  >
-                    Back to Table Creation
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                              {uiState.isSubmitting ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                                  Saving...
+                                </>
+                              ) : (
+                                <>
+                                  <Save className="h-4 w-4 mr-1" />
+                                  Save Changes
+                                </>
+                              )}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Save Changes</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to save these changes to
+                                the table?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => {
+                                  document.forms[0].dispatchEvent(
+                                    new Event("submit", {
+                                      bubbles: true,
+                                      cancelable: true,
+                                    })
+                                  );
+                                }}
+                              >
+                                Save
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push("/create/table")}
+                      type="button"
+                      disabled={uiState.isSubmitting || uiState.isDeleting}
+                    >
+                      Back to Table Creation
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
         <Separator orientation="vertical" className="h-auto hidden lg:block" />
         <Separator className="my-6 lg:hidden" />
         {/* Right Column: Display All Tables */}
         <div className="w-full lg:w-1/2 flex flex-col">
-          <Card className="h-auto">
-            <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
-              <CardTitle className="text-base sm:text-lg md:text-xl">
-                All Tables
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-280px)]">
-                <div className="px-3 sm:px-6 pb-4">
-                  <TableList
-                    tables={tablesList}
-                    isLoading={loadingState.tables}
-                    error={null}
-                    title=""
-                    highlightId={tableId}
-                    onTableClick={handleTableClick}
-                    showCounts={true}
-                  />
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <AnimatedCard variant="slideUp" delay={0.2} duration={0.4}>
+            <Card className="h-auto">
+              <CardHeader className="px-4 py-2 sm:px-6 sm:py-3">
+                <CardTitle className="text-base sm:text-lg md:text-xl">
+                  All Tables
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[calc(100vh-280px)]">
+                  <div className="px-3 sm:px-6 pb-4">
+                    <TableList
+                      tables={tablesList}
+                      isLoading={loadingState.tables}
+                      error={null}
+                      title=""
+                      highlightId={tableId}
+                      onTableClick={handleTableClick}
+                      showCounts={true}
+                    />
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </AnimatedCard>
         </div>
       </div>
     </AppLayout>
