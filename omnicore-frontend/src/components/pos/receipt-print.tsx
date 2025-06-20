@@ -34,9 +34,21 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   const time = now.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
-  });
+  }); // Helper to parse price to number for calculations
+  const parsePrice = (price: number | string): number => {
+    if (typeof price === "number") {
+      return price;
+    }
+    try {
+      return parseFloat(String(price));
+    } catch (e) {
+      console.error("Invalid price format:", price, e);
+      return 0;
+    }
+  };
+
   const netTotal = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + parsePrice(item.price) * item.quantity,
     0
   );
   const vat = +(netTotal * VAT_RATE).toFixed(2);
@@ -49,10 +61,14 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
       name.length > maxLength ? name.substring(0, maxLength - 3) + "..." : name;
     return trimmedName.padEnd(maxLength, " ");
   };
-  const formatPrice = (price: number): string =>
-    `${price.toFixed(2)}`.padStart(7, " ");
-  const formatTotalPrice = (price: number): string =>
-    `${price.toFixed(2)}`.padStart(9, " ");
+  const formatPrice = (price: number | string): string => {
+    const numPrice = typeof price === "number" ? price : parsePrice(price);
+    return `৳${numPrice.toFixed(2)}`.padStart(8, " ");
+  };
+  const formatTotalPrice = (price: number | string): string => {
+    const numPrice = typeof price === "number" ? price : parsePrice(price);
+    return `৳${numPrice.toFixed(2)}`.padStart(10, " ");
+  };
   // Format labels for total sections with consistent width
   const formatTotalLabel = (label: string): string => {
     return label.padEnd(23, " ");
@@ -111,7 +127,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
             <div>
               <span className="pre-price">{formatPrice(item.price)}</span>
               <span className="pre-total">
-                {formatTotalPrice(item.price * item.quantity)}
+                {formatTotalPrice(parsePrice(item.price) * item.quantity)}
               </span>
             </div>
           </pre>

@@ -1,13 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
+import { useRouter } from "next/navigation";
 import { AppLayout } from "@/components/app/layout/app-layout";
 import { PageHeader } from "@/components/ui/page-header";
 import ProductGrid from "@/components/pos/product-grid";
 import CartSidebar, { CartItem } from "@/components/pos/cart-sidebar";
 import CartAlert from "@/components/pos/cart-alert";
 import { useSoundEffect } from "@/components/pos/use-sound-effect";
-import productsData from "@/json/products.json";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { AnimatedCard } from "@/components/ui/animated-card";
+import { apiRequest, ApiError } from "@/lib/api";
 import {
   Select,
   SelectContent,
@@ -15,33 +24,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Search, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
+// Define our Product interface to match the API response
 interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
-  type: string;
-  price: number;
-  imageUrl: string;
+  category_name: string;
+  price: number | string; // Allow both number and string types
+  image: string;
   description?: string;
+  preparation_time?: number;
+  is_active: boolean;
 }
 
 interface Counter {
-  id: number;
+  id: string;
   name: string;
   location: string;
   status: string;
-  availableProducts: number[];
+  description?: string;
+  item_details: Product[];
 }
 
 const PosPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [counters, setCounters] = useState<Counter[]>([]);
   const [selectedCounter, setSelectedCounter] = useState<Counter | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    counters: true,
+    items: false,
+  });
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedCartItemId, setSelectedCartItemId] = useState<string | null>(
+    null
+  ); // Track selected cart item
+  const [searchQuery, setSearchQuery] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<
     "Cash" | "Card" | "Mobile"
   >("Cash");
@@ -56,55 +77,148 @@ const PosPage = () => {
 
   // Reference to store the notification timeout ID
   const notificationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const { playCheckoutSound } = useSoundEffect();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Load counters data
-        const countersResponse = await fetch("/json/counters.json");
-        if (!countersResponse.ok) throw new Error("Failed to load counters");
-        const countersData = await countersResponse.json();
-        setCounters(countersData);
+  const nextRouter = useRouter();
 
-        // Set all products
-        setAllProducts(productsData);
-        setProducts(productsData);
+  // Create a router adapter that matches the apiRequest expected interface
+  const router = useMemo(
+    () => ({
+      push: async (url: string) => {
+        nextRouter.push(url);
+        return Promise.resolve();
+      },
+    }),
+    [nextRouter]
+  );
+
+  // Fetch counters from the backend API using apiRequest
+  useEffect(() => {
+    const fetchCounters = async () => {
+      try {
+        setLoading((prev) => ({ ...prev, counters: true }));
+
+        // Use apiRequest to handle authentication and error handling automatically
+        const data = await apiRequest<null, Counter[]>(
+          "settings/counters/",
+          router,
+          { method: "GET" },
+          true // requireAuth = true
+        );
+
+        const activeCounters = data.filter(
+          (counter: Counter) => counter.status === "active"
+        );
+
+        setCounters(activeCounters);
 
         // Set default counter if available
-        if (countersData.length > 0) {
-          const activeCounters = countersData.filter(
-            (counter: Counter) => counter.status === "active"
-          );
-          if (activeCounters.length > 0) {
-            setSelectedCounter(activeCounters[0]);
+        if (activeCounters.length > 0) {
+          setSelectedCounter(activeCounters[0]);
+        }
+        setLoading((prev) => ({ ...prev, counters: false }));
+      } catch (error) {
+        console.error("Error fetching counters:", error);
+
+        // Enhanced error handling with fallback to static data
+        let errorMessage = "Failed to load counters from the API."; // Check if the error is an ApiError
+        if (error && typeof error === "object" && "status" in error) {
+          // This is an ApiError from our apiRequest function
+          const apiError = error as ApiError;
+
+          const statusCode = apiError.status;
+          if (statusCode === 401) {
+            errorMessage = "Authentication failed. Please login again.";
+          } else if (statusCode === 404) {
+            errorMessage =
+              "Counter API endpoint not found. Check API configuration.";
+          } else {
+            errorMessage = `API Error (${statusCode}): ${
+              apiError.statusText || "Unknown error"
+            }`;
           }
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
         }
 
-        setLoading(false);
-      } catch (error) {
-        setError(
-          `Failed to load data: ${
-            error instanceof Error ? error.message : "Unknown error"
-          }`
-        );
-        setLoading(false);
+        setError(errorMessage);
+
+        // Fallback to load dummy data if API fails
+        try {
+          // Load static dummy data in production/development for demo purposes
+          console.log("Attempting to load fallback dummy counter data...");
+          // Dummy counter with items matching our API structure
+          const dummyCounter: Counter = {
+            id: "dummy-counter-1",
+            name: "Demo Counter",
+            location: "Front Entrance",
+            description: "Demo Counter for testing",
+            status: "active",
+            item_details: [
+              {
+                id: "dummy-item-1",
+                name: "Chicken Burger",
+                description: "Delicious chicken burger with special sauce",
+                price: 220.0, // Using number instead of string
+                image: "/omnicore.png",
+                is_active: true,
+                preparation_time: 15,
+                category: "burger-category",
+                category_name: "Burger",
+              },
+              {
+                id: "dummy-item-2",
+                name: "Coffee",
+                description: "Fresh brewed coffee",
+                price: 150.0, // Using number instead of string
+                image: "/omnicore.png",
+                is_active: true,
+                preparation_time: 5,
+                category: "coffee-category",
+                category_name: "Coffee",
+              },
+            ],
+          };
+
+          setCounters([dummyCounter]);
+          setSelectedCounter(dummyCounter);
+          setError(
+            "Using demo data as API connection failed. Check backend server."
+          );
+        } catch (fallbackError) {
+          console.error("Failed to load fallback data:", fallbackError);
+        }
+
+        setLoading((prev) => ({ ...prev, counters: false }));
       }
     };
+    fetchCounters();
+  }, [router]);
 
-    fetchData();
-  }, []);
+  // Update products when a counter is selected
   useEffect(() => {
     if (selectedCounter) {
-      const filteredProducts = allProducts.filter((product) =>
-        selectedCounter.availableProducts.includes(product.id)
-      );
-      setProducts(filteredProducts);
-    } else {
-      setProducts(allProducts);
+      setLoading((prev) => ({ ...prev, items: true }));
+
+      // Filter and process items from the selected counter
+      const items = selectedCounter.item_details
+        .filter((item) => item.is_active)
+        .map((item) => ({
+          ...item,
+          imageUrl: item.image || "/omnicore.png", // Add imageUrl for compatibility
+        }));
+
+      setProducts(items);
+      setLoading((prev) => ({ ...prev, items: false }));
     }
-  }, [selectedCounter, allProducts]);
-  const handleCounterChange = (counterId: number) => {
+  }, [selectedCounter]);
+
+  // Handle counter change
+  const handleCounterChange = (counterId: string) => {
+    if (counterId === "all") {
+      setSelectedCounter(null);
+      return;
+    }
+
     const counter = counters.find((c) => c.id === counterId);
     setSelectedCounter(counter || null);
 
@@ -114,6 +228,18 @@ const PosPage = () => {
     // Close any existing notification
     setNotification((prev) => ({ ...prev, isVisible: false }));
   };
+
+  // Filter products based on search
+  const filteredProducts = useCallback(() => {
+    if (!searchQuery) return products;
+
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [products, searchQuery]);
+
   const handleAddToCart = (product: Product) => {
     // Cancel any existing notification timeout to prevent overlapping notifications
     if (notificationTimeoutRef.current) {
@@ -146,16 +272,38 @@ const PosPage = () => {
       return [...prev, { ...product, quantity: 1 }];
     });
 
-    // Set notification to auto-hide after 4 seconds (matching the duration in CartNotification)
+    // Set notification to auto-hide after 4 seconds
     notificationTimeoutRef.current = setTimeout(() => {
       setNotification((prev) => ({ ...prev, isVisible: false }));
       notificationTimeoutRef.current = null;
     }, 4000);
   };
 
-  const handleRemoveFromCart = (id: number) => {
+  const handleRemoveFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
+  // Handle incrementing item quantity in cart
+  const handleIncrementItem = useCallback((id: string) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  }, []);
+
+  // Handle decrementing item quantity in cart
+  const handleDecrementItem = useCallback((id: string) => {
+    setCart((prev) =>
+      prev.map((item) => {
+        // If quantity is 1, keep it at 1
+        if (item.id === id && item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      })
+    );
+  }, []);
+
   const handleResetCart = useCallback(() => {
     setCart([]);
     // Immediately close any existing notification
@@ -197,7 +345,6 @@ const PosPage = () => {
       }, 4000);
     }, 500);
   }, [playCheckoutSound, paymentMethod, orderType]);
-
   // Setup keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -222,12 +369,67 @@ const PosPage = () => {
           event.preventDefault();
           handleResetCart();
           break;
+        // Handle + key for incrementing selected item or last item in cart
+        case "+":
+        case "=": // Same key as + on most keyboards
+          event.preventDefault();
+          if (!cart.length) return;
+
+          // If an item is selected, increment that item
+          if (selectedCartItemId) {
+            handleIncrementItem(selectedCartItemId);
+          }
+          // If no item is selected, increment the last added item
+          else if (cart.length > 0) {
+            const lastItem = cart[cart.length - 1];
+            handleIncrementItem(lastItem.id);
+            // Briefly select this item to provide visual feedback
+            setSelectedCartItemId(lastItem.id);
+            setTimeout(() => {
+              setSelectedCartItemId(null);
+            }, 300);
+          }
+          break;
+        // Handle - key for decrementing selected item or last item in cart
+        case "-":
+          event.preventDefault();
+          if (!cart.length) return;
+
+          // If an item is selected, decrement that item
+          if (selectedCartItemId) {
+            const selectedItem = cart.find(
+              (item) => item.id === selectedCartItemId
+            );
+            if (selectedItem && selectedItem.quantity > 1) {
+              handleDecrementItem(selectedCartItemId);
+            }
+          }
+          // If no item is selected, decrement the last added item if it has quantity > 1
+          else if (cart.length > 0) {
+            const lastItem = cart[cart.length - 1];
+            if (lastItem.quantity > 1) {
+              handleDecrementItem(lastItem.id);
+              // Briefly select this item to provide visual feedback
+              setSelectedCartItemId(lastItem.id);
+              setTimeout(() => {
+                setSelectedCartItemId(null);
+              }, 300);
+            }
+          }
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cart.length, handleCheckout, handleResetCart]);
+  }, [
+    cart,
+    selectedCartItemId,
+    handleCheckout,
+    handleResetCart,
+    handleIncrementItem,
+    handleDecrementItem,
+  ]);
 
   // Cleanup effect to clear any notification timeouts when component unmounts
   useEffect(() => {
@@ -238,118 +440,125 @@ const PosPage = () => {
       }
     };
   }, []);
+
   return (
     <AppLayout>
-      <div className="flex flex-col md:flex-row h-full min-h-screen">
-        {/* Main Product Grid */}
-        <main className="flex-1 p-2 md:p-4 w-full">
-          <PageHeader
-            title="Point of Sale"
-            description={
-              selectedCounter
-                ? `Terminal: ${selectedCounter.name}`
-                : "Select a counter below"
-            }
-          />
+      <AnimatedCard variant="slideUp" className="mb-4">
+        <Breadcrumb
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: "Point of Sale" },
+          ]}
+        />
+        <PageHeader
+          title="Point of Sale"
+          description={
+            selectedCounter
+              ? `Terminal: ${selectedCounter.name} - ${selectedCounter.location}`
+              : "Select a counter below"
+          }
+        />
+      </AnimatedCard>
 
-          {loading ? (
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Main Product Grid */}
+        <AnimatedCard
+          variant="slideUp"
+          className="flex-1 p-4 rounded-lg bg-card shadow border border-border"
+          delay={0.1}
+        >
+          {loading.counters ? (
             <div className="p-8 flex flex-col items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-              <p className="text-muted-foreground">Loading products...</p>
+              <p className="text-muted-foreground">Loading counters...</p>
             </div>
           ) : error ? (
-            <div className="p-8 text-red-500">{error}</div>
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           ) : (
             <>
-              {/* Counter Selection */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="mb-4 flex items-center gap-2 max-w-xl">
+              {" "}
+              {/* Counter Selection and Search */}
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                <div className="relative w-full md:w-1/2">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Search products..."
-                    className="px-3 py-2 border border-border rounded-md w-full max-w-xl"
-                    onChange={(e) => {
-                      const searchTerm = e.target.value.toLowerCase();
-                      if (searchTerm === "") {
-                        // Reset to current counter's products or all products
-                        if (selectedCounter) {
-                          const filteredProducts = allProducts.filter(
-                            (product) =>
-                              selectedCounter.availableProducts.includes(
-                                product.id
-                              )
-                          );
-                          setProducts(filteredProducts);
-                        } else {
-                          setProducts(allProducts);
-                        }
-                      } else {
-                        // Filter within current selection
-                        const baseProducts = selectedCounter
-                          ? allProducts.filter((p) =>
-                              selectedCounter.availableProducts.includes(p.id)
-                            )
-                          : allProducts;
-
-                        setProducts(
-                          baseProducts.filter(
-                            (product) =>
-                              product.name.toLowerCase().includes(searchTerm) ||
-                              product.category
-                                .toLowerCase()
-                                .includes(searchTerm)
-                          )
-                        );
-                      }
-                    }}
+                    className="pl-10 pr-3 py-2 border border-border rounded-md w-full"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <div className="mb-4 flex flex-col md:flex-row items-start md:items-center gap-4">
-                  <label className="block text-sm font-medium mb-2">
-                    Select Counter
+
+                <div className="w-full md:w-1/2 flex items-center gap-2">
+                  <label className="whitespace-nowrap text-sm font-medium">
+                    Select Counter:
                   </label>
-                  <div className="max-w-sm mb-4">
-                    {" "}
-                    <Select
-                      value={
-                        selectedCounter ? selectedCounter.id.toString() : "all"
-                      }
-                      onValueChange={(value) => {
-                        if (value === "all") {
-                          setSelectedCounter(null);
-                        } else {
-                          const counterId = parseInt(value, 10);
-                          handleCounterChange(counterId);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a counter" />
-                      </SelectTrigger>{" "}
-                      <SelectContent>
-                        <SelectItem value="all">Default</SelectItem>
-                        {counters
-                          .filter((counter) => counter.status === "active")
-                          .map((counter) => (
-                            <SelectItem
-                              key={counter.id}
-                              value={counter.id.toString()}
-                            >
-                              {counter.name} ({counter.location})
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Select
+                    value={selectedCounter ? selectedCounter.id : "all"}
+                    onValueChange={handleCounterChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a counter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Products</SelectItem>
+                      {counters.length > 0 ? (
+                        counters.map((counter) => (
+                          <SelectItem key={counter.id} value={counter.id}>
+                            {counter.name} ({counter.location})
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem disabled value="none">
+                          No counters available
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-              {/* Search and filter bar */}
-              <ProductGrid products={products} onAddToCart={handleAddToCart} />
+              {/* Show warning if using demo data */}
+              {error && error.includes("demo data") && (
+                <Alert className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {error} Make sure the backend server is running at
+                    http://localhost:8000
+                  </AlertDescription>
+                </Alert>
+              )}
+              {/* Product Grid */}
+              {loading.items ? (
+                <div className="p-8 flex flex-col items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                  <p className="text-muted-foreground">Loading products...</p>
+                </div>
+              ) : filteredProducts().length === 0 ? (
+                <div className="p-8 text-center">
+                  <p className="text-muted-foreground">
+                    No products found for this counter.
+                    {searchQuery && " Try adjusting your search terms."}
+                  </p>
+                </div>
+              ) : (
+                <ProductGrid
+                  products={filteredProducts()}
+                  onAddToCart={handleAddToCart}
+                />
+              )}
             </>
           )}
-        </main>
-        {/* Order Summary Sidebar */}{" "}
-        <div className="w-full md:w-80 max-w-full md:max-w-xs lg:max-w-sm flex-shrink-0">
+        </AnimatedCard>{" "}
+        {/* Order Summary Sidebar */}
+        <AnimatedCard
+          variant="slideUp"
+          className="w-full lg:w-96 flex-shrink-0"
+          delay={0.2}
+        >
           <CartSidebar
             cart={cart}
             onReset={handleResetCart}
@@ -360,8 +569,12 @@ const PosPage = () => {
             onPaymentMethodChange={setPaymentMethod}
             onOrderTypeChange={setOrderType}
             counterName={selectedCounter?.name || "Default"}
+            onIncrementItem={handleIncrementItem}
+            onDecrementItem={handleDecrementItem}
+            selectedCartItemId={selectedCartItemId}
+            onCartItemSelect={setSelectedCartItemId}
           />
-        </div>{" "}
+        </AnimatedCard>
         <CartAlert
           isVisible={notification.isVisible}
           message={notification.message}

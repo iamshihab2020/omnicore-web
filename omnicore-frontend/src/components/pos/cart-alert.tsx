@@ -39,7 +39,7 @@ const CartAlert: React.FC<CartAlertProps> = ({
   if (!isShown) return null;
 
   return (
-    <div className="fixed right-4 top-10 z-50 max-w-[350px] transition-opacity">
+    <div className="fixed right-10 top-26 z-50 max-w-[550px] transition-opacity">
       <Alert
         className="border-primary/20 bg-primary text-primary-foreground shadow-md"
         variant="default"

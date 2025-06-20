@@ -5,15 +5,20 @@ import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 import { useSoundEffect } from "./use-sound-effect";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   category: string;
-  type: string;
-  price: number;
-  imageUrl: string;
+  category_name: string;
+  price: number | string; // Accept both number and string for price
+  image: string;
+  imageUrl?: string; // For backward compatibility
+  type?: string; // For grouping
   description?: string;
+  preparation_time?: number;
+  is_active: boolean;
 }
 
 interface ProductGridProps {
@@ -21,17 +26,35 @@ interface ProductGridProps {
   onAddToCart: (product: Product) => void;
 }
 
+// Helper function to format price regardless of whether it's a number or string
+const formatPrice = (price: number | string): string => {
+  if (typeof price === "number") {
+    return price.toFixed(2);
+  }
+  // Handle string price by parsing it first
+  try {
+    return parseFloat(String(price)).toFixed(2);
+  } catch (e) {
+    console.error("Invalid price format:", price, e);
+    return "0.00";
+  }
+};
+
 const fallbackImg = "/omnicore.png";
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
-  const [fallbacks, setFallbacks] = useState<{ [id: number]: boolean }>({});
-  const [clickedProductId, setClickedProductId] = useState<number | null>(null);
+  const [fallbacks, setFallbacks] = useState<{ [id: string]: boolean }>({});
+  const [clickedProductId, setClickedProductId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const { playAddToCartSound } = useSoundEffect();
 
-  // Extract unique product types and sort them alphabetically
+  // Extract unique product types/categories and sort them alphabetically
   const productTypes = useMemo(() => {
-    const types = Array.from(new Set(products.map((product) => product.type)));
+    const types = Array.from(
+      new Set(
+        products.map((product) => product.category_name || "Uncategorized")
+      )
+    );
     return types.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
   }, [products]);
 
@@ -46,17 +69,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
 
     // Populate the groups
     products.forEach((product) => {
-      if (product.type) {
-        if (!groupedProducts[product.type]) {
-          groupedProducts[product.type] = [];
-        }
-        groupedProducts[product.type].push(product);
+      const type = product.category_name || "Uncategorized";
+      if (!groupedProducts[type]) {
+        groupedProducts[type] = [];
       }
+      groupedProducts[type].push(product);
     });
 
     return groupedProducts;
-  }, [products, productTypes]);
-  // Handle product click with simple animation
+  }, [products, productTypes]); // Handle product click with elegant animation
   const handleProductClick = (product: Product) => {
     // If already clicked, don't trigger animation again
     if (clickedProductId === product.id) return;
@@ -69,65 +90,100 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
     // Add to cart
     onAddToCart(product);
 
-    // Reset animation after 400ms (shorter duration for better performance)
+    // Reset animation after 800ms for a more noticeable but still snappy effect
     setTimeout(() => {
       setClickedProductId(null);
-    }, 400);
-  };
-  // Product card component for reuse with simplified animation
+    }, 800);
+  }; // Product card component with elegant animation
   const ProductCard = ({ product }: { product: Product }) => (
     <div
       key={product.id}
-      className={`bg-card text-card-foreground rounded-lg shadow border border-border flex flex-col cursor-pointer group max-w-sm w-full min-w-0 ${
-        clickedProductId === product.id ? "ring-1 ring-primary" : ""
+      className={`bg-card text-card-foreground rounded-lg shadow-sm border border-border flex flex-col cursor-pointer group max-w-sm w-full min-w-0 relative overflow-hidden transition-all duration-300 ${
+        clickedProductId === product.id
+          ? "shadow-lg"
+          : "hover:shadow hover:border-muted-foreground/20"
       }`}
       onClick={() => handleProductClick(product)}
     >
+      {" "}
       <div className="relative overflow-hidden rounded-t-lg">
         <Image
-          src={fallbacks[product.id] ? fallbackImg : product.imageUrl}
+          src={
+            fallbacks[product.id]
+              ? fallbackImg
+              : product.imageUrl || product.image || fallbackImg
+          }
           alt={product.name}
           width={300}
           height={200}
-          className="w-full h-52 object-cover object-center bg-muted"
+          className={`w-full h-52 object-cover object-center bg-muted transition-transform duration-300 ${
+            clickedProductId === product.id
+              ? "scale-[1.03]"
+              : "group-hover:scale-[1.01]"
+          }`}
           onError={() => setFallbacks((f) => ({ ...f, [product.id]: true }))}
           unoptimized
         />
+
+        {/* Overlay and effects on click */}
         {clickedProductId === product.id && (
-          <div className="absolute bottom-0 right-0 m-2">
-            <span className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
-              <CheckCircle size={12} />
-              Added
-            </span>
-          </div>
+          <>
+            {/* Elegant overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent animate-in fade-in duration-200"></div>
+
+            {/* Centered success indicator */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="rounded-full bg-primary/90 p-3 shadow-lg animate-in zoom-in-50 duration-300">
+                <CheckCircle className="text-white h-8 w-8" />
+              </div>
+            </div>
+
+            {/* Bottom banner */}
+            <div className="absolute bottom-0 left-0 right-0">
+              <div className="bg-primary py-1.5 px-3 text-sm font-medium text-primary-foreground text-center animate-in slide-in-from-bottom duration-200">
+                Added to Order
+              </div>
+            </div>
+          </>
         )}
       </div>{" "}
-      <div className="p-3 flex-1 flex flex-col md:flex-row items-start md:items-center justify-between">
+      <div
+        className={`p-3 flex-1 flex flex-col md:flex-row items-start md:items-center justify-between transition-all duration-300 ${
+          clickedProductId === product.id
+            ? "bg-gradient-to-r from-primary/5 to-transparent"
+            : ""
+        }`}
+      >
         <div>
-          <h3 className="text-base font-semibold mb-0.5 truncate">
+          <h3
+            className={`text-base font-semibold mb-0.5 truncate transition-colors duration-300 ${
+              clickedProductId === product.id ? "text-primary" : ""
+            }`}
+          >
             {product.name}
           </h3>
           <div className="text-xs capitalize text-muted-foreground mb-1">
-            {product.type}
+            {product.category_name || "Uncategorized"}
           </div>
         </div>
         <div
-          className={`text-base font-bold mb-1 ${
-            clickedProductId === product.id ? "text-primary" : "text-primary"
+          className={`text-base font-bold mb-1 transition-all duration-300 ${
+            clickedProductId === product.id
+              ? "text-primary transform translate-y-[-2px]"
+              : "text-primary"
           }`}
         >
-          ${product.price.toFixed(2)}
+          ৳{formatPrice(product.price)}
         </div>
       </div>
     </div>
   );
-
   return (
     <Tabs
       defaultValue="all"
       value={activeTab}
       onValueChange={setActiveTab}
-      className="w-full"
+      className="w-full flex flex-col h-full"
     >
       <TabsList className="mb-4 flex flex-wrap">
         <TabsTrigger value="all">All</TabsTrigger>
@@ -137,36 +193,41 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddToCart }) => {
           </TabsTrigger>
         ))}
       </TabsList>
-
       {/* All products tab, organized by type */}
       <TabsContent value="all" className="space-y-8">
-        {productTypes.map(
-          (type) =>
-            productsByType[type]?.length > 0 && (
-              <div key={`group-${type}`} className="mb-6">
-                <h2 className="text-xl font-bold mb-3 capitalize border-b pb-2">
-                  {type}
-                </h2>
-                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center mx-auto gap-3 sm:gap-4">
-                  {productsByType[type].map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
+        <ScrollArea className="h-[calc(100vh-20rem)] md:h-[calc(100vh-16rem)] lg:h-[calc(100vh-12rem)] pr-4">
+          {productTypes.map(
+            (type) =>
+              productsByType[type]?.length > 0 && (
+                <div key={`group-${type}`} className="mb-6">
+                  <h2 className="text-xl font-bold mb-3 capitalize border-b pb-2">
+                    {type}
+                  </h2>
+                  <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center mx-auto gap-3 sm:gap-4">
+                    {productsByType[type].map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )
-        )}
+              )
+          )}
+        </ScrollArea>
       </TabsContent>
-
       {/* Individual type tabs */}
       {productTypes.map((type) => (
         <TabsContent key={`tab-${type}`} value={type}>
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center mx-auto gap-3 sm:gap-4 mb-10 lg:mb-0">
-            {products
-              .filter((product) => product.type === type)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-          </div>
+          <ScrollArea className="h-[calc(100vh-20rem)] md:h-[calc(100vh-16rem)] lg:h-[calc(100vh-12rem)] pr-4">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center mx-auto gap-3 sm:gap-4 mb-10 lg:mb-0">
+              {products
+                .filter(
+                  (product) =>
+                    (product.category_name || "Uncategorized") === type
+                )
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+          </ScrollArea>
         </TabsContent>
       ))}
     </Tabs>

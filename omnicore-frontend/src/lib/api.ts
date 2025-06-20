@@ -1,6 +1,14 @@
 // API client for interacting with Django backend
 const API_URL = "http://localhost:8000/api";
 
+// Define API error interface for better error handling
+export interface ApiError {
+  status?: number;
+  statusText?: string;
+  data?: Record<string, unknown>;
+  message?: string;
+}
+
 export interface Tenant {
   id: string;
   name: string;
@@ -153,7 +161,7 @@ export function isTokenExpired(token: string | null): boolean {
     return Date.now() >= expiryTime;
   } catch (error) {
     console.error("Error parsing token:", error);
-    return true; 
+    return true;
   }
 }
 
@@ -394,12 +402,19 @@ export const apiRequest = async <Req, Res>(
         await router.push("/login");
         throw new Error("Session expired. Please log in again.");
       }
-    }
-
-    // Propagate backend errors
+    } // Propagate backend errors
     if (axiosError.response) {
       console.error("API Error Response:", axiosError.response.data); // Log the error payload
-      throw axiosError.response; // Throw the full response for frontend handling
+
+      // Construct a typed ApiError object
+      const apiError: ApiError = {
+        status: axiosError.response.status,
+        statusText: axiosError.response.statusText,
+        data: axiosError.response.data as Record<string, unknown>,
+        message: axiosError.message || "API request failed",
+      };
+
+      throw apiError; // Throw the typed error for frontend handling
     }
 
     // Handle unexpected issues (e.g., network errors)
