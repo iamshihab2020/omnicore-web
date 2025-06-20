@@ -286,7 +286,6 @@ export default function CreateCounterPage() {
 
   return (
     <AppLayout>
-      {" "}
       <div className="px-2 sm:px-4">
         <PageHeader
           title="Create Counter"
@@ -383,7 +382,7 @@ export default function CreateCounterPage() {
                       <SelectItem value="inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>{" "}
+                </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
@@ -435,7 +434,6 @@ export default function CreateCounterPage() {
         {/* Menu Items Selection */}
         <div className="w-full lg:w-1/2 flex flex-col">
           <Card className="flex flex-col h-auto">
-            {" "}
             <CardHeader className="px-4 py-3 sm:px-6 sm:py-4 flex flex-row items-center justify-between">
               <CardTitle className="text-lg sm:text-xl">
                 Available Items
@@ -483,7 +481,6 @@ export default function CreateCounterPage() {
                     {Object.entries(itemsByCategory).map(
                       ([category, items]) => (
                         <div key={category} className="mb-6">
-                          {" "}
                           <h3 className="text-base font-bold mb-3 capitalize border-b pb-2">
                             {category}
                           </h3>
@@ -498,7 +495,6 @@ export default function CreateCounterPage() {
                                 }`}
                                 onClick={() => handleItemToggle(item.id)}
                               >
-                                {" "}
                                 <div className="flex items-center gap-3">
                                   <Checkbox
                                     id={`item-${item.id}`}
