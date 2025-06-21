@@ -110,19 +110,21 @@ omnicore-frontend/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Backend API running (see omnicore-backend directory)
 
 ### Installation
 
 1. Clone the repository (if not already done)
+
    ```bash
    git clone https://github.com/yourusername/omnicore-web.git
    cd omnicore-web/omnicore-frontend
    ```
 
 2. Install dependencies
+
    ```bash
    npm install
    # or
@@ -130,6 +132,7 @@ omnicore-frontend/
    ```
 
 3. Set up environment variables
+
    ```
    # Create a .env.local file with:
    NEXT_PUBLIC_API_URL=http://localhost:8000/api
@@ -137,6 +140,7 @@ omnicore-frontend/
    ```
 
 4. Start the development server
+
    ```bash
    npm run dev
    # or
@@ -170,6 +174,7 @@ The frontend connects to the Django backend API using Axios and React Query:
 ### Traditional Hosting
 
 1. Build the application
+
    ```bash
    npm run build
    # or

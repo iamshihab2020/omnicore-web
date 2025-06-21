@@ -106,6 +106,7 @@ The API will be available at `http://localhost:8000/api/`
 #### Settings
 
 ##### Counters
+
 Counters represent selling points or service points in a restaurant.
 
 - `GET /api/settings/counters/` - List all counters for the tenant
@@ -115,12 +116,14 @@ Counters represent selling points or service points in a restaurant.
 - `DELETE /api/settings/counters/{id}/` - Delete a counter
 
 Counter functionalities include:
+
 - Assigning menu items to specific counters
 - Setting counter status (active/inactive)
 - Defining counter location and description
 - Managing which items can be sold at each counter
 
 ##### VAT Tax
+
 VAT (Value-Added Tax) management for applying taxes to orders.
 
 - `GET /api/settings/vat/` - List all VAT tax entries for the tenant
@@ -131,6 +134,7 @@ VAT (Value-Added Tax) management for applying taxes to orders.
 - `DELETE /api/settings/vat/{id}/` - Delete a VAT tax entry
 
 VAT tax functionalities include:
+
 - Setting different tax rates
 - Activating or deactivating tax rates
 - Naming and describing tax rates (e.g., Standard VAT, Reduced VAT)
@@ -307,13 +311,12 @@ We provide utility functions to make working with tenants easier:
 - `TenantContextManager`: Helper class for tenant operations
 - Methods for tenant filtering, role checking, and more
 
-
-
 ## Core Features and Models
 
 ### Multi-Tenancy
 
 The platform is built with multi-tenancy at its core:
+
 - Each restaurant or business is a distinct tenant
 - Data isolation between tenants
 - Shared infrastructure but separate data storage
@@ -410,6 +413,7 @@ bruno/
 ```
 
 To use these collections:
+
 1. Install the Bruno app from [usebruno.com](https://www.usebruno.com/)
 2. Open the bruno folder in the app
 3. Set up your environment variables
@@ -439,6 +443,7 @@ scripts/
 ```
 
 These scripts help with:
+
 - Creating test data
 - Running specific test scenarios
 - Managing database migrations
@@ -461,6 +466,7 @@ For production deployment:
 1. **Configure environment variables**
 
    Create appropriate environment variables for production:
+
    - `DEBUG=False`
    - `SECRET_KEY=your-secure-secret-key`
    - `ALLOWED_HOSTS=yourdomain.com`
@@ -524,10 +530,6 @@ The API is designed to support versioning if needed in the future:
 ```
 /api/v1/endpoint/  # Future version support
 ```
-
-
-
-
 
 For detailed documentation on these utilities, see [tenant-utils.md](docs/tenant-utils.md).
 
