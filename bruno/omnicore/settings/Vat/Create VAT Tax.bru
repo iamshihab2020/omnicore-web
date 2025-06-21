@@ -1,0 +1,28 @@
+meta {
+  name: Create VAT Tax
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8000/api/settings/vat/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+headers {
+  X-Tenant-Workspace: {{workspace}}
+}
+
+body:json {
+  {
+    "name": "Standard VAT",
+    "rate": 15.00,
+    "description": "Standard VAT rate for most goods and services",
+    "is_active": true
+  }
+}
