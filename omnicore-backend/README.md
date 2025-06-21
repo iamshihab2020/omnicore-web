@@ -2,12 +2,9 @@
 
 OmniCore is a comprehensive multi-tenant SaaS platform designed for restaurant management and Point of Sale (POS) operations. The platform provides a complete solution for managing restaurant operations, including menu management, order processing, payment handling, counter/selling point management, tax management, and more.
 
-## Project Structure
+## Project Overview
 
-The project is divided into two main parts:
-
-1. **omnicore-backend**: Django REST API backend with JWT authentication
-2. **omnicore-frontend**: Next.js frontend application
+This repository contains the Django REST API backend with JWT authentication for the OmniCore restaurant management system.
 
 ## Backend
 
@@ -278,9 +275,9 @@ apps/
     └── views.py
 ```
 
-## Frontend (Next.js)
+## Frontend Integration
 
-Details of the frontend implementation can be found in the `omnicore-frontend` directory.
+This backend is designed to work with the OmniCore frontend application located in the `omnicore-frontend` directory. Please see the README.md in that directory for frontend-specific details.
 
 ## Multi-Tenancy Architecture
 
