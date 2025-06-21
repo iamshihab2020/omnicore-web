@@ -49,6 +49,9 @@ interface Counter {
   item_details: Product[];
 }
 
+// Key for storing selected counter ID in localStorage
+const SELECTED_COUNTER_KEY = "selectedCounterId";
+
 const PosPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [counters, setCounters] = useState<Counter[]>([]);
@@ -111,10 +114,29 @@ const PosPage = () => {
 
         setCounters(activeCounters);
 
-        // Set default counter if available
-        if (activeCounters.length > 0) {
+        // Get the saved counter ID from localStorage
+        let savedCounterId: string | null = null;
+
+        // We need to check if we're in a browser environment before accessing localStorage
+        if (typeof window !== "undefined") {
+          savedCounterId = localStorage.getItem(SELECTED_COUNTER_KEY);
+        }
+
+        // If we have a saved counter ID and it exists in the active counters, use it
+        if (
+          savedCounterId &&
+          activeCounters.some((counter) => counter.id === savedCounterId)
+        ) {
+          const savedCounter = activeCounters.find(
+            (counter) => counter.id === savedCounterId
+          );
+          setSelectedCounter(savedCounter || null);
+        }
+        // Otherwise use the first counter as default
+        else if (activeCounters.length > 0) {
           setSelectedCounter(activeCounters[0]);
         }
+
         setLoading((prev) => ({ ...prev, counters: false }));
       } catch (error) {
         console.error("Error fetching counters:", error);
@@ -177,10 +199,14 @@ const PosPage = () => {
                 category_name: "Coffee",
               },
             ],
-          };
-
-          setCounters([dummyCounter]);
+          };          setCounters([dummyCounter]);
           setSelectedCounter(dummyCounter);
+          
+          // Save the dummy counter to localStorage when using demo data
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(SELECTED_COUNTER_KEY, dummyCounter.id);
+          }
+          
           setError(
             "Using demo data as API connection failed. Check backend server."
           );
@@ -212,15 +238,39 @@ const PosPage = () => {
     }
   }, [selectedCounter]);
 
+  // Load selected counter from localStorage on mount
+  useEffect(() => {
+    const storedCounterId = localStorage.getItem(SELECTED_COUNTER_KEY);
+    if (storedCounterId) {
+      const counter = counters.find((c) => c.id === storedCounterId);
+      setSelectedCounter(counter || null);
+    }
+  }, [counters]);
+
+  // Save selected counter to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedCounter) {
+      localStorage.setItem(SELECTED_COUNTER_KEY, selectedCounter.id);
+    }
+  }, [selectedCounter]);
   // Handle counter change
   const handleCounterChange = (counterId: string) => {
     if (counterId === "all") {
       setSelectedCounter(null);
+      // Remove from localStorage when selecting "All Products"
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(SELECTED_COUNTER_KEY);
+      }
       return;
     }
 
     const counter = counters.find((c) => c.id === counterId);
     setSelectedCounter(counter || null);
+    
+    // Save selected counter ID to localStorage
+    if (typeof window !== 'undefined' && counter) {
+      localStorage.setItem(SELECTED_COUNTER_KEY, counter.id);
+    }
 
     // Clear cart when changing counter
     setCart([]);
