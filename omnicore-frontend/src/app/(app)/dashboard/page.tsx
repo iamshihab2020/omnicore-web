@@ -1,160 +1,153 @@
 "use client";
 
+import React from "react";
 import { AppLayout } from "@/components/app/layout/app-layout";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Overview } from "@/components/dashboard/overview";
-import { RecentSales } from "@/components/dashboard/recent-sales";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
-import TeamMembers from "@/components/dashboard/team-members";
+import { QuickStats } from "@/components/dashboard/quick-stats";
+import { RevenueChart } from "@/components/dashboard/revenue-chart";
+import { SalesMetrics } from "@/components/dashboard/sales-metrics";
+import { SalesSummary } from "@/components/dashboard/sales-summary";
+import { TeamDashboard } from "@/components/dashboard/team-dashboard";
+import { CalendarClock, LayoutDashboard, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 
-const stats = [
-  {
-    title: "Total Revenue",
-    value: 45231.89,
-    prefix: "$",
-    decimals: 2,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        className="text-muted-foreground h-4 w-4"
-      >
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
-    change: "+20.1% from last month",
-  },
-  {
-    title: "Subscriptions",
-    value: 2350,
-    prefix: "+",
-    decimals: 0,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        className="text-muted-foreground h-4 w-4"
-      >
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    change: "+180.1% from last month",
-  },
-  {
-    title: "Sales",
-    value: 12234,
-    prefix: "+",
-    decimals: 2,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        className="text-muted-foreground h-4 w-4"
-      >
-        <rect width="20" height="14" x="2" y="5" rx="2" />
-        <path d="M2 10h20" />
-      </svg>
-    ),
-    change: "+19% from last month",
-  },
-  {
-    title: "Active Now",
-    value: 573,
-    prefix: "+",
-    decimals: 0,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        className="text-muted-foreground h-4 w-4"
-      >
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-      </svg>
-    ),
-    change: "+201 since last hour",
-  },
-];
-
-export default function Dashboard() {
-  return (
+export default function Dashboard() {  return (
     <AppLayout>
-      <div className="grid items-start gap-6 pb-8 md:gap-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <Card
-              key={stat.title}
-              className="transition-colors duration-200 hover:bg-transparent/60"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
-                {stat.icon}
-              </CardHeader>
-              <CardContent>
-                <AnimatedCounter
-                  value={stat.value}
-                  prefix={stat.prefix}
-                  decimals={stat.decimals}
-                />
-                <p className="text-muted-foreground text-xs">{stat.change}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-          <Card className="col-span-1 lg:col-span-4">
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <Overview />
-            </CardContent>
-          </Card>
-          <Card className="col-span-1 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Recent Sales</CardTitle>
-              <CardDescription>You made 265 sales this month.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RecentSales />
-            </CardContent>
-          </Card>
-        </div>
-        {/* Team Members Section */}
+      <div className="">
         <div>
-          <TeamMembers />
+          {/* Dashboard Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 rounded-xl bg-gradient-primary pt-0 pb-6 pr-6 pl-6 text-white">
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <div className="bg-white p-2 rounded-lg shadow-lg">
+                  <LayoutDashboard className="h-6 w-6 text-primary animate-float" />
+                </div>
+                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+              </div>
+              <p className="text-white/90 max-w-lg">
+                Welcome back! Here&apos;s an overview of your restaurant
+                performance for today.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 bg-white/20 hover:bg-white/30 backdrop-blur-sm border-white/10 text-white"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button
+                size="sm"
+                className="h-9 bg-white hover:bg-white/90 text-primary"
+              >
+                <CalendarClock className="h-4 w-4 mr-2" />
+                Today: June 20, 2025
+              </Button>
+            </div>
+          </div>
+          {/* Quick Stats Cards */}
+          <div className="mb-8">
+            <QuickStats />
+          </div>
+          {/* Main Dashboard Content */}{" "}
+          <Tabs defaultValue="overview" className="space-y-8">
+            <TabsList className="w-full border-b-0 rounded-xl bg-gradient-purple/10 p-2 justify-start">
+              <TabsTrigger
+                value="overview"
+                className="text-base rounded-xl data-[state=active]:bg-gradient-purple data-[state=active]:text-white"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="sales"
+                className="text-base rounded-xl data-[state=active]:bg-gradient-purple data-[state=active]:text-white"
+              >
+                Sales
+              </TabsTrigger>
+              <TabsTrigger
+                value="products"
+                className="text-base rounded-xl data-[state=active]:bg-gradient-purple data-[state=active]:text-white"
+              >
+                Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="customers"
+                className="text-base rounded-xl data-[state=active]:bg-gradient-purple data-[state=active]:text-white"
+              >
+                Customers
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview" className="space-y-6">
+              {/* Revenue & Sales Charts */}
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                <RevenueChart />
+                <SalesSummary />
+              </div>
+
+              {/* Performance Metrics */}
+              <SalesMetrics />
+
+              {/* Team Management */}
+              <div className="pt-3">
+                <TeamDashboard />
+              </div>
+            </TabsContent>{" "}
+            <TabsContent value="sales">
+              <Card className="border-2 border-dashed bg-gradient-purple/5 border-purple-200">
+                <CardContent className="flex flex-col items-center justify-center p-12 py-20">
+                  <div className="w-20 h-20 rounded-full bg-gradient-purple mb-6 flex items-center justify-center shadow-lg animate-pulse-slow">
+                    <p className="text-3xl text-white font-bold">$</p>
+                  </div>
+                  <p className="text-center text-lg font-medium text-purple-800 mb-2">
+                    Sales dashboard coming soon!
+                  </p>{" "}
+                  <p className="text-center text-muted-foreground max-w-lg">
+                    This area is under construction. We&apos;re working on
+                    bringing you detailed sales analytics, performance metrics,
+                    and customer insights.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="products">
+              <Card className="border-2 border-dashed bg-gradient-blue/5 border-blue-200">
+                <CardContent className="flex flex-col items-center justify-center p-12 py-20">
+                  <div className="w-20 h-20 rounded-full bg-gradient-blue mb-6 flex items-center justify-center shadow-lg animate-pulse-slow">
+                    <p className="text-3xl text-white font-bold">P</p>
+                  </div>
+                  <p className="text-center text-lg font-medium text-blue-800 mb-2">
+                    Products dashboard coming soon!
+                  </p>{" "}
+                  <p className="text-center text-muted-foreground max-w-lg">
+                    We&apos;re building a comprehensive product management
+                    system with inventory tracking, popularity metrics, and menu
+                    optimization features.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="customers">
+              <Card className="border-2 border-dashed bg-gradient-green/5 border-green-200">
+                <CardContent className="flex flex-col items-center justify-center p-12 py-20">
+                  <div className="w-20 h-20 rounded-full bg-gradient-green mb-6 flex items-center justify-center shadow-lg animate-pulse-slow">
+                    <p className="text-3xl text-white font-bold">C</p>
+                  </div>
+                  <p className="text-center text-lg font-medium text-green-800 mb-2">
+                    Customers dashboard coming soon!
+                  </p>
+                  <p className="text-center text-muted-foreground max-w-lg">
+                    {" "}
+                    Our customer relationship management tools will help you
+                    track loyalty, preferences, and engage with your most
+                    valuable customers.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>          </Tabs>
         </div>
       </div>
     </AppLayout>

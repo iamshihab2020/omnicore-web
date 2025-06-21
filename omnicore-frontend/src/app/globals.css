@@ -125,6 +125,462 @@
   }
 }
 
+/* Dashboard Colorful Styles */
+.bg-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.8) 100%
+  );
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+}
+
+.bg-gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.bg-gradient-orange {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.bg-gradient-red {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.bg-gradient-pink {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+}
+
+.bg-gradient-teal {
+  background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);
+}
+
+/* Pie chart styles */
+.pie-segment {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 9999px;
+}
+
+.pie-segment-0 {
+  clip-path: polygon(50% 50%, 100% 50%, 100% 0%, 50% 0%);
+}
+
+.pie-segment-1 {
+  clip-path: polygon(50% 50%, 50% 0%, 0% 0%, 0% 50%);
+}
+
+.pie-segment-2 {
+  clip-path: polygon(50% 50%, 0% 50%, 0% 100%, 50% 100%);
+}
+
+.pie-segment-3 {
+  clip-path: polygon(50% 50%, 50% 100%, 100% 100%, 100% 50%);
+}
+
+.pie-segment-4 {
+  clip-path: polygon(50% 50%, 100% 50%, 100% 25%, 75% 0%, 50% 0%);
+}
+
+/* Dashboard Card Styles */
+.dashboard-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced card sizes with better constrained heights */
+.dashboard-card.card-sm {
+  min-height: 150px;
+  height: 100%;
+}
+
+.dashboard-card.card-md {
+  min-height: 220px;
+  height: 100%;
+}
+
+.dashboard-card.card-lg {
+  min-height: 300px;
+  height: 100%;
+}
+
+.dashboard-card.card-xl {
+  min-height: 400px;
+  height: 100%;
+}
+
+/* Card width variants */
+.dashboard-card.card-full-width {
+  width: 100%;
+}
+
+.dashboard-card.card-half-width {
+  width: 100%;
+}
+
+/* Dashboard Card Header */
+.dashboard-card-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+}
+
+.dashboard-card-header.gradient {
+  background-image: linear-gradient(
+    135deg,
+    var(--card-gradient-from, hsl(var(--primary))),
+    var(--card-gradient-to, hsl(var(--primary) / 0.8))
+  );
+  color: white;
+  border-bottom: none;
+}
+
+/* Dashboard Card Content */
+.dashboard-card-content {
+  padding: 1rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card Layout and Positioning Utilities */
+.card-content-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.card-content-between {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.card-content-start {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.card-content-end {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+/* Card section styling */
+.card-section {
+  margin-bottom: 1rem;
+}
+
+.card-section:last-child {
+  margin-bottom: 0;
+}
+
+.card-section-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--muted-foreground);
+}
+
+/* Card dividers */
+.card-divider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--border);
+  margin: 1rem 0;
+}
+
+.card-divider-vertical {
+  width: 1px;
+  height: 100%;
+  background-color: var(--border);
+  margin: 0 1rem;
+}
+
+/* Chart containers for consistent sizing */
+.chart-container {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  position: relative;
+}
+
+.chart-container.fixed-height {
+  height: 250px;
+}
+
+/* Card positioning for chart and data combinations */
+.card-chart-with-data {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .card-chart-with-data {
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+/* Equal height cards in grid */
+.equal-height-cards {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 1rem;
+}
+
+/* Card with absolute position decorations */
+.card-has-decoration {
+  position: relative;
+  z-index: 1;
+}
+
+.card-corner-decoration {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 100%;
+  background: var(--decorative-element-color, rgba(255, 255, 255, 0.05));
+  z-index: 0;
+  pointer-events: none;
+}
+
+.card-corner-decoration.top-right {
+  top: -30px;
+  right: -30px;
+}
+
+.card-corner-decoration.bottom-left {
+  bottom: -30px;
+  left: -30px;
+}
+
+/* Grid Layout System for Cards */
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+.dashboard-grid-1 {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-grid-2 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.dashboard-grid-3 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.dashboard-grid-4 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dashboard-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Card Row Layouts */
+.card-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Card with auto height adjustment */
+.card-auto-height {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* Responsive card spacing */
+.card-spacing {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .card-spacing {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-spacing {
+    padding: 1.5rem;
+  }
+}
+
+/* Card Decorations */
+.stat-card-decoration {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.stat-card-decoration::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: hsl(var(--primary) / 0.1);
+  transform: translate(30%, -30%);
+}
+
+.ribbon-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ribbon-decoration::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200%;
+  height: 40px;
+  transform: rotate(45deg) translateY(-50%);
+  transform-origin: center right;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.8) 100%
+  );
+  opacity: 0.8;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.card-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-glow::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-glow:hover::after {
+  opacity: 1;
+}
+
 /* Hide content on screen but show during print */
 .screen-hidden {
   display: none;
@@ -416,4 +872,360 @@
 /* Custom class for the dashboard chart clip path */
 .clip-path-70-percent {
   clip-path: polygon(0% 0%, 70% 0%, 70% 100%, 0% 100%);
+}
+
+/* Dashboard colorful styles */
+.bg-gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)),
+    hsl(var(--primary) / 0.7)
+  );
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+}
+
+.bg-gradient-cyan {
+  background: linear-gradient(135deg, #22d3ee, #0891b2);
+}
+
+.bg-gradient-amber {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+}
+
+.bg-gradient-emerald {
+  background: linear-gradient(135deg, #34d399, #059669);
+}
+
+.dashboard-card {
+  transition: all 0.3s ease;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.stat-card-decoration::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: hsl(var(--primary) / 0.1);
+  transform: translate(30%, -30%);
+}
+
+.ribbon-decoration::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+}
+
+.ribbon-decoration.ribbon-primary::after {
+  background: linear-gradient(to right, #60a5fa, #2563eb);
+}
+
+.ribbon-decoration.ribbon-purple::after {
+  background: linear-gradient(to right, #a78bfa, #8b5cf6);
+}
+
+.ribbon-decoration.ribbon-amber::after {
+  background: linear-gradient(to right, #fbbf24, #d97706);
+}
+
+.ribbon-decoration.ribbon-emerald::after {
+  background: linear-gradient(to right, #34d399, #059669);
+}
+
+/* Animation classes */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.dashboard-tabs [data-state="active"] {
+  position: relative;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Dashboard Metric Styles */
+.metric-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.025em;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: all 0.2s ease;
+}
+
+.metric-value.sm {
+  font-size: 1.25rem;
+}
+
+.metric-value.md {
+  font-size: 1.5rem;
+}
+
+.metric-value.lg {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.metric-value.xl {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.metric-prefix {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  margin-right: 0.125rem;
+}
+
+.metric-suffix {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  margin-left: 0.125rem;
+  font-size: 0.875em;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 0.125rem;
+}
+
+.metric-label.sm {
+  font-size: 0.75rem;
+}
+
+.metric-label.lg {
+  font-size: 1rem;
+}
+
+/* Metric animations */
+.metric-value.animate-in {
+  animation: slideUpAndFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpAndFade {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Colorful metric variants */
+.metric-value.primary {
+  color: hsl(var(--primary));
+}
+
+.metric-value.success {
+  color: rgb(16, 185, 129);
+}
+
+.metric-value.warning {
+  color: rgb(245, 158, 11);
+}
+
+.metric-value.danger {
+  color: rgb(239, 68, 68);
+}
+
+.metric-value.info {
+  color: rgb(59, 130, 246);
+}
+
+.metric-value.gradient {
+  background-image: linear-gradient(
+    135deg,
+    var(--metric-gradient-from, hsl(var(--primary))),
+    var(--metric-gradient-to, hsl(var(--primary) / 0.8))
+  );
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Special Card Types */
+
+/* Cards with gradient backgrounds */
+.gradient-card {
+  background: linear-gradient(
+    135deg,
+    var(--card-gradient-from, hsl(var(--primary) / 0.2)),
+    var(--card-gradient-to, hsl(var(--primary) / 0.1))
+  );
+  border: none;
+  color: var(--card-gradient-text, var(--foreground));
+}
+
+/* Card with pattern background */
+.pattern-card {
+  background-color: hsl(var(--card));
+  background-image: radial-gradient(
+    var(--pattern-dot-color, rgba(0, 0, 0, 0.1)) 1px,
+    transparent 1px
+  );
+  background-size: var(--pattern-size, 20px) var(--pattern-size, 20px);
+}
+
+/* Cards with overlay content */
+.overlay-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-card-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: white;
+  z-index: 10;
+}
+
+.overlay-card-image {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Card badges with improved styling */
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.card-badge.sm {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.675rem;
+}
+
+.card-badge.lg {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Card badge variants with improved colors */
+.card-badge.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.card-badge.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: rgb(245, 158, 11);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.card-badge.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.card-badge.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(59, 130, 246);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.card-badge.primary {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+/* Circle progress indicator */
+.circle-progress {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(
+    var(--progress-color, hsl(var(--primary))) var(--progress-value, 0%),
+    hsl(var(--muted)) var(--progress-value, 0%)
+  );
+}
+
+.circle-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0.375rem;
+  border-radius: 9999px;
+  background: hsl(var(--card));
+}
+
+.circle-progress-text {
+  position: relative;
+  font-weight: 700;
+  color: var(--progress-color, hsl(var(--primary)));
+  z-index: 1;
 }
