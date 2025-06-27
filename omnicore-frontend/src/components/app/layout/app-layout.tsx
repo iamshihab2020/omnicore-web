@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { FullscreenToggle } from "@/components/ui/fullscreen-toggle";
 import { Sidebar, SidebarItem } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 
@@ -198,6 +199,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                                 text={item.title}
                                 icon={Icon}
                                 isActive={isActive}
+                                collapsed={false} // Mobile sidebar is always expanded
                                 onClick={() => setIsSidebarOpen(false)}
                                 className={cn(
                                   "mb-1 transition-all",
@@ -219,6 +221,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
+                            <FullscreenToggle />
                             <ThemeToggle />
                           </div>
                         </div>
@@ -246,30 +249,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                   OmniCore
                 </span>
               </Link>
-              {/* Tablet Navigation */}
-              {showSidebar && (
-                <nav className="hidden md:flex lg:hidden items-center space-x-1 ml-4">
-                  {navItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                          "text-sm font-medium transition-colors hover:text-primary flex items-center gap-2 py-1.5 px-3 rounded-full",
-                          isActive
-                            ? "text-primary bg-primary/10"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {Icon && <Icon className="h-4 w-4" />}
-                        {item.title}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              )}
+              {/* Tablet Navigation removed */}
               {/* Search Bar - show on larger screens */}
               <div className="hidden md:flex flex-1  ml-4">
                 <div className="relative w-full">
@@ -290,6 +270,7 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
               <div className="flex items-center gap-4">
                 <UserNav />
                 <div className="border-l h-6 mx-1 border-muted-foreground/20"></div>
+                <FullscreenToggle />
                 <ThemeToggle />
               </div>
             </div>
@@ -337,13 +318,11 @@ export function AppLayout({ children, showSidebar = true }: AppLayoutProps) {
                           <SidebarItem
                             key={item.href}
                             href={item.href}
-                            text={isCollapsed ? "" : item.title}
+                            text={item.title}
                             icon={Icon}
                             isActive={pathname === item.href}
-                            className={cn(
-                              isCollapsed ? "justify-center px-2" : "",
-                              "mb-1 transition-all hover:bg-muted"
-                            )}
+                            collapsed={isCollapsed}
+                            className={cn("mb-1 transition-all hover:bg-muted")}
                           />
                         );
                       })}

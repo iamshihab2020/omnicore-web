@@ -5,6 +5,11 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -37,6 +42,7 @@ interface SidebarItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
   icon?: React.ComponentType<{ className?: string }>;
   text: string;
   isActive?: boolean;
+  collapsed?: boolean;
 }
 
 export function SidebarItem({
@@ -45,9 +51,19 @@ export function SidebarItem({
   icon: Icon,
   text,
   isActive = false,
+  collapsed = false,
   ...props
 }: SidebarItemProps) {
-  return (
+  const linkContent = (
+    <>
+      {Icon && (
+        <Icon className={cn("h-4 w-4", text && !collapsed ? "mr-3" : "")} />
+      )}
+      {text && !collapsed && text}
+    </>
+  );
+
+  const linkElement = (
     <Link
       href={href}
       className={cn(
@@ -59,14 +75,30 @@ export function SidebarItem({
           ? "bg-primary/10 text-primary font-medium shadow-sm border-l-2 border-primary rounded-none rounded-r-lg"
           : "text-muted-foreground hover:text-foreground rounded-lg",
         "w-full justify-start transition-all duration-200",
+        collapsed ? "justify-center px-2" : "",
         className
       )}
       {...props}
     >
-      {Icon && <Icon className={cn("h-4 w-4", text ? "mr-3" : "")} />}
-      {text}
+      {linkContent}
     </Link>
   );
+
+  if (collapsed && text) {
+    return (
+      <Tooltip delayDuration={200}>
+        <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
+        <TooltipContent
+          side="right"
+          className="font-medium bg-background border border-border shadow-md animate-in slide-in-from-left-3 duration-200"
+        >
+          {text}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return linkElement;
 }
 
 export function SidebarSection({
