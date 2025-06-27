@@ -40,6 +40,16 @@ interface Product {
   is_active: boolean;
 }
 
+interface VatTax {
+  id: string;
+  name: string;
+  rate: string | number;
+  description?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface Counter {
   id: string;
   name: string;
@@ -47,6 +57,7 @@ interface Counter {
   status: string;
   description?: string;
   item_details: Product[];
+  vat_taxes?: VatTax[]; // Make it optional to avoid TypeScript errors with dummy data
 }
 
 // Key for storing selected counter ID in localStorage
@@ -199,14 +210,26 @@ const PosPage = () => {
                 category_name: "Coffee",
               },
             ],
-          };          setCounters([dummyCounter]);
+            vat_taxes: [
+              {
+                id: "dummy-vat-1",
+                name: "Standard VAT",
+                rate: 6.0,
+                description: "Standard VAT Rate",
+                is_active: true,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              },
+            ],
+          };
+          setCounters([dummyCounter]);
           setSelectedCounter(dummyCounter);
-          
+
           // Save the dummy counter to localStorage when using demo data
-          if (typeof window !== 'undefined') {
+          if (typeof window !== "undefined") {
             localStorage.setItem(SELECTED_COUNTER_KEY, dummyCounter.id);
           }
-          
+
           setError(
             "Using demo data as API connection failed. Check backend server."
           );
@@ -258,7 +281,7 @@ const PosPage = () => {
     if (counterId === "all") {
       setSelectedCounter(null);
       // Remove from localStorage when selecting "All Products"
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         localStorage.removeItem(SELECTED_COUNTER_KEY);
       }
       return;
@@ -266,9 +289,9 @@ const PosPage = () => {
 
     const counter = counters.find((c) => c.id === counterId);
     setSelectedCounter(counter || null);
-    
+
     // Save selected counter ID to localStorage
-    if (typeof window !== 'undefined' && counter) {
+    if (typeof window !== "undefined" && counter) {
       localStorage.setItem(SELECTED_COUNTER_KEY, counter.id);
     }
 
@@ -623,6 +646,7 @@ const PosPage = () => {
             onDecrementItem={handleDecrementItem}
             selectedCartItemId={selectedCartItemId}
             onCartItemSelect={setSelectedCartItemId}
+            vat_taxes={selectedCounter?.vat_taxes}
           />
         </AnimatedCard>
         <CartAlert

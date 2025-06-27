@@ -15,8 +15,19 @@ import {
 import ReceiptPrint from "./receipt-print";
 import { Button } from "../ui/button";
 
-// Define VAT rate constant (5%)
-const VAT_RATE = 0.05;
+// Remove the hardcoded VAT rate
+// const VAT_RATE = 0.05;
+
+// Define VAT tax interface
+interface VatTax {
+  id: string;
+  name: string;
+  rate: string | number; // Accept both string and number types to match API response
+  description?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
 
 interface Product {
   id: string;
@@ -76,6 +87,7 @@ interface CartSidebarProps {
   onPaymentMethodChange: (method: "Cash" | "Card" | "Mobile") => void;
   onOrderTypeChange: (type: "Dine In" | "Parcel" | "On Call") => void;
   counterName?: string;
+  vat_taxes?: VatTax[]; // Add VAT tax information from the counter
 }
 
 const CartSidebar: React.FC<CartSidebarProps> = ({
@@ -92,12 +104,22 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   onPaymentMethodChange,
   onOrderTypeChange,
   counterName = "Default",
+  vat_taxes = [], // Default to empty array if not provided
 }) => {
   const subtotal = cart.reduce(
     (sum, item) => sum + parsePrice(item.price) * item.quantity,
     0
   );
-  const vatAmount = +(subtotal * VAT_RATE).toFixed(2);
+
+  // Calculate VAT amount based on selected counter's VAT rates
+  const vatAmount = vat_taxes.reduce((total, tax) => {
+    // Convert tax rate to a number before calculation
+    const rateAsNumber =
+      typeof tax.rate === "string" ? parseFloat(tax.rate) : tax.rate;
+    const taxAmount = (subtotal * rateAsNumber) / 100;
+    return total + taxAmount;
+  }, 0);
+
   const total = +(subtotal + vatAmount).toFixed(2);
 
   const [paidAmount, setPaidAmount] = useState<number>(total);
@@ -240,10 +262,36 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               <span className="text-foreground">Subtotal</span>
               <span className="font-medium">৳{formatPrice(subtotal)}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-foreground">VAT (5%)</span>
-              <span className="font-medium">৳{formatPrice(vatAmount)}</span>
-            </div>
+            {/* VAT section - show all applicable VATs or a message if none */}
+            {vat_taxes.filter((tax) => tax.is_active).length > 0 ? (
+              vat_taxes
+                .filter((tax) => tax.is_active)
+                .map((tax, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center"
+                  >
+                    <span className="text-foreground">
+                      {tax.name} ({tax.rate}%)
+                    </span>
+                    <span className="font-medium">
+                      ৳
+                      {formatPrice(
+                        (subtotal *
+                          (typeof tax.rate === "string"
+                            ? parseFloat(tax.rate)
+                            : tax.rate)) /
+                          100
+                      )}
+                    </span>
+                  </div>
+                ))
+            ) : (
+              <div className="flex justify-between items-center">
+                <span className="text-foreground">VAT</span>
+                <span className="font-medium">৳0.00</span>
+              </div>
+            )}
             <div className="border-t pt-2 mt-2 border-border flex justify-between items-center">
               <span className="font-semibold text-foreground text-lg">
                 Total
@@ -449,6 +497,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
               phone: "01954114410",
             }}
             counterName={counterName} // Pass the counter name to the receipt
+            vat_taxes={vat_taxes} // Pass VAT tax information to the receipt
           />
         </div>
       </aside>

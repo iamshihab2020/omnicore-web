@@ -28,7 +28,11 @@ class CounterViewSet(viewsets.ModelViewSet):
         Get counters for the current tenant
         """
         if hasattr(self.request, "tenant"):
-            return Counter.objects.filter(tenant=self.request.tenant)
+            # Use select_related to prefetch tenant to optimize serialization
+            # This helps when accessing the tenant's VAT taxes in the serializer
+            return Counter.objects.filter(tenant=self.request.tenant).select_related(
+                "tenant"
+            )
         return Counter.objects.none()
 
     def perform_create(self, serializer):

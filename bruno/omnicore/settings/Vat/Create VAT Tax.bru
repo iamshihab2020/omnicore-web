@@ -10,12 +10,12 @@ post {
   auth: bearer
 }
 
-auth:bearer {
-  token: {{access_token}}
+headers {
+  X-Tenant-Workspace: example-restaurant
 }
 
-headers {
-  X-Tenant-Workspace: {{workspace}}
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNTA1NjgyLCJpYXQiOjE3NTA1MDIwODIsImp0aSI6IjE0ZTI4ZjdmMGQ4OTQ4MDM4NzczNzc5MGYxZjlmYWNhIiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.cUF8yU0jAhJlZ1uWK4fa3jEzSalTxwovZbSeNeUT7mo
 }
 
 body:json {

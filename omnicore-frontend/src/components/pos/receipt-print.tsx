@@ -1,6 +1,17 @@
 import React from "react";
 import type { CartItem } from "./cart-sidebar";
 
+// Define VAT tax interface
+interface VatTax {
+  id: string;
+  name: string;
+  rate: string | number; // Accept both string and number types to match API response
+  description?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface ReceiptPrintProps {
   cart: CartItem[];
   invoiceNo: string;
@@ -14,9 +25,8 @@ interface ReceiptPrintProps {
     phone: string;
   };
   counterName?: string;
+  vat_taxes?: VatTax[]; // Add VAT tax information
 }
-
-const VAT_RATE = 0.05;
 
 const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   cart,
@@ -27,6 +37,7 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   changeAmount = 0,
   restaurant,
   counterName = "Default",
+  vat_taxes = [], // Default to empty array if not provided
 }) => {
   // No longer needed as printing is handled by the parent component
   const now = new Date();
@@ -51,8 +62,24 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
     (sum, item) => sum + parsePrice(item.price) * item.quantity,
     0
   );
-  const vat = +(netTotal * VAT_RATE).toFixed(2);
-  const grossTotal = +(netTotal + vat).toFixed(2);
+
+  // Calculate VAT based on the provided VAT taxes
+  // If no VAT taxes are defined, default to 0% VAT
+  const vatDetails = vat_taxes
+    .filter((tax) => tax.is_active)
+    .map((tax) => {
+      // Convert tax rate to number for calculation
+      const rateAsNumber =
+        typeof tax.rate === "string" ? parseFloat(tax.rate) : tax.rate;
+      return {
+        name: tax.name,
+        rate: tax.rate,
+        amount: +((netTotal * rateAsNumber) / 100).toFixed(2),
+      };
+    });
+
+  const totalVatAmount = vatDetails.reduce((sum, tax) => sum + tax.amount, 0);
+  const grossTotal = +(netTotal + totalVatAmount).toFixed(2);
   // Format helper functions for thermal printer style - specialized for fixed-width formatting
   const formatQty = (qty: number): string => `${qty}`.padStart(3, " ");
   const formatItemName = (name: string): string => {
@@ -141,11 +168,23 @@ const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         <span className="total-value">{formatTotalPrice(netTotal)}</span>
       </pre>
       {/* Fourth separator line */}
-      <hr className="receipt-dash" /> {/* VAT section */}
-      <pre className="receipt-total-pre">
-        <span className="total-label">{formatTotalLabel("Vat - 5.00%:")}</span>
-        <span className="total-value">{formatTotalPrice(vat)}</span>
-      </pre>
+      <hr className="receipt-dash" />
+      {/* VAT section - display all applicable VAT taxes */}
+      {vatDetails.length > 0 ? (
+        vatDetails.map((tax, index) => (
+          <pre key={index} className="receipt-total-pre">
+            <span className="total-label">
+              {formatTotalLabel(`${tax.name} - ${tax.rate}%:`)}
+            </span>
+            <span className="total-value">{formatTotalPrice(tax.amount)}</span>
+          </pre>
+        ))
+      ) : (
+        <pre className="receipt-total-pre">
+          <span className="total-label">{formatTotalLabel("VAT:")}</span>
+          <span className="total-value">{formatTotalPrice(0)}</span>
+        </pre>
+      )}
       {/* Fifth separator line */}
       <hr className="receipt-dash" /> {/* Gross total section */}{" "}
       <pre className="receipt-total-pre receipt-grosstotal">
