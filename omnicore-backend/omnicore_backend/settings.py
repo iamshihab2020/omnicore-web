@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "apps.pos.apps.PosConfig",
     "apps.management.apps.ManagementConfig",
     "apps.settings.apps.SettingsConfig",
+    "apps.staff.apps.StaffConfig",
 ]
 
 MIDDLEWARE = [
