@@ -1,0 +1,68 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/sales/orders/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "customer_name": "John Doe",
+    "customer_phone": "123-456-7890",
+    "order_type": "dine_in",
+    "table_number": "12",
+    "items": [
+      {
+        "menu_item": "{{menuItemId}}",
+        "quantity": 2,
+        "notes": "Extra sauce on the side",
+        "addons": []
+      },
+      {
+        "menu_item": "{{menuItemId}}",
+        "quantity": 1,
+        "notes": "No onions",
+        "addons": []
+      }
+    ],
+    "notes": "Birthday celebration",
+    "payment_method": "card"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Order created successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("order_number");
+    expect(res.body).to.have.property("status");
+    expect(res.body).to.have.property("items");
+    expect(res.body.items).to.be.an("array");
+    expect(res.body.items.length).to.equal(2);
+  });
+  
+  // Save the order ID
+  if (res.body && res.body.id) {
+    bru.setEnvVar("newOrderId", res.body.id);
+  }
+}
+
+docs {
+  Creates a new order for a specific tenant.
+  Automatically calculates totals based on menu items and quantities.
+  Requires a valid access token in the Authorization header.
+  User must have cashier permissions or above in the tenant.
+}

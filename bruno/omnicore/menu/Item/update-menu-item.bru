@@ -1,0 +1,52 @@
+meta {
+  name: Update Menu Item
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/menu/items/{{menuItemId}}/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Workspace: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "Updated Grilled Salmon",
+    "description": "Premium Atlantic salmon grilled with special herbs and sauce",
+    "price": 21.99,
+    "cost": 9.50,
+    "is_active": true,
+    "preparation_time": 15
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Menu item updated successfully", function() {
+    expect(res.body).to.have.property("message");
+    expect(res.body.message).to.contain("updated");
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.have.property("name");
+    expect(res.body.data.name).to.equal("Updated Grilled Salmon");
+  });
+}
+
+docs {
+  Updates a specific menu item.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+  The tenant is identified by the X-Tenant-Workspace header.
+}

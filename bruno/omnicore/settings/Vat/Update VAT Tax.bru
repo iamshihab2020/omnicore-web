@@ -1,0 +1,32 @@
+meta {
+  name: Update VAT Tax
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:8000/api/settings/vat/{{vat_id}}/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+headers {
+  X-Tenant-Workspace: {{workspace}}
+}
+
+body:json {
+  {
+    "name": "Updated Standard VAT",
+    "rate": 16.00,
+    "description": "Updated standard VAT rate",
+    "is_active": true
+  }
+}
+
+vars:pre-request {
+  vat_id: 00000000-0000-0000-0000-000000000000
+}

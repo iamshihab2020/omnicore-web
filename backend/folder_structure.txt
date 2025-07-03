@@ -1,0 +1,131 @@
+omnicore-backend/
+│
+├── .env                           # Environment variables
+├── .gitignore                     # Git ignore file
+├── manage.py                      # Django management script
+├── README.md                      # Project documentation
+├── requirements.txt               # Python dependencies
+├── db.sqlite3                     # SQLite database
+│
+├── apps/                          # All Django applications
+│   │
+│   ├── __init__.py                # Makes apps a Python package
+│   │
+│   ├── authentication/            # Authentication app
+│   │   ├── __init__.py
+│   │   ├── admin.py               # Django admin configuration
+│   │   ├── apps.py                # App configuration
+│   │   ├── jwt.py                 # JWT custom authentication
+│   │   ├── models.py              # User model and related models
+│   │   ├── serializers.py         # REST framework serializers
+│   │   ├── tests.py               # Unit tests
+│   │   ├── urls.py                # URL routing
+│   │   ├── views.py               # View functions and classes
+│   │   └── migrations/            # Database migrations
+│   │
+│   ├── core/                      # Core functionality app
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── debug.py               # Debug middleware and utilities
+│   │   ├── middleware.py          # Custom middleware (includes TenantMiddleware)
+│   │   ├── models.py              # Core models
+│   │   ├── permissions.py         # Custom permissions
+│   │   ├── tests.py
+│   │   └── migrations/
+│   │
+│   ├── management/                # Restaurant management app
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py              # Models for restaurant tables, etc.
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   ├── views.py
+│   │   └── migrations/
+│   │
+│   ├── menu/                      # Menu management app
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py              # Menu categories, items, variants, addons
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   ├── views.py
+│   │   └── migrations/
+│   │
+│   ├── pos/                       # Point of Sale app
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── models.py              # POS session models
+│   │   ├── tests.py
+│   │   ├── views.py               # API views for POS operations
+│   │   └── migrations/
+│   │
+│   ├── sales/                     # Sales and orders app
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py              # Order, OrderItem models
+│   │   ├── serializers.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   ├── views.py               # Order management views
+│   │   └── migrations/
+│   │
+│   ├── settings/                  # App settings management
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py              # Settings models
+│   │   └── migrations/
+│   │
+│   └── tenants/                   # Multi-tenant functionality
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── models.py              # Tenant and TenantUser models
+│       ├── serializers.py
+│       ├── urls.py
+│       ├── views.py
+│       └── migrations/
+│
+├── core/                          # Core project modules (not a Django app)
+│   ├── middleware/                # Reusable middleware components
+│   ├── models/                    # Base models and model mixins
+│   ├── permissions/               # Reusable permission classes
+│   └── utils/                     # Utility functions and helpers
+│
+├── docs/                          # Project documentation
+│   ├── implementation-summary.md
+│   ├── multi-tenant-architecture.md
+│   ├── tenant-utils.md
+│   └── testing-api.md
+│
+├── omnicore_backend/              # Django project configuration
+│   ├── __init__.py
+│   ├── asgi.py                    # ASGI configuration
+│   ├── settings.py                # Project settings
+│   ├── urls.py                    # Project URL configuration
+│   ├── wsgi.py                    # WSGI configuration
+│   └── __pycache__/
+│
+├── scripts/                       # Utility scripts
+│   ├── create_menu_item.py
+│   ├── create_menu_item.sh
+│   ├── create_restaurant_table.py
+│   ├── create_restaurant_table.sh
+│   ├── delete_restaurant_table.py
+│   ├── delete_restaurant_table.sh
+│   ├── list_restaurant_tables.py
+│   ├── list_restaurant_tables.sh
+│   ├── run_tenant_tests.sh
+│   └── test_menu_api.sh
+│
+├── static/                        # Static files (CSS, JS, images)
+│
+├── templates/                     # HTML templates
+│   └── base.html
+│
+└── venv/                          # Virtual environment (not in version control)

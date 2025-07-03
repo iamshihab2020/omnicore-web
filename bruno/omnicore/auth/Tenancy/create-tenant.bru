@@ -1,0 +1,54 @@
+meta {
+  name: Create Tenant
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "New Test Restaurant",
+    "address": "123 Restaurant Street",
+    "city": "Food City",
+    "state": "Taste State",
+    "country": "Flavor Country",
+    "zip_code": "12345",
+    "phone": "123-456-7890",
+    "email": "contact@testrestaurant.com",
+    "primary_color": "#FF5733",
+    "secondary_color": "#33FF57"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Tenant created successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("name");
+    expect(res.body.name).to.equal("New Test Restaurant");
+  });
+  
+  // Save the tenant ID for other requests
+  if (res.body && res.body.id) {
+    bru.setEnvVar("newTenantId", res.body.id);
+  }
+}
+
+docs {
+  Creates a new tenant for the authenticated user.
+  The user will automatically be assigned as the owner of the tenant.
+  Requires a valid access token in the Authorization header.
+}

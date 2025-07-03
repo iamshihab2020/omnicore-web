@@ -1,0 +1,8 @@
+{
+  "name": "omnicore",
+  "version": "1",
+  "type": "collection",
+  "schema": "https://usebruno.com/schema/collection",
+  "description": "OmniCore API Collection",
+  "icon": "restaurant"
+}

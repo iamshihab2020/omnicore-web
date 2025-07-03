@@ -1,0 +1,36 @@
+meta {
+  name: List Tenant Users
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/users/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response is an array", function() {
+    expect(res.body).to.be.an("array");
+  });
+  
+  // Save the first user ID if available
+  if (res.body && res.body.length > 0) {
+    bru.setEnvVar("tenantUserId", res.body[0].id);
+  }
+}
+
+docs {
+  Lists all users that belong to a specific tenant.
+  Requires a valid access token in the Authorization header.
+  The user must be an admin or owner of the tenant to access this endpoint.
+}

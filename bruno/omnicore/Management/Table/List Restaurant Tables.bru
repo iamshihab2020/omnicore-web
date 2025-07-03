@@ -1,0 +1,48 @@
+meta {
+  name: List Restaurant Tables
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8000/api/management/table/
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Workspace: example-restaurant
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5OTM0NjU5LCJpYXQiOjE3NDk5MzEwNTksImp0aSI6IjEwYzYzMjI2ZWY5YzRmMGRiOGU4YWUyOTgxNGYwYjE4IiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.w_rkjidF2LYUUjobOJcBecbFyCeSEZzHqSVPHY9VSes
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response contains table data", function() {
+    expect(res.body).to.have.property("data");
+    expect(Array.isArray(res.body.data)).to.be.true;
+  });
+  
+  test("Response contains counts", function() {
+    expect(res.body).to.have.property("counts");
+    expect(res.body.counts).to.have.property("total");
+    expect(res.body.counts).to.have.property("available");
+    expect(res.body.counts).to.have.property("occupied");
+    expect(res.body.counts).to.have.property("reserved");
+  });
+}
+
+docs {
+  Lists all restaurant tables for a specific tenant.
+  Optional query parameters:
+  - include_counts: Set to "true" to include counts of tables by status
+  - status: Filter tables by status ("available", "occupied", "reserved", "inactive")
+  - area: Filter tables by area
+  - is_active: Filter tables by active status ("true" or "false")
+}

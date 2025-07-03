@@ -1,0 +1,42 @@
+meta {
+  name: Get Category
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8000/api/menu/categories/2f81372b-ab2d-4437-8ddb-3bbcc98183a6/
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Workspace: test-tenant-restaurant
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NzM3MTI5LCJpYXQiOjE3NDk3MzM1MjksImp0aSI6ImQ2YTRkYjYzYWViNjQ2MWM5OTkxZjYyMjgyZGNjZjg0IiwidXNlcl9pZCI6IjVlYjEyNGQ1LWUxZDItNDAzMS1iZDQyLTJkNmMxM2QwOTY4MyJ9.7fsGcckjZPt-0HzNDg9lNvNF7l-tiyEOdfIlOxbuGnU
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has correct id", function() {
+    expect(res.body).to.have.property("id").equals("{{categoryId}}");
+  });
+  
+  test("Response has name", function() {
+    expect(res.body).to.have.property("name");
+  });
+  
+  test("Response has description", function() {
+    expect(res.body).to.have.property("description");
+  });
+  
+  test("Response has status", function() {
+    expect(res.body).to.have.property("status");
+  });
+}

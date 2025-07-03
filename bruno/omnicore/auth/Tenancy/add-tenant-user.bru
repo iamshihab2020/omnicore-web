@@ -1,0 +1,53 @@
+meta {
+  name: Add User to Tenant
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/users/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "user": {
+      "email": "staff@example.com",
+      "first_name": "Staff",
+      "last_name": "User"
+    },
+    "role": "staff",
+    "is_active": true
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("User added to tenant successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("user");
+    expect(res.body).to.have.property("role");
+    expect(res.body.role).to.equal("staff");
+  });
+  
+  // Save the tenant user ID
+  if (res.body && res.body.id) {
+    bru.setEnvVar("newTenantUserId", res.body.id);
+  }
+}
+
+docs {
+  Adds a new user to a specific tenant with the specified role.
+  If the user doesn't exist, it will be created with a temporary password.
+  Requires a valid access token in the Authorization header.
+  The authenticated user must be an admin or owner of the tenant.
+}

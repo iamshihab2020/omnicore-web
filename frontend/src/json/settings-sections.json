@@ -1,0 +1,82 @@
+{
+  "settings": [
+    {
+      "title": "Counters",
+      "description": "Manage your point of sale counters and assign menu items",
+      "icon": "Store",
+      "path": "/settings/counters",
+      "category": "business"
+    },
+    {
+      "title": "Tax Rules",
+      "description": "Configure tax settings for your transactions",
+      "icon": "Receipt",
+      "path": "/settings/tax",
+      "category": "business",
+      "isNew": true
+    },
+    {
+      "title": "Finance",
+      "description": "Configure financial settings and payment methods",
+      "icon": "Calculator",
+      "path": "/settings/finance",
+      "category": "business",
+      "badge": "Important",
+      "badgeVariant": "outline"
+    },
+    {
+      "title": "Appearance",
+      "description": "Customize your app appearance and theme",
+      "icon": "UserCog",
+      "path": "/settings/user-settings",
+      "category": "user"
+    },
+    {
+      "title": "Business Profile",
+      "description": "Update your business information and branding",
+      "icon": "Globe",
+      "path": "/settings/business-profile",
+      "category": "business"
+    },
+    {
+      "title": "User Profile",
+      "description": "Update your personal profile and preferences",
+      "icon": "User",
+      "path": "/settings/profile",
+      "category": "user"
+    },
+    {
+      "title": "Notifications",
+      "description": "Configure your notification preferences",
+      "icon": "Bell",
+      "path": "/settings/notifications",
+      "category": "user",
+      "badge": "New",
+      "badgeVariant": "secondary"
+    },
+
+    {
+      "title": "System",
+      "description": "View system status and performance metrics",
+      "icon": "HardDrive",
+      "path": "/settings/system",
+      "category": "system"
+    },
+    {
+      "title": "Security",
+      "description": "Configure security settings and access controls",
+      "icon": "Shield",
+      "path": "/settings/security",
+      "category": "system",
+      "badge": "Required",
+      "badgeVariant": "destructive"
+    },
+    {
+      "title": "Documentation",
+      "description": "Access system documentation and help resources",
+      "icon": "BookOpen",
+      "path": "/settings/docs",
+      "category": "system"
+    }
+  ]
+}

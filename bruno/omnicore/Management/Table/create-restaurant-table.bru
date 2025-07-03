@@ -1,0 +1,58 @@
+meta {
+  name: Create Restaurant Table
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8000/api/management/table/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Workspace: {{tenantSlug}}
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5OTY4OTcwLCJpYXQiOjE3NDk5NjUzNzAsImp0aSI6ImRmZGExZjgwNjYzYzQ1NDZhZjkxNTVhNTg2MTM1MWVlIiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.xEBxuIqtrCXvwQPuFLiLnhCj6eW_KNcdoxEQJcQ9nYI
+}
+
+body:json {
+  {
+    "number": "T3",
+    "name": "Front Window Table",
+    "capacity": 4,
+    "status": "available",
+    "area": "Main Hall",
+    "is_active": true,
+    "notes": "Best table for couples and small groups"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Table created successfully", function() {
+    expect(res.body).to.have.property("message");
+    expect(res.body.message).to.equal("Table created successfully");
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.have.property("id");
+    expect(res.body.data).to.have.property("number");
+    expect(res.body.data.number).to.equal("T1");
+  });
+  
+  // Save the table ID
+  if (res.body && res.body.data && res.body.data.id) {
+    bru.setEnvVar("tableId", res.body.data.id);
+  }
+}
+
+docs {
+  Creates a new restaurant table for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  User must have appropriate permissions in the tenant.
+}

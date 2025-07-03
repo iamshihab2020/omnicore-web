@@ -1,0 +1,12 @@
+{
+  "name": "development",
+  "variables": {
+    "baseUrl": "http://localhost:8000",
+    "accessToken": "",
+    "refreshToken": "",
+    "tenantId": "db5336dd-cc8a-4c65-a414-adcaa032f7de",
+    "tenantSlug": "test-tenant-restaurant",
+    "testEmail": "tenant@example.com",
+    "testPassword": "password123"
+  }
+}

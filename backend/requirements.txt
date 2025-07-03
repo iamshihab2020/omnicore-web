@@ -1,0 +1,8 @@
+Django>=5.2.0
+djangorestframework>=3.16.0
+djangorestframework-simplejwt>=5.5.0
+django-cors-headers>=4.7.0
+python-dotenv>=1.1.0
+pillow>=11.2.1          # For image fields
+psycopg2-binary>=2.9.9  # For PostgreSQL support
+gunicorn>=21.2.0        # For production deployment

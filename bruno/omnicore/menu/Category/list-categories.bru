@@ -1,0 +1,41 @@
+meta {
+  name: List Categories
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/menu/categories/
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  X-Tenant-Workspace: example-restaurant
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5ODEwNjAwLCJpYXQiOjE3NDk4MDcwMDAsImp0aSI6ImFhYzcyOTQxMDA0NDRmZjM5NGEwNTNkYjkxNjc0YmYwIiwidXNlcl9pZCI6IjE5MzYxNDA2LWE3N2UtNDc1OS1hNGY4LTcwNDQ3MmYwODUwYSJ9.Lghspui7lROohFKGoesAfCDIF_3ko6eXN1rPAXWPQNs
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response is an array", function() {
+    expect(res.body).to.be.an("array");
+  });
+  
+  // Save the first category ID if available
+  if (res.body && res.body.length > 0) {
+    bru.setEnvVar("categoryId", res.body[0].id);
+  }
+}
+
+docs {
+  Lists all menu categories for a specific tenant.
+  Requires a valid access token in the Authorization header.
+  User must belong to the tenant to access this resource.
+}

@@ -1,0 +1,28 @@
+# Project-specific files to ignore
+.DS_Store
+.env
+*.log
+*.pem
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.history/
+.project
+.settings/
+.classpath
+*.sublime-workspace
+*.sublime-project
+
+# Root-level directories that might contain temporary or large files
+/temp/
+/tmp/
+/backups/
+/docs/_build/
+
+# Refer to individual project gitignore files
+# See: ./omnicore-backend/.gitignore
+# See: ./omnicore-frontend/.gitignore

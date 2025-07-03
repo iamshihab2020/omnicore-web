@@ -1,0 +1,44 @@
+meta {
+  name: Register User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/auth/register/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "newuser@example.com",
+    "password": "securepassword",
+    "password_confirm": "securepassword",
+    "first_name": "New",
+    "last_name": "User",
+    "phone": "1234567890",
+    "create_tenant": true,
+    "tenant_name": "New Restaurant"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("User created successfully", function() {
+    expect(res.body).to.have.property("email");
+    expect(res.body.email).to.equal("newuser@example.com");
+  });
+}
+
+docs {
+  Registers a new user with the provided details.
+  Optionally creates a new tenant and assigns the user as the owner.
+}

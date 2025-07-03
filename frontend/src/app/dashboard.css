@@ -1,0 +1,145 @@
+/* Dashboard-specific styling */
+
+.dashboard-card {
+  @apply border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden;
+}
+
+.dashboard-card::before {
+  content: "";
+  @apply absolute -inset-1 rounded-lg bg-gradient-to-r from-primary/5 to-transparent opacity-0 transition-opacity duration-300;
+}
+
+.dashboard-card:hover::before {
+  @apply opacity-100;
+}
+
+.dashboard-stat-card {
+  @apply dashboard-card p-4;
+}
+
+.dashboard-stat-card::after {
+  content: "";
+  @apply absolute top-0 left-0 h-1 w-0 bg-primary transition-all duration-500;
+}
+
+.dashboard-stat-card:hover::after {
+  @apply w-full;
+}
+
+/* Custom primary gradient for backgrounds */
+.bg-primary-gradient {
+  @apply bg-gradient-to-br from-primary/80 to-primary;
+}
+
+/* Improved shadows for cards */
+.card-hover-effect {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-background/50;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/30 transition-colors;
+}
+
+/* Animated elements */
+.animate-fade-up {
+  animation: fadeUp 0.5s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-delay-1 {
+  animation-delay: 0.1s;
+}
+.animate-delay-2 {
+  animation-delay: 0.2s;
+}
+.animate-delay-3 {
+  animation-delay: 0.3s;
+}
+.animate-delay-4 {
+  animation-delay: 0.4s;
+}
+
+/* Metric card styling */
+.metric-card {
+  @apply border rounded-lg p-4 bg-card transition-all duration-300;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.metric-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Premium glass effect */
+.glass-effect {
+  @apply bg-card/70 backdrop-blur-sm border border-border/30;
+}
+
+/* Data visualization colors */
+.chart-primary {
+  @apply fill-primary stroke-primary;
+}
+.chart-secondary {
+  @apply fill-secondary stroke-secondary;
+}
+.chart-accent {
+  @apply fill-accent stroke-accent;
+}
+.chart-muted {
+  @apply fill-muted-foreground stroke-muted-foreground;
+}
+
+/* Team member card styling */
+.team-card {
+  @apply dashboard-card overflow-hidden;
+}
+
+.team-avatar {
+  @apply relative inline-block;
+}
+
+.team-avatar::after {
+  content: "";
+  @apply absolute bottom-1 right-1 w-3 h-3 rounded-full;
+}
+
+.team-avatar.status-active::after {
+  @apply bg-emerald-500;
+}
+
+.team-avatar.status-away::after {
+  @apply bg-amber-500;
+}
+
+.team-avatar.status-offline::after {
+  @apply bg-gray-400;
+}
+
+/* Subtle divider */
+.subtle-divider {
+  @apply border-t border-border/50 my-4;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
+}

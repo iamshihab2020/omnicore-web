@@ -1,0 +1,33 @@
+meta {
+  name: Get User Details
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/auth/user/
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has user details", function() {
+    expect(res.body).to.have.property("email");
+    expect(res.body).to.have.property("first_name");
+    expect(res.body).to.have.property("last_name");
+  });
+}
+
+docs {
+  Gets the authenticated user's details.
+  Requires a valid access token in the Authorization header.
+}

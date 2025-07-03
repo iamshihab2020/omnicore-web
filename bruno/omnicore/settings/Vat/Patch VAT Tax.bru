@@ -1,0 +1,29 @@
+meta {
+  name: Patch VAT Tax
+  type: http
+  seq: 6
+}
+
+patch {
+  url: http://localhost:8000/api/settings/vat/{{vat_id}}/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+headers {
+  X-Tenant-Workspace: {{workspace}}
+}
+
+body:json {
+  {
+    "is_active": false
+  }
+}
+
+vars:pre-request {
+  vat_id: 00000000-0000-0000-0000-000000000000
+}

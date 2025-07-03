@@ -1,0 +1,35 @@
+meta {
+  name: List Tenants
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/tenants/
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response is an array", function() {
+    expect(res.body).to.be.an("array");
+  });
+  
+  // Save first tenant ID if available for other requests
+  if (res.body && res.body.length > 0) {
+    bru.setEnvVar("tenantId", res.body[0].id);
+  }
+}
+
+docs {
+  Lists all tenants that the authenticated user belongs to.
+  Requires a valid access token in the Authorization header.
+}

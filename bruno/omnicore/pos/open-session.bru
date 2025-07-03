@@ -1,0 +1,49 @@
+meta {
+  name: Open POS Session
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/tenants/{{tenantId}}/pos/sessions/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "opening_balance": 100.00,
+    "notes": "Morning shift"
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.status).to.equal(201);
+  });
+  
+  test("Session opened successfully", function() {
+    expect(res.body).to.have.property("id");
+    expect(res.body).to.have.property("status");
+    expect(res.body.status).to.equal("open");
+    expect(res.body).to.have.property("opening_balance");
+    expect(res.body.opening_balance).to.equal(100);
+  });
+  
+  // Save the session ID
+  if (res.body && res.body.id) {
+    bru.setEnvVar("posSessionId", res.body.id);
+  }
+}
+
+docs {
+  Opens a new POS session for a specific tenant.
+  Only one active session is allowed per user.
+  Requires a valid access token in the Authorization header.
+  User must have cashier permissions or above in the tenant.
+}

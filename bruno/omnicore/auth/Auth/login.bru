@@ -1,0 +1,50 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/auth/login/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "tenant@example.com",
+    "password": "password123"
+  }
+}
+
+tests {
+  // Test successful login
+  test("Status code is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Response has tokens", function() {
+    expect(res.body).to.have.property("access");
+    expect(res.body).to.have.property("refresh");
+  });
+  
+  test("Response has user info", function() {
+    expect(res.body).to.have.property("user");
+    expect(res.body.user).to.have.property("email");
+  });
+  
+  // Store tokens in environment variables for other requests
+  if (res.status === 200) {
+    bru.setEnvVar("accessToken", res.body.access);
+    bru.setEnvVar("refreshToken", res.body.refresh);
+  }
+}
+
+docs {
+  Logs in a user with email and password.
+  Returns JWT access and refresh tokens, along with user details.
+}
